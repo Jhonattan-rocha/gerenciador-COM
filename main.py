@@ -6,7 +6,7 @@ from PySide6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QHBoxLayout,
                              QFileDialog, QMessageBox) # Import QMessageBox for error dialogs
 from PySide6.QtGui import QIcon, QPixmap
 from PySide6.QtCore import QTimer, QThread, Signal, QSemaphore
-import serial, logging
+import serial, logging, time
 import serial.tools.list_ports
 import socket
 import threading
@@ -632,17 +632,27 @@ class ServerThread(QThread):
         if not self.serial_port or not self.serial_port.is_open:
             self.log_message("Porta serial não está aberta.", level=logging.WARNING)
             return
+        
+        max_retries = 3
+        retry_delay = 1  # Começa com 1s
 
         try:
-            if self.serial_semaphore.tryAcquire(timeout=5000):
-                try:
-                    encoded_data = data.encode('utf-8')
-                    self.serial_port.write(encoded_data)
-                    self.log_message(f"Enviado para serial: {data.strip()}")
-                finally:
-                    self.serial_semaphore.release()
-            else:
-                self.log_message("Timeout ao adquirir semáforo para porta serial.", level=logging.WARNING)
+            for attempt in range(max_retries):
+                if self.serial_semaphore.tryAcquire(timeout=5000):
+                    try:
+                        encoded_data = data.encode('utf-8')
+                        self.serial_port.write(encoded_data)
+                        self.log_message(f"Enviado para serial: {data.strip()}")
+                        break  # Sucesso, sai do loop
+                    finally:
+                        self.serial_semaphore.release()
+                else:
+                    self.log_message(f"Tentativa {attempt + 1}/{max_retries}: Falha ao adquirir semáforo. Retentando...", level=logging.WARNING)
+                    time.sleep(retry_delay)
+                    retry_delay *= 2  # Aumenta o tempo de espera
+
+            if attempt == max_retries - 1:
+                self.log_message("Erro crítico: Não foi possível adquirir semáforo para escrita serial.", level=logging.ERROR)
 
         except serial.SerialTimeoutException:
             self.log_message("Timeout ao escrever na porta serial.", level=logging.WARNING)

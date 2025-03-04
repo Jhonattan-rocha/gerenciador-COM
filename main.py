@@ -19,14 +19,14 @@ class SerealConWindow(QWidget):
         super().__init__()
         self.setWindowTitle("Gerenciador de porta sereal")
         self.setWindowIcon(QIcon("./icon.png"))
-        self.serial_port = None
-        self.server_socket = None
-        self.client_thread = None
-        self.server_thread = None
-        self.connected_clients = {}
-        self.serial_port_semaphore = QSemaphore(1)
-        self.log_file_path = ""
-        self.log_file_name = "app_log.txt"
+        self.serial_port = None # To store serial port instance
+        self.server_socket = None # To store server socket
+        self.client_thread = None # To store client thread
+        self.server_thread = None # To store server thread
+        self.connected_clients = {} # To store connected clients in server mode
+        self.serial_port_semaphore = QSemaphore(1) # Semaphore for serial port access
+        self.log_file_path = "" # Initialize log file path
+        self.log_file_name = "app_log.txt" # Default log file name, will be configurable
 
         self.tab_widget = QTabWidget()
         self.config_tab = QWidget()
@@ -49,14 +49,145 @@ class SerealConWindow(QWidget):
         self.setLayout(main_layout)
 
         self.load_config()
-        self.setup_logging()
+        self.setup_logging() # Setup logging after loading config to get log file name
         self.log_timer = QTimer(self)
         self.log_timer.timeout.connect(self.update_log_content)
         self.log_timer.start(5000)
-        self.log_signal.connect(self.append_log_text)
-        self.status_signal.connect(self.update_status_text) # Connect status signal
+        self.log_signal.connect(self.append_log_text) # Connect signal to append log text
+        self.status_signal.connect(self.update_status_gui) # Connect status signal
 
-        self.log_message("Aplicativo Iniciado.")
+        self.log_message("Aplicativo Iniciado.") # Initial log message
+
+    def setup_logging(self):
+        """Sets up logging to file and QTextEdit."""
+        log_dir = self.log_location_input.text()
+        if log_dir:
+            self.log_file_path = f"{log_dir}/{self.log_file_name}"
+        else:
+            self.log_file_path = self.log_file_name # Fallback if no log location is set in config
+
+        logging.basicConfig(level=logging.DEBUG,
+                            format='%(asctime)s - %(levelname)s - %(message)s',
+                            filename=self.log_file_path,
+                            filemode='w') # 'w' to overwrite log on each start, use 'a' to append
+
+        # Redirect stdout and stderr to logging
+        class QtHandler(logging.Handler):
+            def __init__(self):
+                logging.Handler.__init__(self)
+
+            def emit(self, record):
+                record = self.format(record)
+                self.log_signal.emit(record) # Emit signal with log message
+
+        handler = QtHandler()
+        formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+        handler.setFormatter(formatter)
+        logging.getLogger().addHandler(handler)
+        logging.info("Logging configurado.")
+
+        # Redirect print to logging.info
+        # def log_print(*args, **kwargs):
+        #     message = ' '.join(map(str, args))
+        #     logging.info(message)
+        # sys.stdout.write = log_print
+        # sys.stderr.write = log_print
+
+
+    def setup_config_tab(self):
+        config_layout = QVBoxLayout(self.config_tab)
+
+        # Modo Cliente/Servidor
+        mode_layout = QHBoxLayout()
+        mode_label = QLabel("Modo:")
+        self.mode_combo = QComboBox()
+        self.mode_combo.addItems(["Cliente", "Servidor"])
+        mode_layout.addWidget(mode_label)
+        mode_layout.addWidget(self.mode_combo)
+
+        # Configurações de Servidor
+        self.server_config_group = QGroupBox("Configurações Servidor")
+        server_config_layout = QGridLayout()
+        self.server_ip_label = QLabel("IP:")
+        self.server_ip_input = QLineEdit()
+        self.server_port_label = QLabel("Porta:")
+        self.server_port_input = QLineEdit()
+        server_config_layout.addWidget(self.server_ip_label, 0, 0)
+        server_config_layout.addWidget(self.server_ip_input, 0, 1)
+        server_config_layout.addWidget(self.server_port_label, 1, 0)
+        server_config_layout.addWidget(self.server_port_input, 1, 1)
+        self.server_config_group.setLayout(server_config_layout)
+
+        # Configurações de Cliente
+        self.client_config_group = QGroupBox("Configurações Cliente")
+        client_config_layout = QGridLayout()
+        self.client_url_label = QLabel("URL (com porta):")
+        self.client_url_input = QLineEdit()
+        client_config_layout.addWidget(self.client_url_label, 0, 0)
+        client_config_layout.addWidget(self.client_url_input, 0, 1)
+        self.client_config_group.setLayout(client_config_layout)
+
+        # Local do Log
+        log_location_layout = QHBoxLayout()
+        log_location_label = QLabel("Local do Log:")
+        self.log_location_input = QLineEdit()
+        self.log_location_button = QPushButton("Escolher Pasta")
+        self.log_location_button.clicked.connect(self.choose_log_location)
+        log_location_layout.addWidget(log_location_label)
+        log_location_layout.addWidget(self.log_location_input)
+        log_location_layout.addWidget(self.log_location_button)
+
+        # Nome do Arquivo de Log
+        log_file_name_layout = QHBoxLayout()
+        log_file_name_label = QLabel("Nome Arquivo Log:")
+        self.log_file_name_input = QLineEdit()
+        self.log_file_name_input.setText(self.log_file_name) # Default value
+        log_file_name_layout.addWidget(log_file_name_label)
+        log_file_name_layout.addWidget(self.log_file_name_input)
+
+
+        # Usuário e Senha
+        user_pass_layout = QGridLayout()
+        user_label = QLabel("Usuário:")
+        self.user_input = QLineEdit()
+        password_label = QLabel("Senha:")
+        self.password_input = QLineEdit()
+        self.password_input.setEchoMode(QLineEdit.Password)
+        user_pass_layout.addWidget(user_label, 0, 0)
+        user_pass_layout.addWidget(self.user_input, 0, 1)
+        user_pass_layout.addWidget(password_label, 1, 0)
+        user_pass_layout.addWidget(self.password_input, 1, 1)
+
+        # Porta Serial
+        serial_port_layout = QHBoxLayout()
+        serial_port_label = QLabel("Porta Serial:")
+        self.serial_port_combo = QComboBox()
+        ports = serial.tools.list_ports.comports()
+
+        if ports:
+            for port, desc, hwid in sorted(ports):
+                self.serial_port_combo.addItem(port)
+
+        serial_port_layout.addWidget(serial_port_label)
+        serial_port_layout.addWidget(self.serial_port_combo)
+
+        # Botão Conectar
+        self.connect_button = QPushButton("Conectar")
+        self.connect_button.clicked.connect(self.handle_connect_button)
+
+        config_layout.addLayout(mode_layout)
+        config_layout.addWidget(self.server_config_group)
+        config_layout.addWidget(self.client_config_group)
+        config_layout.addLayout(log_location_layout)
+        config_layout.addLayout(log_file_name_layout) # Add log file name input
+        config_layout.addLayout(user_pass_layout)
+        config_layout.addLayout(serial_port_layout)
+        config_layout.addWidget(self.connect_button)
+        self.config_tab.setLayout(config_layout)
+
+        self.update_server_client_visibility()
+        self.mode_combo.currentIndexChanged.connect(self.update_server_client_visibility)
+
 
     def setup_status_tab(self):
         status_layout = QVBoxLayout(self.status_tab)
@@ -90,19 +221,60 @@ class SerealConWindow(QWidget):
         status_layout.addWidget(connection_status_group)
         self.status_tab.setLayout(status_layout)
 
-    def update_status_text(self, status_message):
-        """Updates status label in GUI thread."""
-        status_data = json.loads(status_message)
-        if 'status_label' in status_data:
-            self.status_label_value.setText(status_data['status_label'])
-        if 'connection_details' in status_data:
-            self.connection_details_value.setText(status_data['connection_details'])
-        if 'focused_port' in status_data:
-            self.focused_port_value.setText(status_data['focused_port'])
-        if 'server_status' in status_data:
-            self.server_status_value.setText(status_data['server_status'])
-        if 'client_status' in status_data:
-            self.client_status_value.setText(status_data['client_status'])
+    def setup_log_tab(self):
+        log_layout = QVBoxLayout(self.log_tab)
+
+        self.log_text_edit = QTextEdit()
+        self.log_text_edit.setReadOnly(True)
+
+        self.reload_log_button = QPushButton("Recarregar Log")
+        self.reload_log_button.clicked.connect(self.update_log_content)
+
+        log_layout.addWidget(self.log_text_edit)
+        log_layout.addWidget(self.reload_log_button)
+        self.log_tab.setLayout(log_layout)
+
+    def setup_credits_tab(self):
+        credits_layout = QVBoxLayout(self.credits_tab)
+
+        self.logo_label = QLabel()
+        logo_pixmap = QPixmap("./logo.png")
+        if not logo_pixmap.isNull():
+            logo_pixmap = logo_pixmap.scaledToWidth(600)
+            self.logo_label.setPixmap(logo_pixmap)
+        else:
+            self.logo_label.setText("Risetec")
+            self.logo_label.setStyleSheet("font-size: 20px;")
+
+        credits_text = """
+        Desenvolvido por: [Jhonattan/Risetec]
+        Versão: 1.0
+        Data: 2025-03-20
+
+        Um gerenciador de porta sereal para auxiliar o sistema Microdata a ter suporte a dispositivos que usam esse tipo de porta.
+        """
+        self.credits_label = QLabel(credits_text)
+        self.credits_label.setWordWrap(True)
+
+        credits_layout.addWidget(self.logo_label)
+        credits_layout.addWidget(self.credits_label)
+        self.credits_tab.setLayout(credits_layout)
+
+    def update_server_client_visibility(self):
+        """Atualiza a visibilidade dos grupos Servidor/Cliente baseado no Modo."""
+        modo_selecionado = self.mode_combo.currentText()
+        if modo_selecionado == "Servidor":
+            self.server_config_group.setVisible(True)
+            self.client_config_group.setVisible(False)
+        elif modo_selecionado == "Cliente":
+            self.server_config_group.setVisible(False)
+            self.client_config_group.setVisible(True)
+
+    def choose_log_location(self):
+        """Abre um diálogo para escolher a pasta de log."""
+        log_dir = QFileDialog.getExistingDirectory(self, "Escolher Pasta de Log")
+        if log_dir:
+            self.log_location_input.setText(log_dir)
 
     def handle_connect_button(self):
         """Function to execute on Connect button click."""
@@ -615,4 +787,7 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     window = SerealConWindow()
     window.show()
-    sys.exit(app.exec())
+    try:
+        sys.exit(app.exec())
+    except Exception as e: 
+        print(e)

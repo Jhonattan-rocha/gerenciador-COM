@@ -11,13 +11,13 @@ import serial.tools.list_ports
 import socket
 import threading
 
-class SerealConWindow(QWidget):
+class SerialConWindow(QWidget):
     log_signal = Signal(str)
     status_signal = Signal(str) # Signal for status updates
 
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Gerenciador de porta sereal")
+        self.setWindowTitle("Gerenciador de porta serial")
         self.setWindowIcon(QIcon("./icon.png"))
         self.serial_port = None # To store serial port instance
         self.server_socket = None # To store server socket
@@ -251,7 +251,7 @@ class SerealConWindow(QWidget):
         Versão: 1.0
         Data: 2025-03-20
 
-        Um gerenciador de porta sereal para auxiliar o sistema Microdata a ter suporte a dispositivos que usam esse tipo de porta.
+        Um gerenciador de porta serial para auxiliar o sistema Microdata a ter suporte a dispositivos que usam esse tipo de porta.
         """
         self.credits_label = QLabel(credits_text)
         self.credits_label.setWordWrap(True)
@@ -795,7 +795,7 @@ class ClientThread(QThread):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    window = SerealConWindow()
+    window = SerialConWindow()
     window.show()
     try:
         sys.exit(app.exec())

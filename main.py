@@ -3,29 +3,30 @@ import json
 from PySide6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QHBoxLayout,
                              QTabWidget, QLabel, QGroupBox, QGridLayout,
                              QLineEdit, QPushButton, QComboBox, QTextEdit,
-                             QFileDialog)
+                             QFileDialog, QMessageBox) # Import QMessageBox for error dialogs
 from PySide6.QtGui import QIcon, QPixmap
-from PySide6.QtCore import QTimer, QThread, Signal, QSemaphore  # Import QThread, Signal, QSemaphore
+from PySide6.QtCore import QTimer, QThread, Signal, QSemaphore
 import serial, logging
 import serial.tools.list_ports
 import socket
 import threading
 
 class SerealConWindow(QWidget):
-    log_signal = Signal(str) # Signal to update log from threads
+    log_signal = Signal(str)
+    status_signal = Signal(str) # Signal for status updates
 
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Gerenciador de porta sereal")
         self.setWindowIcon(QIcon("./icon.png"))
-        self.serial_port = None # To store serial port instance
-        self.server_socket = None # To store server socket
-        self.client_thread = None # To store client thread
-        self.server_thread = None # To store server thread
-        self.connected_clients = {} # To store connected clients in server mode
-        self.serial_port_semaphore = QSemaphore(1) # Semaphore for serial port access
-        self.log_file_path = "" # Initialize log file path
-        self.log_file_name = "app_log.txt" # Default log file name, will be configurable
+        self.serial_port = None
+        self.server_socket = None
+        self.client_thread = None
+        self.server_thread = None
+        self.connected_clients = {}
+        self.serial_port_semaphore = QSemaphore(1)
+        self.log_file_path = ""
+        self.log_file_name = "app_log.txt"
 
         self.tab_widget = QTabWidget()
         self.config_tab = QWidget()
@@ -48,144 +49,14 @@ class SerealConWindow(QWidget):
         self.setLayout(main_layout)
 
         self.load_config()
-        self.setup_logging() # Setup logging after loading config to get log file name
+        self.setup_logging()
         self.log_timer = QTimer(self)
         self.log_timer.timeout.connect(self.update_log_content)
         self.log_timer.start(5000)
-        self.log_signal.connect(self.append_log_text) # Connect signal to append log text
+        self.log_signal.connect(self.append_log_text)
+        self.status_signal.connect(self.update_status_text) # Connect status signal
 
-        self.log_message("Aplicativo Iniciado.") # Initial log message
-
-    def setup_logging(self):
-        """Sets up logging to file and QTextEdit."""
-        log_dir = self.log_location_input.text()
-        if log_dir:
-            self.log_file_path = f"{log_dir}/{self.log_file_name}"
-        else:
-            self.log_file_path = self.log_file_name # Fallback if no log location is set in config
-
-        logging.basicConfig(level=logging.DEBUG,
-                            format='%(asctime)s - %(levelname)s - %(message)s',
-                            filename=self.log_file_path,
-                            filemode='w') # 'w' to overwrite log on each start, use 'a' to append
-
-        # Redirect stdout and stderr to logging
-        class QtHandler(logging.Handler):
-            def __init__(self):
-                logging.Handler.__init__(self)
-
-            def emit(self, record):
-                record = self.format(record)
-                self.log_signal.emit(record) # Emit signal with log message
-
-        handler = QtHandler()
-        formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-        handler.setFormatter(formatter)
-        logging.getLogger().addHandler(handler)
-        logging.info("Logging configurado.")
-
-        # Redirect print to logging.info
-        def log_print(*args, **kwargs):
-            message = ' '.join(map(str, args))
-            logging.info(message)
-        sys.stdout.write = log_print
-        sys.stderr.write = log_print
-
-
-    def setup_config_tab(self):
-        config_layout = QVBoxLayout(self.config_tab)
-
-        # Modo Cliente/Servidor
-        mode_layout = QHBoxLayout()
-        mode_label = QLabel("Modo:")
-        self.mode_combo = QComboBox()
-        self.mode_combo.addItems(["Cliente", "Servidor"])
-        mode_layout.addWidget(mode_label)
-        mode_layout.addWidget(self.mode_combo)
-
-        # Configurações de Servidor
-        self.server_config_group = QGroupBox("Configurações Servidor")
-        server_config_layout = QGridLayout()
-        self.server_ip_label = QLabel("IP:")
-        self.server_ip_input = QLineEdit()
-        self.server_port_label = QLabel("Porta:")
-        self.server_port_input = QLineEdit()
-        server_config_layout.addWidget(self.server_ip_label, 0, 0)
-        server_config_layout.addWidget(self.server_ip_input, 0, 1)
-        server_config_layout.addWidget(self.server_port_label, 1, 0)
-        server_config_layout.addWidget(self.server_port_input, 1, 1)
-        self.server_config_group.setLayout(server_config_layout)
-
-        # Configurações de Cliente
-        self.client_config_group = QGroupBox("Configurações Cliente")
-        client_config_layout = QGridLayout()
-        self.client_url_label = QLabel("URL (com porta):")
-        self.client_url_input = QLineEdit()
-        client_config_layout.addWidget(self.client_url_label, 0, 0)
-        client_config_layout.addWidget(self.client_url_input, 0, 1)
-        self.client_config_group.setLayout(client_config_layout)
-
-        # Local do Log
-        log_location_layout = QHBoxLayout()
-        log_location_label = QLabel("Local do Log:")
-        self.log_location_input = QLineEdit()
-        self.log_location_button = QPushButton("Escolher Pasta")
-        self.log_location_button.clicked.connect(self.choose_log_location)
-        log_location_layout.addWidget(log_location_label)
-        log_location_layout.addWidget(self.log_location_input)
-        log_location_layout.addWidget(self.log_location_button)
-
-        # Nome do Arquivo de Log
-        log_file_name_layout = QHBoxLayout()
-        log_file_name_label = QLabel("Nome Arquivo Log:")
-        self.log_file_name_input = QLineEdit()
-        self.log_file_name_input.setText(self.log_file_name) # Default value
-        log_file_name_layout.addWidget(log_file_name_label)
-        log_file_name_layout.addWidget(self.log_file_name_input)
-
-
-        # Usuário e Senha
-        user_pass_layout = QGridLayout()
-        user_label = QLabel("Usuário:")
-        self.user_input = QLineEdit()
-        password_label = QLabel("Senha:")
-        self.password_input = QLineEdit()
-        self.password_input.setEchoMode(QLineEdit.Password)
-        user_pass_layout.addWidget(user_label, 0, 0)
-        user_pass_layout.addWidget(self.user_input, 0, 1)
-        user_pass_layout.addWidget(password_label, 1, 0)
-        user_pass_layout.addWidget(self.password_input, 1, 1)
-
-        # Porta Serial
-        serial_port_layout = QHBoxLayout()
-        serial_port_label = QLabel("Porta Serial:")
-        self.serial_port_combo = QComboBox()
-        ports = serial.tools.list_ports.comports()
-
-        if ports:
-            for port, desc, hwid in sorted(ports):
-                self.serial_port_combo.addItem(port)
-
-        serial_port_layout.addWidget(serial_port_label)
-        serial_port_layout.addWidget(self.serial_port_combo)
-
-        # Botão Conectar
-        self.connect_button = QPushButton("Conectar")
-        self.connect_button.clicked.connect(self.handle_connect_button)
-
-        config_layout.addLayout(mode_layout)
-        config_layout.addWidget(self.server_config_group)
-        config_layout.addWidget(self.client_config_group)
-        config_layout.addLayout(log_location_layout)
-        config_layout.addLayout(log_file_name_layout) # Add log file name input
-        config_layout.addLayout(user_pass_layout)
-        config_layout.addLayout(serial_port_layout)
-        config_layout.addWidget(self.connect_button)
-        self.config_tab.setLayout(config_layout)
-
-        self.update_server_client_visibility()
-        self.mode_combo.currentIndexChanged.connect(self.update_server_client_visibility)
-
+        self.log_message("Aplicativo Iniciado.")
 
     def setup_status_tab(self):
         status_layout = QVBoxLayout(self.status_tab)
@@ -197,89 +68,77 @@ class SerealConWindow(QWidget):
         self.status_label_value = QLabel("Desconectado")
         self.connection_details_value = QLabel("N/A")
         self.focused_port_value = QLabel("N/A")
-        self.connected_clients_value = QLabel("0") # For server mode client count
+        self.connected_clients_value = QLabel("0")
+        self.server_status_value = QLabel("Parado") # Server mode specific status
+        self.client_status_value = QLabel("Desconectado") # Client mode specific status
 
-        connection_status_layout.addWidget(QLabel("Status:"), 0, 0)
+        connection_status_layout.addWidget(QLabel("Status Geral:"), 0, 0)
         connection_status_layout.addWidget(self.status_label_value, 0, 1)
         connection_status_layout.addWidget(QLabel("Detalhes da Conexão:"), 1, 0)
         connection_status_layout.addWidget(self.connection_details_value, 1, 1)
         connection_status_layout.addWidget(QLabel("Porta Serial Focada:"), 2, 0)
         connection_status_layout.addWidget(self.focused_port_value, 2, 1)
-        connection_status_layout.addWidget(QLabel("Clientes Conectados (Servidor):"), 3, 0) # New for server
-        connection_status_layout.addWidget(self.connected_clients_value, 3, 1) # New for server
+        connection_status_layout.addWidget(QLabel("Clientes Conectados (Servidor):"), 3, 0)
+        connection_status_layout.addWidget(self.connected_clients_value, 3, 1)
+        connection_status_layout.addWidget(QLabel("Status Servidor:"), 4, 0) # Server status label
+        connection_status_layout.addWidget(self.server_status_value, 4, 1) # Server status value
+        connection_status_layout.addWidget(QLabel("Status Cliente:"), 5, 0) # Client status label
+        connection_status_layout.addWidget(self.client_status_value, 5, 1) # Client status value
+
         connection_status_group.setLayout(connection_status_layout)
 
         status_layout.addWidget(connection_status_group)
         self.status_tab.setLayout(status_layout)
 
-    def setup_log_tab(self):
-        log_layout = QVBoxLayout(self.log_tab)
-
-        self.log_text_edit = QTextEdit()
-        self.log_text_edit.setReadOnly(True)
-
-        self.reload_log_button = QPushButton("Recarregar Log")
-        self.reload_log_button.clicked.connect(self.update_log_content)
-
-        log_layout.addWidget(self.log_text_edit)
-        log_layout.addWidget(self.reload_log_button)
-        self.log_tab.setLayout(log_layout)
-
-    def setup_credits_tab(self):
-        credits_layout = QVBoxLayout(self.credits_tab)
-
-        self.logo_label = QLabel()
-        logo_pixmap = QPixmap("./logo.png")
-        if not logo_pixmap.isNull():
-            logo_pixmap = logo_pixmap.scaledToWidth(600)
-            self.logo_label.setPixmap(logo_pixmap)
-        else:
-            self.logo_label.setText("Risetec")
-            self.logo_label.setStyleSheet("font-size: 20px;")
-
-        credits_text = """
-        Desenvolvido por: [Jhonattan/Risetec]
-        Versão: 1.0
-        Data: 2025-03-20
-
-        Um gerenciador de porta sereal para auxiliar o sistema Microdata a ter suporte a dispositivos que usam esse tipo de porta.
-        """
-        self.credits_label = QLabel(credits_text)
-        self.credits_label.setWordWrap(True)
-
-        credits_layout.addWidget(self.logo_label)
-        credits_layout.addWidget(self.credits_label)
-        self.credits_tab.setLayout(credits_layout)
-
-    def update_server_client_visibility(self):
-        """Atualiza a visibilidade dos grupos Servidor/Cliente baseado no Modo."""
-        modo_selecionado = self.mode_combo.currentText()
-        if modo_selecionado == "Servidor":
-            self.server_config_group.setVisible(True)
-            self.client_config_group.setVisible(False)
-        elif modo_selecionado == "Cliente":
-            self.server_config_group.setVisible(False)
-            self.client_config_group.setVisible(True)
-
-    def choose_log_location(self):
-        """Abre um diálogo para escolher a pasta de log."""
-        log_dir = QFileDialog.getExistingDirectory(self, "Escolher Pasta de Log")
-        if log_dir:
-            self.log_location_input.setText(log_dir)
+    def update_status_text(self, status_message):
+        """Updates status label in GUI thread."""
+        status_data = json.loads(status_message)
+        if 'status_label' in status_data:
+            self.status_label_value.setText(status_data['status_label'])
+        if 'connection_details' in status_data:
+            self.connection_details_value.setText(status_data['connection_details'])
+        if 'focused_port' in status_data:
+            self.focused_port_value.setText(status_data['focused_port'])
+        if 'server_status' in status_data:
+            self.server_status_value.setText(status_data['server_status'])
+        if 'client_status' in status_data:
+            self.client_status_value.setText(status_data['client_status'])
 
     def handle_connect_button(self):
-        """Função a ser executada ao clicar no botão Conectar."""
+        """Function to execute on Connect button click."""
         modo = self.mode_combo.currentText()
         if modo == "Servidor":
-            self.start_server_mode()
+            if not self.server_thread or not self.server_thread.isRunning():
+                self.start_server_mode()
+            else:
+                self.stop_server_mode() # Stop if already running
         elif modo == "Cliente":
-            self.start_client_mode()
+            if not self.client_thread or not self.client_thread.isRunning():
+                self.start_client_mode()
+            else:
+                self.stop_client_mode() # Stop if already running
         else:
             self.log_message("Modo inválido selecionado.")
 
-        self.save_config() # Save config after connect attempt
-        self.update_log_content() # Refresh log display
+        self.save_config()
+        self.update_log_content()
+        self.update_connect_button_text() # Update button text after action
 
+    def update_connect_button_text(self):
+        """Updates the connect button text based on current mode and thread status."""
+        modo = self.mode_combo.currentText()
+        if modo == "Servidor":
+            if self.server_thread and self.server_thread.isRunning():
+                self.connect_button.setText("Parar Servidor")
+            else:
+                self.connect_button.setText("Iniciar Servidor")
+        elif modo == "Cliente":
+            if self.client_thread and self.client_thread.isRunning():
+                self.connect_button.setText("Desconectar Cliente")
+            else:
+                self.connect_button.setText("Conectar Cliente")
+        else:
+            self.connect_button.setText("Conectar") # Default text
 
     def start_server_mode(self):
         """Starts the application in Server mode."""
@@ -289,27 +148,29 @@ class SerealConWindow(QWidget):
 
         if not ip or not port or not porta_serial:
             self.log_message("Configurações de Servidor incompletas.")
-            self.status_label_value.setText("Erro de Configuração")
+            QMessageBox.warning(self, "Erro de Configuração", "Por favor, preencha todas as configurações do servidor.")
+            self.update_status_gui(status_label="Erro de Configuração", server_status="Configuração Incompleta")
             return
 
         try:
             port_num = int(port)
         except ValueError:
             self.log_message("Porta do servidor inválida. Deve ser um número.")
-            self.status_label_value.setText("Erro de Configuração")
+            QMessageBox.warning(self, "Erro de Configuração", "Porta do servidor inválida. Deve ser um número.")
+            self.update_status_gui(status_label="Erro de Configuração", server_status="Porta Inválida")
             return
 
         self.log_message(f"Iniciando Servidor em: {ip}:{port}")
-        self.connection_details_value.setText(f"Servidor: {ip}:{port}")
-        self.focused_port_value.setText(porta_serial)
-        self.status_label_value.setText("Servidor Iniciado")
+        self.update_status_gui(status_label="Iniciando Servidor", connection_details=f"Servidor: {ip}:{port}", focused_port=porta_serial, server_status="Iniciando...")
 
         # Stop any existing server thread
         self.stop_server_mode()
 
-        self.server_thread = ServerThread(ip, port_num, porta_serial, self.serial_port_semaphore, self.log_signal)
-        self.server_thread.client_connected_signal.connect(self.update_connected_clients_count) # Connect signal
+        self.server_thread = ServerThread(ip, port_num, porta_serial, self.serial_port_semaphore, self.log_signal, self.status_signal)
+        self.server_thread.client_connected_signal.connect(self.update_connected_clients_count)
+        self.server_thread.server_status_signal.connect(self.update_server_status_gui) # Connect server status signals
         self.server_thread.start()
+        self.connect_button.setText("Parar Servidor") # Immediately update button text
         self.log_message("Thread Servidor iniciada.")
 
 
@@ -317,13 +178,14 @@ class SerealConWindow(QWidget):
         """Stops the server thread if it's running."""
         if self.server_thread and self.server_thread.isRunning():
             self.log_message("Parando thread Servidor...")
-            self.server_thread.stop_server() # Signal thread to stop gracefully
-            self.server_thread.wait() # Wait for thread to finish
+            self.update_status_gui(status_label="Parando Servidor", server_status="Parando...")
+            self.server_thread.stop_server()
+            self.server_thread.wait()
             self.server_thread = None
-            self.status_label_value.setText("Desconectado")
-            self.connection_details_value.setText("Servidor parado")
-            self.connected_clients = {} # Clear connected clients
-            self.update_connected_clients_count(0) # Reset client count in GUI
+            self.connected_clients = {}
+            self.update_connected_clients_count(0)
+        self.update_status_gui(status_label="Desconectado", connection_details="Servidor parado", server_status="Parado")
+        self.connect_button.setText("Iniciar Servidor")
 
 
     def start_client_mode(self):
@@ -333,19 +195,20 @@ class SerealConWindow(QWidget):
 
         if not url or not porta_serial:
             self.log_message("Configurações de Cliente incompletas.")
-            self.status_label_value.setText("Erro de Configuração")
+            QMessageBox.warning(self, "Erro de Configuração", "Por favor, preencha a URL do cliente e selecione a porta serial.")
+            self.update_status_gui(status_label="Erro de Configuração", client_status="Configuração Incompleta")
             return
 
         self.log_message(f"Conectando ao Cliente em: {url}")
-        self.connection_details_value.setText(f"Cliente: {url}")
-        self.focused_port_value.setText(porta_serial)
-        self.status_label_value.setText("Conectado como Cliente")
+        self.update_status_gui(status_label="Conectando Cliente", connection_details=f"Cliente: {url}", focused_port=porta_serial, client_status="Conectando...")
 
         # Stop any existing client thread
         self.stop_client_mode()
 
-        self.client_thread = ClientThread(url, porta_serial, self.log_signal, self.serial_port_semaphore)
+        self.client_thread = ClientThread(url, porta_serial, self.log_signal, self.serial_port_semaphore, self.status_signal)
+        self.client_thread.client_status_signal.connect(self.update_client_status_gui) # Connect client status signal
         self.client_thread.start()
+        self.connect_button.setText("Desconectar Cliente") # Immediately update button text
         self.log_message("Thread Cliente iniciada.")
 
 
@@ -353,15 +216,16 @@ class SerealConWindow(QWidget):
         """Stops the client thread if it's running."""
         if self.client_thread and self.client_thread.isRunning():
             self.log_message("Parando thread Cliente...")
-            self.client_thread.stop_client() # Signal thread to stop gracefully
-            self.client_thread.wait() # Wait for thread to finish
+            self.update_status_gui(status_label="Desconectando Cliente", client_status="Desconectando...")
+            self.client_thread.stop_client()
+            self.client_thread.wait()
             self.client_thread = None
-            self.status_label_value.setText("Desconectado")
-            self.connection_details_value.setText("Cliente parado")
+        self.update_status_gui(status_label="Desconectado", connection_details="Cliente parado", client_status="Desconectado")
+        self.connect_button.setText("Conectar Cliente")
 
 
     def update_log_content(self):
-        """Atualiza o conteúdo do QTextEdit com o log do arquivo."""
+        """Updates log content in QTextEdit from file."""
         if self.log_file_path:
             try:
                 with open(self.log_file_path, 'r') as f:
@@ -376,24 +240,22 @@ class SerealConWindow(QWidget):
              self.log_text_edit.setText("Local do arquivo de log não configurado.")
 
     def append_log_text(self, message):
-        """Appends text to the log QTextEdit in GUI thread."""
+        """Appends text to log QTextEdit in GUI thread."""
         self.log_text_edit.append(message)
 
-
     def log_message(self, message, level=logging.INFO):
-        """Logs a message to the system and displays in log window."""
+        """Logs a message to system and log window."""
         logging.log(level, message)
 
-
     def save_config(self):
-        """Salva as configurações em um arquivo JSON."""
+        """Saves configuration to JSON file."""
         config = {
             "modo": self.mode_combo.currentText(),
             "server_ip": self.server_ip_input.text(),
             "server_port": self.server_port_input.text(),
             "client_url": self.client_url_input.text(),
             "log_location": self.log_location_input.text(),
-            "log_file_name": self.log_file_name_input.text(), # Save log file name
+            "log_file_name": self.log_file_name_input.text(),
             "usuario": self.user_input.text(),
             "senha": self.password_input.text(),
             "porta_serial": self.serial_port_combo.currentText()
@@ -406,7 +268,7 @@ class SerealConWindow(QWidget):
             self.log_message(f"Erro ao salvar as configurações: {e}", level=logging.ERROR)
 
     def load_config(self):
-        """Carrega as configurações de um arquivo JSON."""
+        """Loads configuration from JSON file."""
         try:
             with open("config.json", 'r') as f:
                 config = json.load(f)
@@ -415,12 +277,12 @@ class SerealConWindow(QWidget):
                 self.server_port_input.setText(config.get("server_port", ""))
                 self.client_url_input.setText(config.get("client_url", ""))
                 self.log_location_input.setText(config.get("log_location", ""))
-                self.log_file_name_input.setText(config.get("log_file_name", "app_log.txt")) # Load log file name
-                self.log_file_name = self.log_file_name_input.text() # Update current log file name
+                self.log_file_name_input.setText(config.get("log_file_name", "app_log.txt"))
+                self.log_file_name = self.log_file_name_input.text()
                 self.user_input.setText(config.get("usuario", ""))
                 self.password_input.setText(config.get("senha", ""))
                 serial_port = config.get("porta_serial", "")
-                if serial_port: # Check if port exists before setting
+                if serial_port:
                     index = self.serial_port_combo.findText(serial_port)
                     if index != -1:
                         self.serial_port_combo.setCurrentIndex(index)
@@ -432,30 +294,60 @@ class SerealConWindow(QWidget):
             self.log_message(f"Erro ao carregar as configurações: {e}", level=logging.ERROR)
 
     def update_connected_clients_count(self, count):
-        """Updates the connected clients count in the status tab."""
+        """Updates connected clients count in status tab."""
         self.connected_clients_value.setText(str(count))
+
+    def update_status_gui(self, status_label=None, connection_details=None, focused_port=None, server_status=None, client_status=None):
+        """Helper to bundle status updates into a signal emission."""
+        status_update = {}
+        if status_label is not None:
+            status_update['status_label'] = status_label
+        if connection_details is not None:
+            status_update['connection_details'] = connection_details
+        if focused_port is not None:
+            status_update['focused_port'] = focused_port
+        if server_status is not None:
+            status_update['server_status'] = server_status
+        if client_status is not None:
+            status_update['client_status'] = client_status
+        self.status_signal.emit(json.dumps(status_update))
+
+    def update_server_status_gui(self, status_message):
+        """Updates server specific status in GUI thread."""
+        status_data = json.loads(status_message)
+        if 'server_status' in status_data:
+            self.update_status_gui(server_status=status_data['server_status'])
+
+    def update_client_status_gui(self, status_message):
+        """Updates client specific status in GUI thread."""
+        status_data = json.loads(status_message)
+        if 'client_status' in status_data:
+            self.update_status_gui(client_status=status_data['client_status'])
 
 
 class ServerThread(QThread):
-    client_connected_signal = Signal(int) # Signal to update client count in GUI
+    client_connected_signal = Signal(int)
+    server_status_signal = Signal(str) # Signal server status to GUI
 
-    def __init__(self, ip, port, serial_port_name, serial_semaphore, log_signal):
+    def __init__(self, ip, port, serial_port_name, serial_semaphore, log_signal, status_signal):
         super().__init__()
         self.ip = ip
         self.port = port
         self.serial_port_name = serial_port_name
         self.serial_semaphore = serial_semaphore
         self.log_signal = log_signal
+        self.status_signal = status_signal # Status signal for GUI updates
         self._is_running = True
         self.server_socket = None
-        self.connected_clients = {} # Store client connections here
+        self.serial_port = None
+        self.connected_clients = {}
 
     def stop_server(self):
-        """Sets the stop flag and closes the server socket."""
+        """Sets stop flag and closes server socket."""
         self._is_running = False
         if self.server_socket:
             try:
-                self.server_socket.close() # Close server socket to stop accepting connections
+                self.server_socket.close()
             except Exception as e:
                 logging.error(f"Erro ao fechar o socket do servidor: {e}")
 
@@ -464,46 +356,57 @@ class ServerThread(QThread):
         try:
             self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.server_socket.bind((self.ip, self.port))
-            self.server_socket.listen(5) # Listen for up to 5 connections
+            self.server_socket.listen(5)
             self.log_message(f"Servidor ouvindo em {self.ip}:{self.port}")
-            self.update_connected_clients_count_signal() # Initialize client count in GUI
-            self.open_serial_port() # Open serial port in server thread context
+            self.update_server_status("Ouvindo") # Update server status to "Ouvindo" in GUI
+            self.update_connected_clients_count_signal()
+            if not self.open_serial_port(): # Open serial port, check if successful
+                return # Exit if serial port opening fails
 
             while self._is_running:
                 try:
+                    self.server_socket.settimeout(1) # Set a timeout for accept
                     client_socket, addr = self.server_socket.accept()
-                    if not self._is_running: # Check again inside loop for immediate stop
+                    self.server_socket.settimeout(None) # Reset timeout after accept
+
+                    if not self._is_running:
                         client_socket.close()
                         break
 
-                    client_id = addr[1] # Use port as client ID for simplicity
-                    self.connected_clients[client_id] = client_socket # Store client socket
-                    self.update_connected_clients_count_signal() # Update client count on connection
+                    client_id = addr[1]
+                    self.connected_clients[client_id] = client_socket
+                    self.update_connected_clients_count_signal()
                     self.log_message(f"Cliente conectado de {addr}")
+                    self.update_server_status("Ouvindo") # Keep status as "Ouvindo", clients are connected
 
                     client_handler_thread = threading.Thread(target=self.handle_client, args=(client_socket, addr))
-                    client_handler_thread.daemon = True # Allow main thread to exit without waiting
+                    client_handler_thread.daemon = True
                     client_handler_thread.start()
 
-                except socket.timeout: # Non-blocking accept check (if timeout is set)
-                    continue # Just continue to loop and check _is_running
-
-                except OSError as e: # Socket might be closed by stop_server
+                except socket.timeout: # Socket timeout is normal, check running flag
                     if not self._is_running:
-                        break # Expected if server is being stopped
+                        break
+                    continue
+
+                except OSError as e: # Socket closed by stop_server
+                    if not self._is_running:
+                        break
                     else:
                         self.log_message(f"Erro ao aceitar conexão: {e}", level=logging.ERROR)
-                        break # Unexpected error, stop server loop
+                        self.update_server_status("Erro") # Update server status to "Erro"
+                        break
 
                 except Exception as e:
                     self.log_message(f"Erro inesperado no loop do servidor: {e}", level=logging.ERROR)
-                    break # Stop server loop on unexpected error
+                    self.update_server_status("Erro") # Update server status to "Erro"
+                    break
 
         finally:
-            self.close_serial_port() # Ensure serial port is closed on server thread exit
+            self.close_serial_port()
             if self.server_socket:
                 self.server_socket.close()
                 self.log_message("Socket do servidor fechado.")
+            self.update_server_status("Parado") # Update server status to "Parado" in GUI
             self.log_message("Thread Servidor finalizada.")
 
 
@@ -515,31 +418,34 @@ class ServerThread(QThread):
                 data = client_socket.recv(1024)
                 if not data:
                     self.log_message(f"Cliente {client_ip_addr} desconectado.")
-                    break # Client disconnected
+                    break
 
                 decoded_data = data.decode('utf-8')
                 self.log_message(f"Recebido do cliente {client_ip_addr}: {decoded_data.strip()}")
-                self.write_to_serial_port(decoded_data) # Write received data to serial port
+                self.write_to_serial_port(decoded_data)
 
         except Exception as e:
             self.log_message(f"Erro ao lidar com o cliente {client_ip_addr}: {e}", level=logging.ERROR)
         finally:
             client_id = addr[1]
             if client_id in self.connected_clients:
-                del self.connected_clients[client_id] # Remove client on disconnect/error
-                self.update_connected_clients_count_signal() # Update client count on disconnect
+                del self.connected_clients[client_id]
+                self.update_connected_clients_count_signal()
             client_socket.close()
             self.log_message(f"Conexão com cliente {client_ip_addr} encerrada.")
 
 
     def open_serial_port(self):
-        """Opens the serial port."""
+        """Opens the serial port and returns success status."""
         try:
-            self.serial_port = serial.Serial(self.serial_port_name, baudrate=9600, timeout=1) # Example settings
+            self.serial_port = serial.Serial(self.serial_port_name, baudrate=9600, timeout=1)
             self.log_message(f"Porta serial {self.serial_port_name} aberta.")
+            return True # Serial port opened successfully
         except serial.SerialException as e:
             self.log_message(f"Erro ao abrir porta serial {self.serial_port_name}: {e}", level=logging.ERROR)
-            self._is_running = False # Stop server if serial port fails to open
+            self.update_server_status("Erro na Serial") # Update server status to "Erro na Serial"
+            self._is_running = False
+            return False # Serial port opening failed
 
     def close_serial_port(self):
         """Closes the serial port."""
@@ -550,19 +456,19 @@ class ServerThread(QThread):
 
 
     def write_to_serial_port(self, data):
-        """Writes data to the serial port, using semaphore for control."""
+        """Writes data to serial port using semaphore."""
         if not self.serial_port or not self.serial_port.is_open:
             self.log_message("Porta serial não está aberta.", level=logging.WARNING)
             return
 
         try:
-            if self.serial_semaphore.tryAcquire(timeout=5000): # Try acquire with timeout
+            if self.serial_semaphore.tryAcquire(timeout=5000):
                 try:
                     encoded_data = data.encode('utf-8')
                     self.serial_port.write(encoded_data)
                     self.log_message(f"Enviado para serial: {data.strip()}")
                 finally:
-                    self.serial_semaphore.release() # Ensure semaphore is released
+                    self.serial_semaphore.release()
             else:
                 self.log_message("Timeout ao adquirir semáforo para porta serial.", level=logging.WARNING)
 
@@ -573,28 +479,35 @@ class ServerThread(QThread):
 
 
     def log_message(self, message, level=logging.INFO):
-        """Logs a message using the provided log signal to update GUI."""
+        """Logs a message using log signal for GUI."""
         logging.log(level, message)
 
     def update_connected_clients_count_signal(self):
-        """Emits signal to update client count in GUI thread."""
-        self.client_connected_signal.emit(len(self.connected_clients)) # Emit signal with client count
+        """Emits signal to update client count in GUI."""
+        self.client_connected_signal.emit(len(self.connected_clients))
 
+    def update_server_status(self, status_text):
+        """Updates server status in GUI via signal."""
+        status_update = {'server_status': status_text}
+        self.status_signal.emit(json.dumps(status_update))
 
 
 class ClientThread(QThread):
-    def __init__(self, server_url, serial_port_name, log_signal, serial_semaphore):
+    client_status_signal = Signal(str) # Signal client status to GUI
+
+    def __init__(self, server_url, serial_port_name, log_signal, serial_semaphore, status_signal):
         super().__init__()
         self.server_url = server_url
         self.serial_port_name = serial_port_name
         self.log_signal = log_signal
         self.serial_semaphore = serial_semaphore
+        self.status_signal = status_signal # Status signal for GUI updates
         self._is_running = True
         self.serial_port = None
         self.client_socket = None
 
     def stop_client(self):
-        """Sets the stop flag and closes resources."""
+        """Sets stop flag and closes resources."""
         self._is_running = False
         self.close_serial_port()
         if self.client_socket:
@@ -603,18 +516,21 @@ class ClientThread(QThread):
             except Exception as e:
                 self.log_message(f"Erro ao fechar socket cliente: {e}")
 
-
     def run(self):
         """Client thread execution."""
         try:
             url_parts = self.server_url.split(':')
             host = url_parts[0]
-            port = int(url_parts[1]) if len(url_parts) > 1 and url_parts[1] else 80 # Default HTTP port if no port
+            port = int(url_parts[1]) if len(url_parts) > 1 and url_parts[1] else 80
 
+            self.update_client_status("Conectando...") # Update client status to "Conectando..." in GUI
             self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.client_socket.connect((host, port))
             self.log_message(f"Conectado ao servidor em {self.server_url}")
-            self.open_serial_port() # Open serial port in client thread context
+            self.update_client_status("Conectado") # Update client status to "Conectado" in GUI
+            if not self.open_serial_port(): # Open serial port, check if successful
+                self.update_client_status("Erro na Serial") # Update client status if serial fails
+                return # Exit if serial port fails to open
 
             while self._is_running:
                 data_from_serial = self.read_from_serial_port()
@@ -624,25 +540,33 @@ class ClientThread(QThread):
                         self.log_message(f"Enviado para servidor: {data_from_serial.strip()}")
                     except Exception as e:
                         self.log_message(f"Erro ao enviar dados para o servidor: {e}", level=logging.ERROR)
+                        self.update_client_status("Erro de Envio") # Update client status to "Erro de Envio"
                         break # Stop client loop on send error
+
+        except ConnectionRefusedError:
+            self.log_message(f"Falha ao conectar ao servidor em {self.server_url}. Conexão Recusada.", level=logging.ERROR)
+            self.update_client_status("Conexão Recusada") # Update client status to "Conexão Recusada"
         except Exception as e:
             self.log_message(f"Erro na thread Cliente: {e}", level=logging.ERROR)
+            self.update_client_status("Erro de Conexão") # Update client status to "Erro de Conexão"
         finally:
-            self.close_serial_port() # Ensure serial port is closed on thread exit
+            self.close_serial_port()
             if self.client_socket:
                 self.client_socket.close()
                 self.log_message("Socket cliente fechado.")
+            self.update_client_status("Desconectado") # Update client status to "Desconectado" in GUI
             self.log_message("Thread Cliente finalizada.")
 
 
     def open_serial_port(self):
-        """Opens the serial port."""
+        """Opens the serial port and returns success status."""
         try:
-            self.serial_port = serial.Serial(self.serial_port_name, baudrate=9600, timeout=1) # Example settings
+            self.serial_port = serial.Serial(self.serial_port_name, baudrate=9600, timeout=1)
             self.log_message(f"Porta serial {self.serial_port_name} aberta.")
+            return True # Serial port opened successfully
         except serial.SerialException as e:
             self.log_message(f"Erro ao abrir porta serial {self.serial_port_name}: {e}", level=logging.ERROR)
-            self._is_running = False # Stop client if serial port fails to open
+            return False # Serial port opening failed
 
 
     def close_serial_port(self):
@@ -654,33 +578,37 @@ class ClientThread(QThread):
 
 
     def read_from_serial_port(self):
-        """Reads data from the serial port, using semaphore for control."""
+        """Reads data from serial port using semaphore."""
         if not self.serial_port or not self.serial_port.is_open:
             self.log_message("Porta serial não está aberta para leitura.", level=logging.WARNING)
             return None
 
         try:
-            if self.serial_semaphore.tryAcquire(timeout=5000): # Try acquire with timeout
+            if self.serial_semaphore.tryAcquire(timeout=5000):
                 try:
-                    data = self.serial_port.readline().decode('utf-8').strip() # Read line and decode
+                    data = self.serial_port.readline().decode('utf-8').strip()
                     if data:
                         self.log_message(f"Recebido da serial: {data}")
-                        return data # Return data if read
+                        return data
                 finally:
-                    self.serial_semaphore.release() # Ensure semaphore is released
+                    self.serial_semaphore.release()
             else:
                 self.log_message("Timeout ao adquirir semáforo para leitura da porta serial.", level=logging.WARNING)
         except serial.SerialTimeoutException:
-            pass # Timeout during read is normal, just return None
+            pass # Timeout during read is normal
         except Exception as e:
             self.log_message(f"Erro ao ler da porta serial: {e}", level=logging.ERROR)
 
-        return None # Return None if no data or error
-
+        return None
 
     def log_message(self, message, level=logging.INFO):
-        """Logs a message using the provided log signal to update GUI."""
+        """Logs a message using log signal for GUI."""
         logging.log(level, message)
+
+    def update_client_status(self, status_text):
+        """Updates client status in GUI via signal."""
+        status_update = {'client_status': status_text}
+        self.status_signal.emit(json.dumps(status_update))
 
 
 if __name__ == '__main__':

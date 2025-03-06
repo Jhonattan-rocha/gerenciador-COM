@@ -52,9 +52,6 @@ class SerialConWindow(QWidget):
 
         self.setup_logging()
         self.load_config()
-        self.log_timer = QTimer(self)
-        self.log_timer.timeout.connect(self.update_log_content)
-        self.log_timer.start(5000)
         self.log_signal.connect(self.append_log_text) # Connect signal to append log text
         self.status_signal.connect(self.update_status_gui) # Connect status signal
 
@@ -447,7 +444,7 @@ class SerialConWindow(QWidget):
             "porta_serial": self.serial_port_combo.currentText()
         }
         try:
-            with open("config.json", 'w') as f:
+            with open("config.json", 'w', encoding='utf8') as f:
                 json.dump(config, f, indent=4)
             self.log_message("Configurações salvas em config.json")
         except Exception as e:
@@ -518,7 +515,7 @@ class ServerThread(QThread):
         self.ip = ip
         self.port = port
         self.serial_port_name = serial_port_name
-        self.serial_semaphore = serial_semaphore
+        self.serial_semaphore: QSemaphore = serial_semaphore
         self._is_running = True
         self.server_socket = None
         self.serial_port = None
@@ -582,6 +579,8 @@ class ServerThread(QThread):
                     self.log_message(f"Erro inesperado no loop do servidor: {e}", level=logging.ERROR)
                     self.update_server_status("Erro") # Update server status to "Erro"
                     break
+                
+                time.sleep(1)
 
         finally:
             self.close_serial_port()
@@ -603,8 +602,11 @@ class ServerThread(QThread):
                     break
 
                 decoded_data = data.decode('utf-8')
+                print(decoded_data)
                 self.log_message(f"Recebido do cliente {client_ip_addr}: {decoded_data.strip()}")
                 self.write_to_serial_port(decoded_data)
+
+                time.sleep(1)
 
         except Exception as e:
             self.log_message(f"Erro ao lidar com o cliente {client_ip_addr}: {e}", level=logging.ERROR)
@@ -648,7 +650,7 @@ class ServerThread(QThread):
 
         try:
             for attempt in range(max_retries):
-                if self.serial_semaphore.tryAcquire(timeout=5000):
+                if self.serial_semaphore.tryAcquire():
                     try:
                         encoded_data = data.encode('utf-8')
                         self.serial_port.write(encoded_data)
@@ -692,7 +694,7 @@ class ClientThread(QThread):
         self.server_url = server_url
         self.serial_port_name = serial_port_name
         self.log_signal = log_signal
-        self.serial_semaphore = serial_semaphore
+        self.serial_semaphore: QSemaphore = serial_semaphore
         self._is_running = True
         self.serial_port = None
         self.client_socket = None
@@ -733,7 +735,7 @@ class ClientThread(QThread):
                         self.log_message(f"Erro ao enviar dados para o servidor: {e}", level=logging.ERROR)
                         self.update_client_status("Erro de Envio") # Update client status to "Erro de Envio"
                         break # Stop client loop on send error
-
+                time.sleep(1)
         except ConnectionRefusedError:
             self.log_message(f"Falha ao conectar ao servidor em {self.server_url}. Conexão Recusada.", level=logging.ERROR)
             self.update_client_status("Conexão Recusada") # Update client status to "Conexão Recusada"
@@ -775,7 +777,7 @@ class ClientThread(QThread):
             return None
 
         try:
-            if self.serial_semaphore.tryAcquire(timeout=5000):
+            if self.serial_semaphore.tryAcquire():
                 try:
                     data = self.serial_port.readline().decode('utf-8').strip()
                     if data:

@@ -1,11 +1,11 @@
 {
     "modo": "Servidor",
-    "server_ip": "10.150.0.30",
+    "server_ip": "10.0.0.107",
     "server_port": "9000",
-    "client_url": "10.150.0.100:5000",
-    "log_location": "/home/jhonattan/Documents/projects/conexao-com",
+    "client_url": "10.150.0.27:9000",
+    "log_location": "C:/Users/Jhonattan/Documents/GitHub/gerenciador-COM",
     "log_file_name": "app_log.txt",
     "usuario": "jhonattan.rocha",
     "senha": "19751983",
-    "porta_serial": "COM3"
+    "porta_serial": "COM5"
 }

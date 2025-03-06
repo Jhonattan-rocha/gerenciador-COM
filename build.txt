@@ -1,1 +1,1 @@
-nuitka --standalone --onefile --remove-output --enable-plugin=pyside6 --windows-disable-console  main.py
+nuitka --standalone --onefile --remove-output --enable-plugin=pyside6 --windows-disable-console main.py

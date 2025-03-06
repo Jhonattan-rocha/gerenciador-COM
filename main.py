@@ -10,6 +10,7 @@ import serial, logging, time
 import serial.tools.list_ports
 import socket
 import threading
+import io
 
 class SerialConWindow(QWidget):
     log_signal = Signal(str)
@@ -27,6 +28,7 @@ class SerialConWindow(QWidget):
         self.serial_port_semaphore = QSemaphore(1) # Semaphore for serial port access
         self.log_file_path = "" # Initialize log file path
         self.log_file_name = "app_log.txt" # Default log file name, will be configurable
+        self.logger: logging = logging.getLogger(__name__)
 
         self.tab_widget = QTabWidget()
         self.config_tab = QWidget()
@@ -48,8 +50,8 @@ class SerialConWindow(QWidget):
         main_layout.addWidget(self.tab_widget)
         self.setLayout(main_layout)
 
+        self.setup_logging()
         self.load_config()
-        self.setup_logging() # Setup logging after loading config to get log file name
         self.log_timer = QTimer(self)
         self.log_timer.timeout.connect(self.update_log_content)
         self.log_timer.start(5000)
@@ -59,32 +61,52 @@ class SerialConWindow(QWidget):
         self.log_message("Aplicativo Iniciado.") # Initial log message
 
     def setup_logging(self):
-        """Sets up logging to file and QTextEdit."""
-        log_dir = self.log_location_input.text()
-        if log_dir:
-            self.log_file_path = f"{log_dir}/{self.log_file_name}"
-        else:
-            self.log_file_path = self.log_file_name # Fallback if no log location is set in config
+        """Configura o sistema de logs e redireciona stdout e stderr para o log."""
+        
+        log_dir = self.log_location_input.text().strip()
+        if not log_dir:
+            log_dir = "."  # Diretório atual
+        self.log_file_path = f"{log_dir}/{self.log_file_name}"
 
-        logging.basicConfig(level=logging.DEBUG,
-                            format='%(asctime)s - %(levelname)s - %(message)s',
-                            filename=self.log_file_path,
-                            filemode='w') # 'w' to overwrite log on each start, use 'a' to append
+        # Configuração do logging para arquivo
+        logging.basicConfig(
+            level=logging.DEBUG,
+            format="%(asctime)s - %(levelname)s - %(message)s",
+            filename=self.log_file_path,
+            filemode="a"
+        )
 
-        # Redirect stdout and stderr to logging
+        # Criando um handler para exibir logs na GUI
         class QtHandler(logging.Handler):
-            def __init__(self):
-                logging.Handler.__init__(self)
+            def __init__(self, log_signal):
+                super().__init__()
+                self.log_signal = log_signal
 
             def emit(self, record):
-                record = self.format(record)
-                self.log_signal.emit(record) # Emit signal with log message
+                log_message = self.format(record)
+                self.log_signal.emit(log_message)  # Agora emite corretamente
 
-        handler = QtHandler()
-        formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-        handler.setFormatter(formatter)
-        logging.getLogger().addHandler(handler)
-        logging.info("Logging configurado.")
+        handler = QtHandler(self.log_signal)
+        handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+
+        self.logger = logging.getLogger(__name__)
+        self.logger.setLevel(logging.DEBUG)
+        self.logger.addHandler(handler)
+
+        # Redirecionar stdout e stderr para o log
+        class LogRedirector(io.TextIOBase):
+            def __init__(self, logger):
+                self.logger = logger
+
+            def write(self, message):
+                if message.strip():
+                    self.logger.info(message.strip())
+                super().write(self)                
+
+        log_redirector = LogRedirector(self.logger)
+        sys.stdout = log_redirector
+        sys.stderr = log_redirector
+        self.logger.info("Logging configurado com sucesso.")
 
     def setup_config_tab(self):
         config_layout = QVBoxLayout(self.config_tab)
@@ -330,7 +352,7 @@ class SerialConWindow(QWidget):
         # Stop any existing server thread
         self.stop_server_mode()
 
-        self.server_thread = ServerThread(ip, port_num, porta_serial, self.serial_port_semaphore, self.log_signal, self.status_signal)
+        self.server_thread = ServerThread(ip, port_num, porta_serial, self.serial_port_semaphore)
         self.server_thread.client_connected_signal.connect(self.update_connected_clients_count)
         self.server_thread.server_status_signal.connect(self.update_server_status_gui) # Connect server status signals
         self.server_thread.start()
@@ -407,9 +429,9 @@ class SerialConWindow(QWidget):
         """Appends text to log QTextEdit in GUI thread."""
         self.log_text_edit.append(message)
 
-    def log_message(self, message, level=logging.INFO):
+    def log_message(self, message: str, level=logging.INFO):
         """Logs a message to system and log window."""
-        logging.log(level, message)
+        self.logger.info(msg=message, stacklevel=level)
 
     def save_config(self):
         """Saves configuration to JSON file."""
@@ -475,9 +497,8 @@ class SerialConWindow(QWidget):
             self.client_status_value.setText(status_update['client_status'])
         self.status_signal.emit(status_update)
 
-    def update_server_status_gui(self, status_message):
+    def update_server_status_gui(self, status_data: dict):
         """Updates server specific status in GUI thread."""
-        status_data = json.loads(status_message)
         if 'server_status' in status_data:
             self.update_status_gui({"server_status":status_data['server_status']})
 
@@ -510,7 +531,7 @@ class ServerThread(QThread):
             try:
                 self.server_socket.close()
             except Exception as e:
-                logging.error(f"Erro ao fechar o socket do servidor: {e}")
+                self.logger.error(f"Erro ao fechar o socket do servidor: {e}")
 
     def run(self):
         """Server thread execution."""

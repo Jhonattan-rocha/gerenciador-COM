@@ -1,7 +1,7 @@
 {
     "modo": "Servidor",
     "server_ip": "10.150.0.30",
-    "server_port": "1000",
+    "server_port": "9000",
     "client_url": "10.150.0.100:5000",
     "log_location": "/home/jhonattan/Documents/projects/conexao-com",
     "log_file_name": "app_log.txt",

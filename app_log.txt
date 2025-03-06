@@ -1,0 +1,95 @@
+2025-03-06 10:18:21,933 - INFO - Logging configurado com sucesso.
+2025-03-06 10:18:21,936 - INFO - Traceback (most recent call last):
+2025-03-06 10:18:21,938 - INFO - File "C:\Users\Jhonattan\Documents\GitHub\gerenciador-COM\main.py", line 478, in load_config
+    self.log_message("Configurações carregadas de config.json")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-03-06 10:18:21,939 - INFO - File "C:\Users\Jhonattan\Documents\GitHub\gerenciador-COM\main.py", line 436, in log_message
+    self.logger.info(level, message)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+2025-03-06 10:18:21,939 - INFO - File "C:\Users\Jhonattan\AppData\Local\Programs\Python\Python313\Lib\logging\__init__.py", line 1519, in info
+    self._log(INFO, msg, args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-03-06 10:18:21,940 - INFO - File "C:\Users\Jhonattan\AppData\Local\Programs\Python\Python313\Lib\logging\__init__.py", line 1664, in _log
+    self.handle(record)
+    ~~~~~~~~~~~^^^^^^^^
+2025-03-06 10:18:21,940 - INFO - File "C:\Users\Jhonattan\AppData\Local\Programs\Python\Python313\Lib\logging\__init__.py", line 1680, in handle
+    self.callHandlers(record)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^
+2025-03-06 10:18:21,940 - INFO - File "C:\Users\Jhonattan\AppData\Local\Programs\Python\Python313\Lib\logging\__init__.py", line 1736, in callHandlers
+    hdlr.handle(record)
+    ~~~~~~~~~~~^^^^^^^^
+2025-03-06 10:18:21,940 - INFO - File "C:\Users\Jhonattan\AppData\Local\Programs\Python\Python313\Lib\logging\__init__.py", line 1026, in handle
+    self.emit(record)
+    ~~~~~~~~~^^^^^^^^
+2025-03-06 10:18:21,940 - INFO - File "C:\Users\Jhonattan\Documents\GitHub\gerenciador-COM\main.py", line 85, in emit
+    log_message = self.format(record)
+2025-03-06 10:18:21,940 - INFO - File "C:\Users\Jhonattan\AppData\Local\Programs\Python\Python313\Lib\logging\__init__.py", line 998, in format
+    return fmt.format(record)
+           ~~~~~~~~~~^^^^^^^^
+2025-03-06 10:18:21,940 - INFO - File "C:\Users\Jhonattan\AppData\Local\Programs\Python\Python313\Lib\logging\__init__.py", line 711, in format
+    record.message = record.getMessage()
+                     ~~~~~~~~~~~~~~~~~^^
+2025-03-06 10:18:21,940 - INFO - File "C:\Users\Jhonattan\AppData\Local\Programs\Python\Python313\Lib\logging\__init__.py", line 400, in getMessage
+    msg = msg % self.args
+          ~~~~^~~~~~~~~~~
+2025-03-06 10:18:21,940 - INFO - TypeError: not all arguments converted during string formatting
+2025-03-06 10:18:21,941 - INFO - During handling of the above exception, another exception occurred:
+2025-03-06 10:18:21,941 - INFO - Traceback (most recent call last):
+2025-03-06 10:18:21,942 - INFO - File "C:\Users\Jhonattan\Documents\GitHub\gerenciador-COM\main.py", line 809, in <module>
+    window = SerialConWindow()
+2025-03-06 10:18:21,942 - INFO - File "C:\Users\Jhonattan\Documents\GitHub\gerenciador-COM\main.py", line 53, in __init__
+    self.load_config()
+    ~~~~~~~~~~~~~~~~^^
+2025-03-06 10:18:21,942 - INFO - File "C:\Users\Jhonattan\Documents\GitHub\gerenciador-COM\main.py", line 482, in load_config
+    self.log_message(f"Erro ao carregar as configurações: {e}", level=logging.ERROR)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-03-06 10:18:21,942 - INFO - File "C:\Users\Jhonattan\Documents\GitHub\gerenciador-COM\main.py", line 436, in log_message
+    self.logger.info(level, message)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+2025-03-06 10:18:21,942 - INFO - File "C:\Users\Jhonattan\AppData\Local\Programs\Python\Python313\Lib\logging\__init__.py", line 1519, in info
+    self._log(INFO, msg, args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-03-06 10:18:21,942 - INFO - File "C:\Users\Jhonattan\AppData\Local\Programs\Python\Python313\Lib\logging\__init__.py", line 1664, in _log
+    self.handle(record)
+    ~~~~~~~~~~~^^^^^^^^
+2025-03-06 10:18:21,942 - INFO - File "C:\Users\Jhonattan\AppData\Local\Programs\Python\Python313\Lib\logging\__init__.py", line 1680, in handle
+    self.callHandlers(record)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^
+2025-03-06 10:18:21,942 - INFO - File "C:\Users\Jhonattan\AppData\Local\Programs\Python\Python313\Lib\logging\__init__.py", line 1736, in callHandlers
+    hdlr.handle(record)
+    ~~~~~~~~~~~^^^^^^^^
+2025-03-06 10:18:21,942 - INFO - File "C:\Users\Jhonattan\AppData\Local\Programs\Python\Python313\Lib\logging\__init__.py", line 1026, in handle
+    self.emit(record)
+    ~~~~~~~~~^^^^^^^^
+2025-03-06 10:18:21,942 - INFO - File "C:\Users\Jhonattan\Documents\GitHub\gerenciador-COM\main.py", line 85, in emit
+    log_message = self.format(record)
+2025-03-06 10:18:21,942 - INFO - File "C:\Users\Jhonattan\AppData\Local\Programs\Python\Python313\Lib\logging\__init__.py", line 998, in format
+    return fmt.format(record)
+           ~~~~~~~~~~^^^^^^^^
+2025-03-06 10:18:21,942 - INFO - File "C:\Users\Jhonattan\AppData\Local\Programs\Python\Python313\Lib\logging\__init__.py", line 711, in format
+    record.message = record.getMessage()
+                     ~~~~~~~~~~~~~~~~~^^
+2025-03-06 10:18:21,942 - INFO - File "C:\Users\Jhonattan\AppData\Local\Programs\Python\Python313\Lib\logging\__init__.py", line 400, in getMessage
+    msg = msg % self.args
+          ~~~~^~~~~~~~~~~
+2025-03-06 10:18:21,942 - INFO - TypeError: not all arguments converted during string formatting
+2025-03-06 10:18:30,528 - INFO - Logging configurado com sucesso.
+2025-03-06 10:19:48,810 - INFO - Logging configurado com sucesso.
+2025-03-06 10:19:48,811 - INFO - Configurações carregadas de config.json
+2025-03-06 10:19:48,811 - INFO - Aplicativo Iniciado.
+2025-03-06 10:27:21,076 - INFO - Logging configurado com sucesso.
+2025-03-06 10:27:21,077 - INFO - Configurações carregadas de config.json
+2025-03-06 10:27:21,077 - INFO - Aplicativo Iniciado.
+2025-03-06 10:29:16,942 - INFO - Iniciando Servidor em: 10.150.0.30:9000
+2025-03-06 10:29:16,964 - INFO - Thread Servidor iniciada.
+2025-03-06 10:29:16,966 - INFO - Configurações salvas em config.json
+2025-03-06 10:29:16,968 - INFO - Servidor ouvindo em 10.150.0.30:9000
+2025-03-06 10:29:17,003 - INFO - Porta serial COM3 aberta.
+2025-03-06 10:29:52,925 - INFO - Parando thread Servidor...
+2025-03-06 10:29:52,986 - INFO - Porta serial COM3 fechada.
+2025-03-06 10:29:52,986 - INFO - Socket do servidor fechado.
+2025-03-06 10:29:52,987 - INFO - Thread Servidor finalizada.
+2025-03-06 10:29:53,009 - INFO - Configurações salvas em config.json
+2025-03-06 10:56:28,807 - INFO - Logging configurado com sucesso.
+2025-03-06 10:56:28,809 - INFO - Configurações carregadas de config.json
+2025-03-06 10:56:28,809 - INFO - Aplicativo Iniciado.

@@ -86,14 +86,6 @@ class SerialConWindow(QWidget):
         logging.getLogger().addHandler(handler)
         logging.info("Logging configurado.")
 
-        # Redirect print to logging.info
-        # def log_print(*args, **kwargs):
-        #     message = ' '.join(map(str, args))
-        #     logging.info(message)
-        # sys.stdout.write = log_print
-        # sys.stderr.write = log_print
-
-
     def setup_config_tab(self):
         config_layout = QVBoxLayout(self.config_tab)
 
@@ -321,7 +313,7 @@ class SerialConWindow(QWidget):
         if not ip or not port or not porta_serial:
             self.log_message("Configurações de Servidor incompletas.")
             QMessageBox.warning(self, "Erro de Configuração", "Por favor, preencha todas as configurações do servidor.")
-            self.update_status_gui(status_label="Erro de Configuração", server_status="Configuração Incompleta")
+            self.update_status_gui({"status_label":"Erro de Configuração", "server_status":"Configuração Incompleta"})
             return
 
         try:
@@ -329,11 +321,11 @@ class SerialConWindow(QWidget):
         except ValueError:
             self.log_message("Porta do servidor inválida. Deve ser um número.")
             QMessageBox.warning(self, "Erro de Configuração", "Porta do servidor inválida. Deve ser um número.")
-            self.update_status_gui(status_label="Erro de Configuração", server_status="Porta Inválida")
+            self.update_status_gui({"status_label":"Erro de Configuração", "server_status":"Porta Inválida"})
             return
 
         self.log_message(f"Iniciando Servidor em: {ip}:{port}")
-        self.update_status_gui(status_label="Iniciando Servidor", connection_details=f"Servidor: {ip}:{port}", focused_port=porta_serial, server_status="Iniciando...")
+        self.update_status_gui({"status_label":"Iniciando Servidor", "connection_details":f"Servidor: {ip}:{port}", "focused_port":porta_serial, "server_status":"Iniciando..."})
 
         # Stop any existing server thread
         self.stop_server_mode()
@@ -350,13 +342,13 @@ class SerialConWindow(QWidget):
         """Stops the server thread if it's running."""
         if self.server_thread and self.server_thread.isRunning():
             self.log_message("Parando thread Servidor...")
-            self.update_status_gui(status_label="Parando Servidor", server_status="Parando...")
+            self.update_status_gui({"status_label":"Parando Servidor", "server_status":"Parando..."})
             self.server_thread.stop_server()
             self.server_thread.wait()
             self.server_thread = None
             self.connected_clients = {}
             self.update_connected_clients_count(0)
-        self.update_status_gui(status_label="Desconectado", connection_details="Servidor parado", server_status="Parado")
+        self.update_status_gui({"status_label":"Desconectado", "connection_details":"Servidor parado", "server_status":"Parado"})
         self.connect_button.setText("Iniciar Servidor")
 
 
@@ -368,16 +360,16 @@ class SerialConWindow(QWidget):
         if not url or not porta_serial:
             self.log_message("Configurações de Cliente incompletas.")
             QMessageBox.warning(self, "Erro de Configuração", "Por favor, preencha a URL do cliente e selecione a porta serial.")
-            self.update_status_gui(status_label="Erro de Configuração", client_status="Configuração Incompleta")
+            self.update_status_gui({"status_label":"Erro de Configuração", "client_status":"Configuração Incompleta"})
             return
 
         self.log_message(f"Conectando ao Cliente em: {url}")
-        self.update_status_gui(status_label="Conectando Cliente", connection_details=f"Cliente: {url}", focused_port=porta_serial, client_status="Conectando...")
+        self.update_status_gui({"status_label":"Conectando Cliente", "connection_details":f"Cliente: {url}", "focused_port":porta_serial, "client_status":"Conectando..."})
 
         # Stop any existing client thread
         self.stop_client_mode()
 
-        self.client_thread = ClientThread(url, porta_serial, self.log_signal, self.serial_port_semaphore, self.status_signal)
+        self.client_thread = ClientThread(url, porta_serial, self.log_signal, self.serial_port_semaphore)
         self.client_thread.client_status_signal.connect(self.update_client_status_gui) # Connect client status signal
         self.client_thread.start()
         self.connect_button.setText("Desconectar Cliente") # Immediately update button text
@@ -388,11 +380,11 @@ class SerialConWindow(QWidget):
         """Stops the client thread if it's running."""
         if self.client_thread and self.client_thread.isRunning():
             self.log_message("Parando thread Cliente...")
-            self.update_status_gui(status_label="Desconectando Cliente", client_status="Desconectando...")
+            self.update_status_gui({"status_label":"Desconectando Cliente", "client_status":"Desconectando..."})
             self.client_thread.stop_client()
             self.client_thread.wait()
             self.client_thread = None
-        self.update_status_gui(status_label="Desconectado", connection_details="Cliente parado", client_status="Desconectado")
+        self.update_status_gui({"status_label":"Desconectado", "connection_details":"Cliente parado", "client_status":"Desconectado"})
         self.connect_button.setText("Conectar Cliente")
 
 
@@ -469,46 +461,43 @@ class SerialConWindow(QWidget):
         """Updates connected clients count in status tab."""
         self.connected_clients_value.setText(str(count))
 
-    def update_status_gui(self, status_label=None, connection_details=None, focused_port=None, server_status=None, client_status=None):
-        """Helper to bundle status updates into a signal emission."""
-        status_update = {}
-        if status_label is not None:
-            status_update['status_label'] = status_label
-        if connection_details is not None:
-            status_update['connection_details'] = connection_details
-        if focused_port is not None:
-            status_update['focused_port'] = focused_port
-        if server_status is not None:
-            status_update['server_status'] = server_status
-        if client_status is not None:
-            status_update['client_status'] = client_status
-        self.status_signal.emit(json.dumps(status_update))
+    def update_status_gui(self, status_update):
+        """Atualiza a GUI com base nos dados do status."""
+        if 'status_label' in status_update:
+            self.status_label_value.setText(status_update['status_label'])
+        if 'connection_details' in status_update:
+            self.connection_details_value.setText(status_update['connection_details'])
+        if 'focused_port' in status_update:
+            self.focused_port_value.setText(status_update['focused_port'])
+        if 'server_status' in status_update:
+            self.server_status_value.setText(status_update['server_status'])
+        if 'client_status' in status_update:
+            self.client_status_value.setText(status_update['client_status'])
+        self.status_signal.emit(status_update)
 
     def update_server_status_gui(self, status_message):
         """Updates server specific status in GUI thread."""
         status_data = json.loads(status_message)
         if 'server_status' in status_data:
-            self.update_status_gui(server_status=status_data['server_status'])
+            self.update_status_gui({"server_status":status_data['server_status']})
 
     def update_client_status_gui(self, status_message):
         """Updates client specific status in GUI thread."""
         status_data = json.loads(status_message)
         if 'client_status' in status_data:
-            self.update_status_gui(client_status=status_data['client_status'])
+            self.update_status_gui({"client_status":status_data['client_status']})
 
 
 class ServerThread(QThread):
     client_connected_signal = Signal(int)
     server_status_signal = Signal(str) # Signal server status to GUI
 
-    def __init__(self, ip, port, serial_port_name, serial_semaphore, log_signal, status_signal):
+    def __init__(self, ip, port, serial_port_name, serial_semaphore):
         super().__init__()
         self.ip = ip
         self.port = port
         self.serial_port_name = serial_port_name
         self.serial_semaphore = serial_semaphore
-        self.log_signal = log_signal
-        self.status_signal = status_signal # Status signal for GUI updates
         self._is_running = True
         self.server_socket = None
         self.serial_port = None
@@ -671,19 +660,18 @@ class ServerThread(QThread):
     def update_server_status(self, status_text):
         """Updates server status in GUI via signal."""
         status_update = {'server_status': status_text}
-        self.status_signal.emit(json.dumps(status_update))
+        self.server_status_signal.emit(status_update)
 
 
 class ClientThread(QThread):
     client_status_signal = Signal(str) # Signal client status to GUI
 
-    def __init__(self, server_url, serial_port_name, log_signal, serial_semaphore, status_signal):
+    def __init__(self, server_url, serial_port_name, log_signal, serial_semaphore):
         super().__init__()
         self.server_url = server_url
         self.serial_port_name = serial_port_name
         self.log_signal = log_signal
         self.serial_semaphore = serial_semaphore
-        self.status_signal = status_signal # Status signal for GUI updates
         self._is_running = True
         self.serial_port = None
         self.client_socket = None
@@ -790,7 +778,7 @@ class ClientThread(QThread):
     def update_client_status(self, status_text):
         """Updates client status in GUI via signal."""
         status_update = {'client_status': status_text}
-        self.status_signal.emit(json.dumps(status_update))
+        self.client_status_signal.emit(status_update)
 
 
 if __name__ == '__main__':

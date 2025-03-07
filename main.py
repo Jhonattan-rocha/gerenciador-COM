@@ -4,7 +4,7 @@ from PySide6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QHBoxLayout,
                              QTabWidget, QLabel, QGroupBox, QGridLayout,
                              QLineEdit, QPushButton, QComboBox, QTextEdit,
                              QFileDialog, QMessageBox) # Import QMessageBox for error dialogs
-from PySide6.QtGui import QIcon, QPixmap
+from PySide6.QtGui import QIcon, QPixmap, QDoubleValidator, QIntValidator
 from PySide6.QtCore import QTimer, QThread, Signal, QSemaphore
 import serial, logging, time
 import serial.tools.list_ports
@@ -124,6 +124,8 @@ class SerialConWindow(QWidget):
         server_config_layout = QGridLayout()
         self.server_ip_label = QLabel("IP:")
         self.server_ip_input = QLineEdit()
+        int_validator = QIntValidator()
+        self.server_ip_input.setValidator(int_validator)
         self.server_port_label = QLabel("Porta:")
         self.server_port_input = QLineEdit()
         server_config_layout.addWidget(self.server_ip_label, 0, 0)
@@ -184,6 +186,51 @@ class SerialConWindow(QWidget):
 
         serial_port_layout.addWidget(serial_port_label)
         serial_port_layout.addWidget(self.serial_port_combo)
+        
+        # baud Rate
+        baudrate_layout = QHBoxLayout()
+        baudrate_label = QLabel("Baud Rate:")
+        self.baudrate_combo = QComboBox()
+        self.baudrate_combo.addItems(["50", "75", "110", "134", "150", "200", "300", "600", "1200", "1800", "2400", "4800",
+                 "9600", "19200", "38400", "57600", "115200", "230400", "460800", "500000", "576000", "921600", "1000000",
+                 "1152000", "1500000", "2000000", "2500000", "3000000", "3500000", "4000000"])
+        baudrate_layout.addWidget(baudrate_label)
+        baudrate_layout.addWidget(self.baudrate_combo)
+
+        timeout_layout = QHBoxLayout()
+        timeout_label = QLabel("Timeout:")
+        self.timeout_edit = QLineEdit()
+        float_validator = QDoubleValidator()
+        self.timeout_edit.setValidator(float_validator)
+        timeout_layout.addWidget(timeout_label)
+        timeout_layout.addWidget(self.timeout_edit)
+
+        # Data Bits
+        databits_layout = QHBoxLayout()
+        databits_label = QLabel("Data Bits:")
+        self.databits_combo = QComboBox()
+        self.databits_combo.addItems(["5", "6", "7", "8"])
+        self.databits_combo.setCurrentText("8")
+        databits_layout.addWidget(databits_label)
+        databits_layout.addWidget(self.databits_combo)
+
+        # Stop Bits
+        stopbits_layout = QHBoxLayout()
+        stopbits_label = QLabel("Stop Bits:")
+        self.stopbits_combo = QComboBox()
+        self.stopbits_combo.addItems(["1", "1.5", "2"])
+        self.stopbits_combo.setCurrentText("2")
+        stopbits_layout.addWidget(stopbits_label)
+        stopbits_layout.addWidget(self.stopbits_combo)
+
+        # Parity
+        parity_layout = QHBoxLayout()
+        parity_label = QLabel("Paridade:")
+        self.parity_combo = QComboBox()
+        self.parity_combo.addItems(["None", "Even", "Odd", "Mark", "Space"])
+        self.parity_combo.setCurrentText("Even")
+        parity_layout.addWidget(parity_label)
+        parity_layout.addWidget(self.parity_combo)
 
         # Botão Conectar
         self.connect_button = QPushButton("Conectar")
@@ -193,9 +240,14 @@ class SerialConWindow(QWidget):
         config_layout.addWidget(self.server_config_group)
         config_layout.addWidget(self.client_config_group)
         config_layout.addLayout(log_location_layout)
-        config_layout.addLayout(log_file_name_layout) # Add log file name input
+        config_layout.addLayout(log_file_name_layout)
         config_layout.addLayout(user_pass_layout)
         config_layout.addLayout(serial_port_layout)
+        config_layout.addLayout(baudrate_layout)
+        config_layout.addLayout(timeout_layout)
+        config_layout.addLayout(databits_layout)
+        config_layout.addLayout(stopbits_layout)
+        config_layout.addLayout(parity_layout)
         config_layout.addWidget(self.connect_button)
         self.config_tab.setLayout(config_layout)
 
@@ -354,7 +406,7 @@ class SerialConWindow(QWidget):
         self.log_message(f"Iniciando Servidor em: {ip}:{port}")
         self.update_status_gui({"status_label":"Iniciando Servidor", "connection_details":f"Servidor: {ip}:{port}", "focused_port":porta_serial, "server_status":"Iniciando..."})
 
-        self.server_thread = ServerThread(ip, port_num, porta_serial, self.serial_port_semaphore)
+        self.server_thread = ServerThread(ip, port_num, porta_serial, self.serial_port_semaphore, {"baudrate": self.baudrate_combo.currentText(), "timeout": self.timeout_edit.text(), "databits": self.databits_combo.currentText(), "stopbist": self.stopbits_combo.currentText(), "parity": self.parity_combo.currentText()})
         self.server_thread.client_connected_signal.connect(self.update_connected_clients_count)
         self.server_thread.server_status_signal.connect(self.update_server_status_gui) # Connect server status signals
         self.server_thread.start()
@@ -393,7 +445,7 @@ class SerialConWindow(QWidget):
         # Stop any existing client thread
         self.stop_client_mode()
 
-        self.client_thread = ClientThread(url, porta_serial, self.log_signal, self.serial_port_semaphore)
+        self.client_thread = ClientThread(url, porta_serial, self.log_signal, self.serial_port_semaphore, {"baudrate": self.baudrate_combo.currentText(), "timeout": self.timeout_edit.text(), "databits": self.databits_combo.currentText(), "stopbist": self.stopbits_combo.currentText(), "parity": self.parity_combo.currentText()})
         self.client_thread.client_status_signal.connect(self.update_client_status_gui) # Connect client status signal
         self.client_thread.start()
         self.connect_button.setText("Desconectar Cliente") # Immediately update button text
@@ -446,7 +498,11 @@ class SerialConWindow(QWidget):
             "log_file_name": self.log_file_name_input.text(),
             "usuario": self.user_input.text(),
             "senha": self.password_input.text(),
-            "porta_serial": self.serial_port_combo.currentText()
+            "porta_serial": self.serial_port_combo.currentText(),
+            "baudrate": self.baudrate_combo.currentText(),
+            "databits": self.databits_combo.currentText(),
+            "stopbist": self.stopbits_combo.currentText(),
+            "parity": self.parity_combo.currentText()
         }
         try:
             with open("config.json", 'w', encoding='cp850') as f:
@@ -469,6 +525,10 @@ class SerialConWindow(QWidget):
                 self.log_file_name = self.log_file_name_input.text()
                 self.user_input.setText(config.get("usuario", ""))
                 self.password_input.setText(config.get("senha", ""))
+                self.baudrate_combo.setCurrentText(config.get("baudrate", "9600"))
+                self.databits_combo.setCurrentText(config.get("databits", "5"))
+                self.stopbits_combo.setCurrentText(config.get("stopbist", "1"))
+                self.parity_combo.setCurrentText(config.get("parity", "Even"))
                 serial_port = config.get("porta_serial", "")
                 if serial_port:
                     index = self.serial_port_combo.findText(serial_port)
@@ -519,7 +579,7 @@ class ServerThread(QThread):
     client_connected_signal = Signal(int)
     server_status_signal = Signal(str) # Signal server status to GUI
 
-    def __init__(self, ip, port, serial_port_name, serial_semaphore):
+    def __init__(self, ip, port, serial_port_name, serial_semaphore, params: dict):
         super().__init__()
         self.ip = ip
         self.port = port
@@ -529,6 +589,7 @@ class ServerThread(QThread):
         self.server_socket = None
         self.serial_port = None
         self.connected_clients = {}
+        self.params = params
 
     def stop_server(self):
         """Sets stop flag and closes server socket."""
@@ -630,7 +691,7 @@ class ServerThread(QThread):
     def open_serial_port(self):
         """Opens the serial port and returns success status."""
         try:
-            self.serial_port = serial.Serial(self.serial_port_name, baudrate=9600, timeout=1, bytesize=serial.EIGHTBITS, stopbits=serial.STOPBITS_TWO, parity=serial.PARITY_EVEN)
+            self.serial_port = serial.Serial(self.serial_port_name, baudrate=int(self.params.get("baudrate")), timeout=float(self.params.get("timeout")), bytesize=int(self.params.get("databits")), stopbits=float(self.params.get("stopbist")), parity=str(self.params.get("parity")))
             self.log_message(f"Porta serial {self.serial_port_name} aberta.")
             return True # Serial port opened successfully
         except serial.SerialException as e:
@@ -697,7 +758,7 @@ class ServerThread(QThread):
 class ClientThread(QThread):
     client_status_signal = Signal(str) # Signal client status to GUI
 
-    def __init__(self, server_url, serial_port_name, log_signal, serial_semaphore):
+    def __init__(self, server_url, serial_port_name, log_signal, serial_semaphore, params: dict):
         super().__init__()
         self.server_url = server_url
         self.serial_port_name = serial_port_name
@@ -706,6 +767,7 @@ class ClientThread(QThread):
         self._is_running = True
         self.serial_port = None
         self.client_socket = None
+        self.params = params
 
     def stop_client(self):
         """Sets stop flag and closes resources."""
@@ -762,7 +824,7 @@ class ClientThread(QThread):
     def open_serial_port(self):
         """Opens the serial port and returns success status."""
         try:
-            self.serial_port = serial.Serial(self.serial_port_name, baudrate=9600, timeout=1, bytesize=serial.EIGHTBITS, stopbits=serial.STOPBITS_TWO, parity=serial.PARITY_EVEN)
+            self.serial_port = serial.Serial(self.serial_port_name, baudrate=int(self.params.get("baudrate")), timeout=float(self.params.get("timeout")), bytesize=int(self.params.get("databits")), stopbits=float(self.params.get("stopbist")), parity=str(self.params.get("parity")))
             self.log_message(f"Porta serial {self.serial_port_name} aberta.")
             return True # Serial port opened successfully
         except serial.SerialException as e:

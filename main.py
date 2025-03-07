@@ -575,11 +575,11 @@ class SerialConWindow(QWidget):
         if 'status_label' in status_data:
             self.update_status_gui({"status_label": status_data['server_status']})
     
-    def close(self):
+    def closeEvent(self, event):
         if self.server_socket:
             self.stop_server_mode()
             self.close_serial_port()
-        return super().close()
+        return super().closeEvent(event)
 
 class ServerThread(QThread):
     client_connected_signal = Signal(int)

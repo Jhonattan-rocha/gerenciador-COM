@@ -506,9 +506,8 @@ class SerialConWindow(QWidget):
         if 'status_label' in status_data:
             self.update_status_gui({"status_label": status_data['server_status']})
 
-    def update_client_status_gui(self, status_message):
+    def update_client_status_gui(self, status_data):
         """Updates client specific status in GUI thread."""
-        status_data = json.loads(status_message)
 
         if 'client_status' in status_data:
             self.update_status_gui({"client_status": status_data['client_status']})

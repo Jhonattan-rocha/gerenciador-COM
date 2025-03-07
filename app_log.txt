@@ -8,3 +8,6 @@
 2025-03-06 21:03:16,077 - INFO - Socket do servidor fechado.
 2025-03-06 21:03:16,078 - INFO - Thread Servidor finalizada.
 2025-03-06 21:03:16,079 - INFO - Configurações salvas em config.json
+2025-03-06 21:26:34,735 - INFO - Logging configurado com sucesso.
+2025-03-06 21:26:34,736 - INFO - Configurações carregadas de config.json
+2025-03-06 21:26:34,736 - INFO - Aplicativo Iniciado.

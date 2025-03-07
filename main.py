@@ -14,7 +14,6 @@ from typing import IO
 
 class SerialConWindow(QWidget):
     log_signal = Signal(str)
-    status_signal = Signal(str) # Signal for status updates
 
     def __init__(self):
         super().__init__()
@@ -56,7 +55,6 @@ class SerialConWindow(QWidget):
         self.log_timer.timeout.connect(self.update_log_content)
         self.log_timer.start(5000)
         self.log_signal.connect(self.append_log_text) # Connect signal to append log text
-        self.status_signal.connect(self.update_status_gui) # Connect status signal
 
         self.log_message("Aplicativo Iniciado.") # Initial log message
         self.update_connect_button_text()

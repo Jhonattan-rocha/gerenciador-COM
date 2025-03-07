@@ -10,7 +10,7 @@ import serial, logging, time
 import serial.tools.list_ports
 import socket
 import threading
-import io
+from typing import IO
 
 class SerialConWindow(QWidget):
     log_signal = Signal(str)
@@ -52,10 +52,14 @@ class SerialConWindow(QWidget):
 
         self.setup_logging()
         self.load_config()
+        self.log_timer = QTimer(self)
+        self.log_timer.timeout.connect(self.update_log_content)
+        self.log_timer.start(5000)
         self.log_signal.connect(self.append_log_text) # Connect signal to append log text
         self.status_signal.connect(self.update_status_gui) # Connect status signal
 
         self.log_message("Aplicativo Iniciado.") # Initial log message
+        self.update_connect_button_text()
 
     def setup_logging(self):
         """Configura o sistema de logs e redireciona stdout e stderr para o log."""
@@ -91,15 +95,16 @@ class SerialConWindow(QWidget):
         self.logger.addHandler(handler)
 
         # Redirecionar stdout e stderr para o log
-        class LogRedirector(io.TextIOBase):
+        class LogRedirector(IO):
             def __init__(self, logger):
                 self.logger = logger
-
-            def write(self, message):
-                if message.strip():
-                    self.logger.info(message.strip())
-                super().write(self)                
-
+            
+            def write(self, s):
+                if s.strip():
+                    self.logger.info(s)
+                
+                super().write(s)
+            
         log_redirector = LogRedirector(self.logger)
         sys.stdout = log_redirector
         sys.stderr = log_redirector
@@ -273,6 +278,8 @@ class SerialConWindow(QWidget):
 
     def update_server_client_visibility(self):
         """Atualiza a visibilidade dos grupos Servidor/Cliente baseado no Modo."""
+        self.update_connect_button_text()
+
         modo_selecionado = self.mode_combo.currentText()
         if modo_selecionado == "Servidor":
             self.server_config_group.setVisible(True)
@@ -288,7 +295,7 @@ class SerialConWindow(QWidget):
             self.log_location_input.setText(log_dir)
 
     def handle_connect_button(self):
-        """Function to execute on Connect button click."""
+        """Function to execute on Connect button click."""        
         modo = self.mode_combo.currentText()
         if modo == "Servidor":
             if not self.server_thread or not self.server_thread.isRunning():
@@ -321,7 +328,10 @@ class SerialConWindow(QWidget):
             else:
                 self.connect_button.setText("Conectar Cliente")
         else:
-            self.connect_button.setText("Conectar") # Default text
+            if modo == 'Servidor':
+                self.connect_button.setText("Iniciar") # Default text
+            else:
+                self.connect_button.setText("Conectar") # Default text
 
     def start_server_mode(self):
         """Starts the application in Server mode."""
@@ -345,9 +355,6 @@ class SerialConWindow(QWidget):
 
         self.log_message(f"Iniciando Servidor em: {ip}:{port}")
         self.update_status_gui({"status_label":"Iniciando Servidor", "connection_details":f"Servidor: {ip}:{port}", "focused_port":porta_serial, "server_status":"Iniciando..."})
-
-        # Stop any existing server thread
-        self.stop_server_mode()
 
         self.server_thread = ServerThread(ip, port_num, porta_serial, self.serial_port_semaphore)
         self.server_thread.client_connected_signal.connect(self.update_connected_clients_count)
@@ -444,7 +451,7 @@ class SerialConWindow(QWidget):
             "porta_serial": self.serial_port_combo.currentText()
         }
         try:
-            with open("config.json", 'w', encoding='utf8') as f:
+            with open("config.json", 'w', encoding='cp850') as f:
                 json.dump(config, f, indent=4)
             self.log_message("Configurações salvas em config.json")
         except Exception as e:
@@ -480,7 +487,7 @@ class SerialConWindow(QWidget):
         """Updates connected clients count in status tab."""
         self.connected_clients_value.setText(str(count))
 
-    def update_status_gui(self, status_update):
+    def update_status_gui(self, status_update: dict):
         """Atualiza a GUI com base nos dados do status."""
         if 'status_label' in status_update:
             self.status_label_value.setText(status_update['status_label'])
@@ -492,18 +499,17 @@ class SerialConWindow(QWidget):
             self.server_status_value.setText(status_update['server_status'])
         if 'client_status' in status_update:
             self.client_status_value.setText(status_update['client_status'])
-        self.status_signal.emit(status_update)
 
     def update_server_status_gui(self, status_data: dict):
         """Updates server specific status in GUI thread."""
         if 'server_status' in status_data:
-            self.update_status_gui({"server_status":status_data['server_status']})
+            self.update_status_gui({"server_status": status_data['server_status'], "status_label": status_data['server_status']})
 
     def update_client_status_gui(self, status_message):
         """Updates client specific status in GUI thread."""
         status_data = json.loads(status_message)
         if 'client_status' in status_data:
-            self.update_status_gui({"client_status":status_data['client_status']})
+            self.update_status_gui({"client_status": status_data['client_status'], "status_label": status_data['client_status']})
 
 
 class ServerThread(QThread):
@@ -601,8 +607,7 @@ class ServerThread(QThread):
                     self.log_message(f"Cliente {client_ip_addr} desconectado.")
                     break
 
-                decoded_data = data.decode('utf-8')
-                print(decoded_data)
+                decoded_data = data.decode('cp850')
                 self.log_message(f"Recebido do cliente {client_ip_addr}: {decoded_data.strip()}")
                 self.write_to_serial_port(decoded_data)
 
@@ -613,7 +618,7 @@ class ServerThread(QThread):
         finally:
             client_id = addr[1]
             if client_id in self.connected_clients:
-                del self.connected_clients[client_id]
+                self.connected_clients.pop(client_id)
                 self.update_connected_clients_count_signal()
             client_socket.close()
             self.log_message(f"Conexão com cliente {client_ip_addr} encerrada.")
@@ -652,7 +657,7 @@ class ServerThread(QThread):
             for attempt in range(max_retries):
                 if self.serial_semaphore.tryAcquire():
                     try:
-                        encoded_data = data.encode('utf-8')
+                        encoded_data = data.encode('cp850')
                         self.serial_port.write(encoded_data)
                         self.log_message(f"Enviado para serial: {data.strip()}")
                         break  # Sucesso, sai do loop
@@ -729,7 +734,7 @@ class ClientThread(QThread):
                 data_from_serial = self.read_from_serial_port()
                 if data_from_serial:
                     try:
-                        self.client_socket.sendall(data_from_serial.encode('utf-8'))
+                        self.client_socket.sendall(data_from_serial.encode('cp850'))
                         self.log_message(f"Enviado para servidor: {data_from_serial.strip()}")
                     except Exception as e:
                         self.log_message(f"Erro ao enviar dados para o servidor: {e}", level=logging.ERROR)
@@ -779,7 +784,7 @@ class ClientThread(QThread):
         try:
             if self.serial_semaphore.tryAcquire():
                 try:
-                    data = self.serial_port.readline().decode('utf-8').strip()
+                    data = self.serial_port.readline().decode('cp850').strip()
                     if data:
                         self.log_message(f"Recebido da serial: {data}")
                         return data

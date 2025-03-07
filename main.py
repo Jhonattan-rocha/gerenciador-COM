@@ -404,7 +404,7 @@ class SerialConWindow(QWidget):
         self.log_message(f"Iniciando Servidor em: {ip}:{port}")
         self.update_status_gui({"status_label":"Iniciando Servidor", "connection_details":f"Servidor: {ip}:{port}", "focused_port":porta_serial, "server_status":"Iniciando..."})
 
-        self.server_thread = ServerThread(ip, port_num, porta_serial, self.serial_port_semaphore, {"baudrate": self.baudrate_combo.currentText(), "timeout": self.timeout_edit.text(), "databits": self.databits_combo.currentText(), "stopbist": self.stopbits_combo.currentText(), "parity": self.parity_combo.currentText()[0]})
+        self.server_thread = ServerThread(ip, port_num, porta_serial, self.serial_port_semaphore, {"baudrate": self.baudrate_combo.currentText(), "timeout": self.timeout_edit.text(), "databits": self.databits_combo.currentText(), "stopbits": self.stopbits_combo.currentText(), "parity": self.parity_combo.currentText()[0]})
         self.server_thread.client_connected_signal.connect(self.update_connected_clients_count)
         self.server_thread.server_status_signal.connect(self.update_server_status_gui) # Connect server status signals
         self.server_thread.start()
@@ -443,7 +443,7 @@ class SerialConWindow(QWidget):
         # Stop any existing client thread
         self.stop_client_mode()
 
-        self.client_thread = ClientThread(url, porta_serial, self.log_signal, self.serial_port_semaphore, {"baudrate": self.baudrate_combo.currentText(), "timeout": self.timeout_edit.text(), "databits": self.databits_combo.currentText(), "stopbist": self.stopbits_combo.currentText(), "parity": self.parity_combo.currentText()[0]})
+        self.client_thread = ClientThread(url, porta_serial, self.log_signal, self.serial_port_semaphore, {"baudrate": self.baudrate_combo.currentText(), "timeout": self.timeout_edit.text(), "databits": self.databits_combo.currentText(), "stopbits": self.stopbits_combo.currentText(), "parity": self.parity_combo.currentText()[0]})
         self.client_thread.client_status_signal.connect(self.update_client_status_gui) # Connect client status signal
         self.client_thread.start()
         self.connect_button.setText("Desconectar Cliente") # Immediately update button text
@@ -499,7 +499,7 @@ class SerialConWindow(QWidget):
             "porta_serial": self.serial_port_combo.currentText(),
             "baudrate": self.baudrate_combo.currentText(),
             "databits": self.databits_combo.currentText(),
-            "stopbist": self.stopbits_combo.currentText(),
+            "stopbits": self.stopbits_combo.currentText(),
             "parity": self.parity_combo.currentText(),
             "timeout": self.timeout_edit.text()
         }
@@ -526,7 +526,7 @@ class SerialConWindow(QWidget):
                 self.password_input.setText(config.get("senha", ""))
                 self.baudrate_combo.setCurrentText(config.get("baudrate", "9600"))
                 self.databits_combo.setCurrentText(config.get("databits", "5"))
-                self.stopbits_combo.setCurrentText(config.get("stopbist", "1"))
+                self.stopbits_combo.setCurrentText(config.get("stopbits", "1"))
                 self.parity_combo.setCurrentText(config.get("parity", "Even"))
                 self.timeout_edit.setText(config.get("timeout", "10"))
                 serial_port = config.get("porta_serial", "")
@@ -574,6 +574,12 @@ class SerialConWindow(QWidget):
         
         if 'status_label' in status_data:
             self.update_status_gui({"status_label": status_data['server_status']})
+    
+    def close(self):
+        if self.server_socket:
+            self.stop_server_mode()
+            self.close_serial_port()
+        return super().close()
 
 class ServerThread(QThread):
     client_connected_signal = Signal(int)
@@ -691,7 +697,7 @@ class ServerThread(QThread):
     def open_serial_port(self):
         """Opens the serial port and returns success status."""
         try:
-            self.serial_port = serial.Serial(self.serial_port_name, baudrate=int(self.params.get("baudrate")), timeout=float(self.params.get("timeout")), bytesize=int(self.params.get("databits")), stopbits=float(self.params.get("stopbist")), parity=str(self.params.get("parity")))
+            self.serial_port = serial.Serial(self.serial_port_name, baudrate=int(self.params.get("baudrate")), timeout=float(self.params.get("timeout")), bytesize=int(self.params.get("databits")), stopbits=float(self.params.get("stopbits")), parity=str(self.params.get("parity")))
             self.log_message(f"Porta serial {self.serial_port_name} aberta.")
             return True # Serial port opened successfully
         except serial.SerialException as e:
@@ -716,7 +722,8 @@ class ServerThread(QThread):
         
         max_retries = 3
         retry_delay = 1  # Começa com 1s
-
+        self.log_message(f"Tentando enviar para serial: {data.strip()}")
+        
         try:
             for attempt in range(max_retries):
                 if self.serial_semaphore.tryAcquire():
@@ -824,7 +831,7 @@ class ClientThread(QThread):
     def open_serial_port(self):
         """Opens the serial port and returns success status."""
         try:
-            self.serial_port = serial.Serial(self.serial_port_name, baudrate=int(self.params.get("baudrate")), timeout=float(self.params.get("timeout")), bytesize=int(self.params.get("databits")), stopbits=float(self.params.get("stopbist")), parity=str(self.params.get("parity")))
+            self.serial_port = serial.Serial(self.serial_port_name, baudrate=int(self.params.get("baudrate")), timeout=float(self.params.get("timeout")), bytesize=int(self.params.get("databits")), stopbits=float(self.params.get("stopbits")), parity=str(self.params.get("parity")))
             self.log_message(f"Porta serial {self.serial_port_name} aberta.")
             return True # Serial port opened successfully
         except serial.SerialException as e:

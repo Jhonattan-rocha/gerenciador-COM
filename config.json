@@ -10,7 +10,7 @@
     "porta_serial": "COM4",
     "baudrate": "9600",
     "databits": "8",
-    "stopbist": "2",
+    "stopbits": "2",
     "parity": "Even",
-    "timeout": "10"
+    "timeout": "5"
 }

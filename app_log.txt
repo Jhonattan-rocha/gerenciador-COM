@@ -11,3 +11,41 @@
 2025-03-06 21:26:34,735 - INFO - Logging configurado com sucesso.
 2025-03-06 21:26:34,736 - INFO - ConfiguraÃ§Ãµes carregadas de config.json
 2025-03-06 21:26:34,736 - INFO - Aplicativo Iniciado.
+2025-03-06 22:46:16,484 - INFO - Logging configurado com sucesso.
+2025-03-06 22:46:16,498 - INFO - Configurações carregadas de config.json
+2025-03-06 22:46:16,499 - INFO - Aplicativo Iniciado.
+2025-03-06 22:47:26,925 - INFO - Iniciando Servidor em: 10.0.0.106:9000
+2025-03-06 22:47:26,927 - INFO - Thread Servidor iniciada.
+2025-03-06 22:47:26,933 - INFO - Configurações salvas em config.json
+2025-03-06 22:47:26,936 - INFO - Socket do servidor fechado.
+2025-03-06 22:47:26,936 - INFO - Thread Servidor finalizada.
+2025-03-06 22:47:26,938 - INFO - Traceback (most recent call last):
+
+2025-03-06 22:47:26,938 - INFO -   File "C:\Users\JHONAT~1\AppData\Local\Temp\ONEFIL~4\main.py", line 546, in run
+
+2025-03-06 22:47:26,938 - INFO - OSError: [WinError 10049] O endereço solicitado não é válido no contexto
+
+2025-03-06 22:47:29,415 - INFO - Iniciando Servidor em: 10.0.0.106:9000
+2025-03-06 22:47:29,416 - INFO - Thread Servidor iniciada.
+2025-03-06 22:47:29,420 - INFO - Socket do servidor fechado.
+2025-03-06 22:47:29,420 - INFO - Thread Servidor finalizada.
+2025-03-06 22:47:29,422 - INFO - Traceback (most recent call last):
+
+2025-03-06 22:47:29,422 - INFO -   File "C:\Users\JHONAT~1\AppData\Local\Temp\ONEFIL~4\main.py", line 546, in run
+
+2025-03-06 22:47:29,423 - INFO - OSError: [WinError 10049] O endereço solicitado não é válido no contexto
+
+2025-03-06 22:47:29,423 - INFO - Configurações salvas em config.json
+2025-03-06 22:47:40,677 - INFO - Logging configurado com sucesso.
+2025-03-06 22:47:40,679 - INFO - Configurações carregadas de config.json
+2025-03-06 22:47:40,679 - INFO - Aplicativo Iniciado.
+2025-03-06 22:48:58,974 - INFO - Iniciando Servidor em: 10.0.0.107:9000
+2025-03-06 22:48:58,975 - INFO - Thread Servidor iniciada.
+2025-03-06 22:48:58,981 - INFO - Servidor ouvindo em 10.0.0.107:9000
+2025-03-06 22:48:58,982 - INFO - Configurações salvas em config.json
+2025-03-06 22:48:58,984 - INFO - Porta serial COM4 aberta.
+2025-03-06 22:52:10,546 - INFO - Parando thread Servidor...
+2025-03-06 22:52:10,549 - INFO - Porta serial COM4 fechada.
+2025-03-06 22:52:10,549 - INFO - Socket do servidor fechado.
+2025-03-06 22:52:10,549 - INFO - Thread Servidor finalizada.
+2025-03-06 22:52:10,553 - INFO - Configurações salvas em config.json

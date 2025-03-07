@@ -630,7 +630,7 @@ class ServerThread(QThread):
     def open_serial_port(self):
         """Opens the serial port and returns success status."""
         try:
-            self.serial_port = serial.Serial(self.serial_port_name, baudrate=9600, timeout=1)
+            self.serial_port = serial.Serial(self.serial_port_name, baudrate=9600, timeout=1, bytesize=serial.EIGHTBITS, stopbits=serial.STOPBITS_TWO, parity=serial.PARITY_EVEN)
             self.log_message(f"Porta serial {self.serial_port_name} aberta.")
             return True # Serial port opened successfully
         except serial.SerialException as e:
@@ -762,7 +762,7 @@ class ClientThread(QThread):
     def open_serial_port(self):
         """Opens the serial port and returns success status."""
         try:
-            self.serial_port = serial.Serial(self.serial_port_name, baudrate=9600, timeout=1)
+            self.serial_port = serial.Serial(self.serial_port_name, baudrate=9600, timeout=1, bytesize=serial.EIGHTBITS, stopbits=serial.STOPBITS_TWO, parity=serial.PARITY_EVEN)
             self.log_message(f"Porta serial {self.serial_port_name} aberta.")
             return True # Serial port opened successfully
         except serial.SerialException as e:

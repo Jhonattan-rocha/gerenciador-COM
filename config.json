@@ -1,11 +1,16 @@
 {
     "modo": "Servidor",
-    "server_ip": "10.0.0.107",
-    "server_port": "9000",
+    "server_ip": "10.150.0.64",
+    "server_port": "10000",
     "client_url": "10.150.0.27:9000",
     "log_location": "C:/Users/Jhonattan/Documents/GitHub/gerenciador-COM",
     "log_file_name": "app_log.txt",
     "usuario": "jhonattan.rocha",
     "senha": "19751983",
-    "porta_serial": "COM4"
+    "porta_serial": "COM4",
+    "baudrate": "9600",
+    "databits": "8",
+    "stopbist": "2",
+    "parity": "Even",
+    "timeout": "10"
 }

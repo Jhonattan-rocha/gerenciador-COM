@@ -70,3 +70,199 @@
 2025-03-07 09:43:41,141 - INFO - Logging configurado com sucesso.
 2025-03-07 09:43:41,142 - INFO - Configurações carregadas de config.json
 2025-03-07 09:43:41,142 - INFO - Aplicativo Iniciado.
+2025-03-07 09:45:47,199 - INFO - Logging configurado com sucesso.
+2025-03-07 09:45:47,206 - INFO - Configurações carregadas de config.json
+2025-03-07 09:45:47,206 - INFO - Aplicativo Iniciado.
+2025-03-07 09:45:54,924 - INFO - Traceback (most recent call last):
+
+2025-03-07 09:45:54,925 - INFO -   File "C:\Users\Jhonattan\Documents\GitHub\gerenciador-COM\main.py", line 882, in <module>
+
+2025-03-07 09:45:54,926 - INFO - sys.exit(app.exec())
+2025-03-07 09:45:54,926 - INFO - KeyboardInterrupt
+2025-03-07 09:46:04,821 - INFO - Logging configurado com sucesso.
+2025-03-07 09:46:04,822 - INFO - Configurações carregadas de config.json
+2025-03-07 09:46:04,823 - INFO - Aplicativo Iniciado.
+2025-03-07 09:46:56,021 - INFO - Logging configurado com sucesso.
+2025-03-07 09:46:56,022 - INFO - Configurações carregadas de config.json
+2025-03-07 09:46:56,022 - INFO - Aplicativo Iniciado.
+2025-03-07 09:47:15,056 - INFO - Logging configurado com sucesso.
+2025-03-07 09:47:15,057 - INFO - Configurações carregadas de config.json
+2025-03-07 09:47:15,057 - INFO - Aplicativo Iniciado.
+2025-03-07 09:48:56,246 - INFO - Iniciando Servidor em: 10.150.064:9000
+2025-03-07 09:48:56,247 - INFO - Thread Servidor iniciada.
+2025-03-07 09:48:56,252 - INFO - Socket do servidor fechado.
+2025-03-07 09:48:56,252 - INFO - Thread Servidor finalizada.
+2025-03-07 09:48:56,254 - INFO - Traceback (most recent call last):
+
+2025-03-07 09:48:56,255 - INFO -   File "C:\Users\Jhonattan\Documents\GitHub\gerenciador-COM\main.py", line 607, in run
+
+2025-03-07 09:48:56,256 - INFO - self.server_socket.bind((self.ip, self.port))
+2025-03-07 09:48:56,256 - INFO - socket
+2025-03-07 09:48:56,256 - INFO - .
+2025-03-07 09:48:56,256 - INFO - gaierror
+2025-03-07 09:48:56,257 - INFO - : 
+2025-03-07 09:48:56,257 - INFO - [Errno 11001] getaddrinfo failed
+2025-03-07 09:48:56,301 - INFO - Configurações salvas em config.json
+2025-03-07 09:49:17,597 - INFO - Iniciando Servidor em: 10.150.064:9000
+2025-03-07 09:49:17,598 - INFO - Thread Servidor iniciada.
+2025-03-07 09:49:17,600 - INFO - Socket do servidor fechado.
+2025-03-07 09:49:17,600 - INFO - Thread Servidor finalizada.
+2025-03-07 09:49:17,601 - INFO - Traceback (most recent call last):
+
+2025-03-07 09:49:17,601 - INFO - Configurações salvas em config.json
+2025-03-07 09:49:17,602 - INFO -   File "C:\Users\Jhonattan\Documents\GitHub\gerenciador-COM\main.py", line 607, in run
+
+2025-03-07 09:49:17,603 - INFO - self.server_socket.bind((self.ip, self.port))
+2025-03-07 09:49:17,603 - INFO - socket
+2025-03-07 09:49:17,603 - INFO - .
+2025-03-07 09:49:17,603 - INFO - gaierror
+2025-03-07 09:49:17,604 - INFO - : 
+2025-03-07 09:49:17,604 - INFO - [Errno 11001] getaddrinfo failed
+2025-03-07 09:50:45,453 - INFO - Iniciando Servidor em: 10.150.064:9000
+2025-03-07 09:50:45,455 - INFO - Thread Servidor iniciada.
+2025-03-07 09:50:45,456 - INFO - Socket do servidor fechado.
+2025-03-07 09:50:45,456 - INFO - Thread Servidor finalizada.
+2025-03-07 09:50:45,457 - INFO - Configurações salvas em config.json
+2025-03-07 09:50:45,458 - INFO - Traceback (most recent call last):
+
+2025-03-07 09:50:45,458 - INFO -   File "C:\Users\Jhonattan\Documents\GitHub\gerenciador-COM\main.py", line 607, in run
+
+2025-03-07 09:50:45,459 - INFO - self.server_socket.bind((self.ip, self.port))
+2025-03-07 09:50:45,459 - INFO - socket
+2025-03-07 09:50:45,459 - INFO - .
+2025-03-07 09:50:45,459 - INFO - gaierror
+2025-03-07 09:50:45,460 - INFO - : 
+2025-03-07 09:50:45,460 - INFO - [Errno 11001] getaddrinfo failed
+2025-03-07 10:25:43,714 - INFO - Logging configurado com sucesso.
+2025-03-07 10:25:43,721 - INFO - Configurações carregadas de config.json
+2025-03-07 10:25:43,722 - INFO - Aplicativo Iniciado.
+2025-03-07 10:26:04,359 - INFO - Iniciando Servidor em: 10.150.064:9000
+2025-03-07 10:26:04,360 - INFO - Thread Servidor iniciada.
+2025-03-07 10:26:04,365 - INFO - Socket do servidor fechado.
+2025-03-07 10:26:04,365 - INFO - Thread Servidor finalizada.
+2025-03-07 10:26:04,384 - INFO - Traceback (most recent call last):
+
+2025-03-07 10:26:04,385 - INFO -   File "C:\Users\Jhonattan\Documents\GitHub\gerenciador-COM\main.py", line 607, in run
+
+2025-03-07 10:26:04,385 - INFO - self.server_socket.bind((self.ip, self.port))
+2025-03-07 10:26:04,385 - INFO - socket
+2025-03-07 10:26:04,385 - INFO - .
+2025-03-07 10:26:04,385 - INFO - gaierror
+2025-03-07 10:26:04,385 - INFO - : 
+2025-03-07 10:26:04,385 - INFO - [Errno 11001] getaddrinfo failed
+2025-03-07 10:26:04,400 - INFO - Configurações salvas em config.json
+2025-03-07 10:28:41,838 - INFO - Logging configurado com sucesso.
+2025-03-07 10:28:41,841 - INFO - Configurações carregadas de config.json
+2025-03-07 10:28:41,841 - INFO - Aplicativo Iniciado.
+2025-03-07 10:30:30,748 - INFO - Logging configurado com sucesso.
+2025-03-07 10:30:30,749 - INFO - Configurações carregadas de config.json
+2025-03-07 10:30:30,749 - INFO - Aplicativo Iniciado.
+2025-03-07 10:30:38,519 - INFO - Iniciando Servidor em: 10.150.0.64:9000
+2025-03-07 10:30:38,520 - INFO - Thread Servidor iniciada.
+2025-03-07 10:30:38,522 - INFO - Servidor ouvindo em 10.150.0.64:9000
+2025-03-07 10:30:38,522 - INFO - Socket do servidor fechado.
+2025-03-07 10:30:38,522 - INFO - Thread Servidor finalizada.
+2025-03-07 10:30:38,524 - INFO - Traceback (most recent call last):
+
+2025-03-07 10:30:38,525 - INFO -   File "C:\Users\Jhonattan\Documents\GitHub\gerenciador-COM\main.py", line 610, in run
+
+2025-03-07 10:30:38,526 - INFO - Configurações salvas em config.json
+2025-03-07 10:30:38,526 - INFO - if not self.open_serial_port(): # Open serial port, check if successful
+2025-03-07 10:30:38,527 - INFO -   File "C:\Users\Jhonattan\Documents\GitHub\gerenciador-COM\main.py", line 692, in open_serial_port
+
+2025-03-07 10:30:38,527 - INFO - self.serial_port = serial.Serial(self.serial_port_name, baudrate=int(self.params.get("baudrate")), timeout=float(self.params.get("timeout")), bytesize=int(self.params.get("databits")), stopbits=float(self.params.get("stopbist")), parity=str(self.params.get("parity")))
+2025-03-07 10:30:38,527 - INFO -   File "C:\Users\Jhonattan\AppData\Local\Programs\Python\Python313\Lib\site-packages\serial\serialwin32.py", line 33, in __init__
+
+2025-03-07 10:30:38,528 - INFO - super(Serial, self).__init__(*args, **kwargs)
+2025-03-07 10:30:38,528 - INFO -   File "C:\Users\Jhonattan\AppData\Local\Programs\Python\Python313\Lib\site-packages\serial\serialutil.py", line 225, in __init__
+
+2025-03-07 10:30:38,528 - INFO - self.parity = parity
+2025-03-07 10:30:38,528 - INFO -   File "C:\Users\Jhonattan\AppData\Local\Programs\Python\Python313\Lib\site-packages\serial\serialutil.py", line 336, in parity
+
+2025-03-07 10:30:38,528 - INFO - raise ValueError("Not a valid parity: {!r}".format(parity))
+2025-03-07 10:30:38,528 - INFO - ValueError
+2025-03-07 10:30:38,529 - INFO - : 
+2025-03-07 10:30:38,529 - INFO - Not a valid parity: 'Even'
+2025-03-07 10:31:20,808 - INFO - Traceback (most recent call last):
+
+2025-03-07 10:31:20,810 - INFO -   File "C:\Users\Jhonattan\Documents\GitHub\gerenciador-COM\main.py", line 465, in update_log_content
+
+2025-03-07 10:31:20,812 - INFO - def update_log_content(self):
+2025-03-07 10:31:20,813 - INFO - KeyboardInterrupt
+2025-03-07 10:34:16,336 - INFO - Logging configurado com sucesso.
+2025-03-07 10:34:16,343 - INFO - Configurações carregadas de config.json
+2025-03-07 10:34:16,343 - INFO - Aplicativo Iniciado.
+2025-03-07 10:34:23,223 - INFO - Iniciando Servidor em: 10.150.0.64:9000
+2025-03-07 10:34:23,223 - INFO - Thread Servidor iniciada.
+2025-03-07 10:34:23,226 - INFO - Servidor ouvindo em 10.150.0.64:9000
+2025-03-07 10:34:23,227 - INFO - Socket do servidor fechado.
+2025-03-07 10:34:23,227 - INFO - Thread Servidor finalizada.
+2025-03-07 10:34:23,230 - INFO - Traceback (most recent call last):
+
+2025-03-07 10:34:23,231 - INFO -   File "C:\Users\Jhonattan\Documents\GitHub\gerenciador-COM\main.py", line 612, in run
+
+2025-03-07 10:34:23,231 - INFO - Configurações salvas em config.json
+2025-03-07 10:34:23,232 - INFO - if not self.open_serial_port(): # Open serial port, check if successful
+2025-03-07 10:34:23,232 - INFO -   File "C:\Users\Jhonattan\Documents\GitHub\gerenciador-COM\main.py", line 694, in open_serial_port
+
+2025-03-07 10:34:23,233 - INFO - self.serial_port = serial.Serial(self.serial_port_name, baudrate=int(self.params.get("baudrate")), timeout=float(self.params.get("timeout")), bytesize=int(self.params.get("databits")), stopbits=float(self.params.get("stopbist")), parity=str(self.params.get("parity")))
+2025-03-07 10:34:23,233 - INFO -   File "C:\Users\Jhonattan\AppData\Local\Programs\Python\Python313\Lib\site-packages\serial\serialwin32.py", line 33, in __init__
+
+2025-03-07 10:34:23,234 - INFO - super(Serial, self).__init__(*args, **kwargs)
+2025-03-07 10:34:23,234 - INFO -   File "C:\Users\Jhonattan\AppData\Local\Programs\Python\Python313\Lib\site-packages\serial\serialutil.py", line 225, in __init__
+
+2025-03-07 10:34:23,234 - INFO - self.parity = parity
+2025-03-07 10:34:23,234 - INFO -   File "C:\Users\Jhonattan\AppData\Local\Programs\Python\Python313\Lib\site-packages\serial\serialutil.py", line 336, in parity
+
+2025-03-07 10:34:23,235 - INFO - raise ValueError("Not a valid parity: {!r}".format(parity))
+2025-03-07 10:34:23,235 - INFO - ValueError
+2025-03-07 10:34:23,235 - INFO - : 
+2025-03-07 10:34:23,235 - INFO - Not a valid parity: 'Even'
+2025-03-07 10:34:26,354 - INFO - Traceback (most recent call last):
+
+2025-03-07 10:34:26,355 - INFO -   File "C:\Users\Jhonattan\Documents\GitHub\gerenciador-COM\main.py", line 465, in update_log_content
+
+2025-03-07 10:34:26,358 - INFO - def update_log_content(self):
+2025-03-07 10:34:26,359 - INFO - KeyboardInterrupt
+2025-03-07 10:34:42,690 - INFO - Logging configurado com sucesso.
+2025-03-07 10:34:42,697 - INFO - Configurações carregadas de config.json
+2025-03-07 10:34:42,698 - INFO - Aplicativo Iniciado.
+2025-03-07 10:35:03,532 - INFO - Iniciando Servidor em: 10.150.0.64:10000
+2025-03-07 10:35:03,533 - INFO - Thread Servidor iniciada.
+2025-03-07 10:35:03,536 - INFO - Servidor ouvindo em 10.150.0.64:10000
+2025-03-07 10:35:03,536 - INFO - Socket do servidor fechado.
+2025-03-07 10:35:03,536 - INFO - Thread Servidor finalizada.
+2025-03-07 10:35:03,540 - INFO - Traceback (most recent call last):
+
+2025-03-07 10:35:03,541 - INFO -   File "C:\Users\Jhonattan\Documents\GitHub\gerenciador-COM\main.py", line 612, in run
+
+2025-03-07 10:35:03,541 - INFO - Configurações salvas em config.json
+2025-03-07 10:35:03,542 - INFO - if not self.open_serial_port(): # Open serial port, check if successful
+2025-03-07 10:35:03,542 - INFO -   File "C:\Users\Jhonattan\Documents\GitHub\gerenciador-COM\main.py", line 694, in open_serial_port
+
+2025-03-07 10:35:03,543 - INFO - self.serial_port = serial.Serial(self.serial_port_name, baudrate=int(self.params.get("baudrate")), timeout=float(self.params.get("timeout")), bytesize=int(self.params.get("databits")), stopbits=float(self.params.get("stopbist")), parity=str(self.params.get("parity")))
+2025-03-07 10:35:03,543 - INFO -   File "C:\Users\Jhonattan\AppData\Local\Programs\Python\Python313\Lib\site-packages\serial\serialwin32.py", line 33, in __init__
+
+2025-03-07 10:35:03,544 - INFO - super(Serial, self).__init__(*args, **kwargs)
+2025-03-07 10:35:03,544 - INFO -   File "C:\Users\Jhonattan\AppData\Local\Programs\Python\Python313\Lib\site-packages\serial\serialutil.py", line 225, in __init__
+
+2025-03-07 10:35:03,544 - INFO - self.parity = parity
+2025-03-07 10:35:03,544 - INFO -   File "C:\Users\Jhonattan\AppData\Local\Programs\Python\Python313\Lib\site-packages\serial\serialutil.py", line 336, in parity
+
+2025-03-07 10:35:03,545 - INFO - raise ValueError("Not a valid parity: {!r}".format(parity))
+2025-03-07 10:35:03,545 - INFO - ValueError
+2025-03-07 10:35:03,545 - INFO - : 
+2025-03-07 10:35:03,545 - INFO - Not a valid parity: 'Even'
+2025-03-07 10:48:45,031 - INFO - Logging configurado com sucesso.
+2025-03-07 10:48:45,032 - INFO - Configurações carregadas de config.json
+2025-03-07 10:48:45,033 - INFO - Aplicativo Iniciado.
+2025-03-07 10:48:50,688 - INFO - Iniciando Servidor em: 10.150.0.64:10000
+2025-03-07 10:48:50,689 - INFO - Thread Servidor iniciada.
+2025-03-07 10:48:50,691 - INFO - Servidor ouvindo em 10.150.0.64:10000
+2025-03-07 10:48:50,694 - INFO - Porta serial COM4 aberta.
+2025-03-07 10:48:50,695 - INFO - Configurações salvas em config.json
+2025-03-07 10:49:12,876 - INFO - Parando thread Servidor...
+2025-03-07 10:49:12,877 - INFO - Porta serial COM4 fechada.
+2025-03-07 10:49:12,878 - INFO - Socket do servidor fechado.
+2025-03-07 10:49:12,878 - INFO - Thread Servidor finalizada.
+2025-03-07 10:49:12,880 - INFO - Configurações salvas em config.json

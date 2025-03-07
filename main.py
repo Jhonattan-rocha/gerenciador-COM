@@ -4,7 +4,7 @@ from PySide6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QHBoxLayout,
                              QTabWidget, QLabel, QGroupBox, QGridLayout,
                              QLineEdit, QPushButton, QComboBox, QTextEdit,
                              QFileDialog, QMessageBox) # Import QMessageBox for error dialogs
-from PySide6.QtGui import QIcon, QPixmap, QDoubleValidator, QIntValidator
+from PySide6.QtGui import QIcon, QPixmap, QDoubleValidator
 from PySide6.QtCore import QTimer, QThread, Signal, QSemaphore
 import serial, logging, time
 import serial.tools.list_ports
@@ -124,8 +124,6 @@ class SerialConWindow(QWidget):
         server_config_layout = QGridLayout()
         self.server_ip_label = QLabel("IP:")
         self.server_ip_input = QLineEdit()
-        int_validator = QIntValidator()
-        self.server_ip_input.setValidator(int_validator)
         self.server_port_label = QLabel("Porta:")
         self.server_port_input = QLineEdit()
         server_config_layout.addWidget(self.server_ip_label, 0, 0)
@@ -406,7 +404,7 @@ class SerialConWindow(QWidget):
         self.log_message(f"Iniciando Servidor em: {ip}:{port}")
         self.update_status_gui({"status_label":"Iniciando Servidor", "connection_details":f"Servidor: {ip}:{port}", "focused_port":porta_serial, "server_status":"Iniciando..."})
 
-        self.server_thread = ServerThread(ip, port_num, porta_serial, self.serial_port_semaphore, {"baudrate": self.baudrate_combo.currentText(), "timeout": self.timeout_edit.text(), "databits": self.databits_combo.currentText(), "stopbist": self.stopbits_combo.currentText(), "parity": self.parity_combo.currentText()})
+        self.server_thread = ServerThread(ip, port_num, porta_serial, self.serial_port_semaphore, {"baudrate": self.baudrate_combo.currentText(), "timeout": self.timeout_edit.text(), "databits": self.databits_combo.currentText(), "stopbist": self.stopbits_combo.currentText(), "parity": self.parity_combo.currentText()[0]})
         self.server_thread.client_connected_signal.connect(self.update_connected_clients_count)
         self.server_thread.server_status_signal.connect(self.update_server_status_gui) # Connect server status signals
         self.server_thread.start()
@@ -445,7 +443,7 @@ class SerialConWindow(QWidget):
         # Stop any existing client thread
         self.stop_client_mode()
 
-        self.client_thread = ClientThread(url, porta_serial, self.log_signal, self.serial_port_semaphore, {"baudrate": self.baudrate_combo.currentText(), "timeout": self.timeout_edit.text(), "databits": self.databits_combo.currentText(), "stopbist": self.stopbits_combo.currentText(), "parity": self.parity_combo.currentText()})
+        self.client_thread = ClientThread(url, porta_serial, self.log_signal, self.serial_port_semaphore, {"baudrate": self.baudrate_combo.currentText(), "timeout": self.timeout_edit.text(), "databits": self.databits_combo.currentText(), "stopbist": self.stopbits_combo.currentText(), "parity": self.parity_combo.currentText()[0]})
         self.client_thread.client_status_signal.connect(self.update_client_status_gui) # Connect client status signal
         self.client_thread.start()
         self.connect_button.setText("Desconectar Cliente") # Immediately update button text
@@ -502,7 +500,8 @@ class SerialConWindow(QWidget):
             "baudrate": self.baudrate_combo.currentText(),
             "databits": self.databits_combo.currentText(),
             "stopbist": self.stopbits_combo.currentText(),
-            "parity": self.parity_combo.currentText()
+            "parity": self.parity_combo.currentText(),
+            "timeout": self.timeout_edit.text()
         }
         try:
             with open("config.json", 'w', encoding='cp850') as f:
@@ -529,6 +528,7 @@ class SerialConWindow(QWidget):
                 self.databits_combo.setCurrentText(config.get("databits", "5"))
                 self.stopbits_combo.setCurrentText(config.get("stopbist", "1"))
                 self.parity_combo.setCurrentText(config.get("parity", "Even"))
+                self.timeout_edit.setText(config.get("timeout", "10"))
                 serial_port = config.get("porta_serial", "")
                 if serial_port:
                     index = self.serial_port_combo.findText(serial_port)

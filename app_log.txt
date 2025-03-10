@@ -1,3 +1,41 @@
-2025-03-07 20:14:11,210 - INFO - Logging configurado com sucesso.
-2025-03-07 20:14:11,211 - INFO - Configurações carregadas de config.json
-2025-03-07 20:14:11,211 - INFO - Aplicativo Iniciado.
+2025-03-10 09:42:15,293 - INFO - Logging configurado com sucesso.
+2025-03-10 09:42:15,294 - INFO - Configurações carregadas de config.json
+2025-03-10 09:42:15,294 - INFO - Aplicativo Iniciado.
+2025-03-10 09:46:27,238 - INFO - Iniciando Servidor em: 10.150.0.12:10000
+2025-03-10 09:46:27,239 - INFO - Thread Servidor iniciada.
+2025-03-10 09:46:27,242 - INFO - Servidor ouvindo em 10.150.0.12:10000
+2025-03-10 09:46:27,243 - ERROR - Erro ao abrir porta serial loop://: could not open port 'loop://': OSError(22, 'A sintaxe do nome do arquivo, do nome do diretório ou do rótulo do volume está incorreta.', None, 123)
+2025-03-10 09:46:27,243 - INFO - Socket do servidor fechado.
+2025-03-10 09:46:27,243 - INFO - Thread Servidor finalizada.
+2025-03-10 09:46:27,288 - INFO - Configurações salvas em config.json
+2025-03-10 09:49:14,190 - INFO - Logging configurado com sucesso.
+2025-03-10 09:49:14,197 - INFO - Configurações carregadas de config.json
+2025-03-10 09:49:14,198 - INFO - Aplicativo Iniciado.
+2025-03-10 09:49:20,160 - INFO - Iniciando Servidor em: 10.150.0.12:10000
+2025-03-10 09:49:20,161 - INFO - Thread Servidor iniciada.
+2025-03-10 09:49:20,163 - INFO - Servidor ouvindo em 10.150.0.12:10000
+2025-03-10 09:49:20,166 - INFO - Configurações salvas em config.json
+2025-03-10 09:49:20,234 - INFO - Porta serial loop:// aberta.
+2025-03-10 09:49:44,401 - INFO - Cliente conectado de ('10.150.0.12', 50683)
+2025-03-10 09:49:44,401 - INFO - Recebido do cliente 10.150.0.12:50683: Nada de mais, apenas 1 teste
+2025-03-10 09:49:44,401 - INFO - Tentando enviar para serial: Nada de mais, apenas 1 teste
+2025-03-10 09:49:44,403 - INFO - Enviado para serial: Nada de mais, apenas 1 teste
+2025-03-10 09:49:46,404 - INFO - Cliente 10.150.0.12:50683 desconectado.
+2025-03-10 09:49:46,405 - INFO - Conexão com cliente 10.150.0.12:50683 encerrada.
+2025-03-10 09:50:02,975 - INFO - Cliente conectado de ('10.150.0.12', 50687)
+2025-03-10 09:50:02,976 - INFO - Recebido do cliente 10.150.0.12:50687: Nada de mais, apenas 1 teste
+2025-03-10 09:50:02,976 - INFO - Tentando enviar para serial: Nada de mais, apenas 1 teste
+2025-03-10 09:50:02,976 - INFO - Enviado para serial: Nada de mais, apenas 1 teste
+2025-03-10 09:50:15,095 - INFO - Cliente 10.150.0.12:50687 desconectado.
+2025-03-10 09:50:15,097 - INFO - Conexão com cliente 10.150.0.12:50687 encerrada.
+2025-03-10 09:50:56,611 - INFO - Cliente conectado de ('10.150.0.12', 50690)
+2025-03-10 09:50:56,611 - INFO - Recebido do cliente 10.150.0.12:50690: Nada de mais, apenas 1 teste
+2025-03-10 09:50:56,611 - INFO - Tentando enviar para serial: Nada de mais, apenas 1 teste
+2025-03-10 09:50:56,611 - INFO - Enviado para serial: Nada de mais, apenas 1 teste
+2025-03-10 09:51:08,706 - INFO - Cliente 10.150.0.12:50690 desconectado.
+2025-03-10 09:51:08,706 - INFO - Conexão com cliente 10.150.0.12:50690 encerrada.
+2025-03-10 09:52:23,454 - INFO - Parando thread Servidor...
+2025-03-10 09:52:23,455 - INFO - Porta serial loop:// fechada.
+2025-03-10 09:52:23,455 - INFO - Socket do servidor fechado.
+2025-03-10 09:52:23,455 - INFO - Thread Servidor finalizada.
+2025-03-10 09:52:23,457 - INFO - Configurações salvas em config.json

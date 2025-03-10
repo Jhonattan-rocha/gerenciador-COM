@@ -6,11 +6,12 @@ from PySide6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QHBoxLayout,
                              QFileDialog, QMessageBox) # Import QMessageBox for error dialogs
 from PySide6.QtGui import QIcon, QPixmap, QDoubleValidator
 from PySide6.QtCore import QTimer, QThread, Signal, QSemaphore
-import serial, logging, time
+import serial, logging, time, platform, socket, threading
 import serial.tools.list_ports
-import socket
-import threading
 from typing import IO
+
+if "linux" in platform.platform().lower():
+    import os, pty
 
 class SerialConWindow(QWidget):
     log_signal = Signal(str)
@@ -159,7 +160,6 @@ class SerialConWindow(QWidget):
         log_file_name_layout.addWidget(log_file_name_label)
         log_file_name_layout.addWidget(self.log_file_name_input)
 
-
         # Usuário e Senha
         user_pass_layout = QGridLayout()
         user_label = QLabel("Usuário:")
@@ -181,9 +181,28 @@ class SerialConWindow(QWidget):
         if ports:
             for port, desc, hwid in sorted(ports):
                 self.serial_port_combo.addItem(port)
+        
+        if "windows" in platform.platform().lower():
+            for i in range(1, 11):  # Adiciona múltiplas instâncias
+                self.serial_port_combo.addItem(f"loop://{i}")
+
+        if "linux" in platform.platform().lower():
+            self.serial_port_combo.addItem("Gerar Porta Virtual")  # Opção para criar dinamicamente
 
         serial_port_layout.addWidget(serial_port_label)
         serial_port_layout.addWidget(self.serial_port_combo)
+        
+        flow_control_layout = QHBoxLayout()
+        flow_control_label = QLabel("Controle de Fluxo:")
+        self.rtscts_combo = QComboBox()
+        self.rtscts_combo.addItems(["Desativado", "Ativado"])
+        self.dsrdtr_combo = QComboBox()
+        self.dsrdtr_combo.addItems(["Desativado", "Ativado"])
+        flow_control_layout.addWidget(flow_control_label)
+        flow_control_layout.addWidget(QLabel("RTS/CTS:"))
+        flow_control_layout.addWidget(self.rtscts_combo)
+        flow_control_layout.addWidget(QLabel("DSR/DTR:"))
+        flow_control_layout.addWidget(self.dsrdtr_combo)
         
         # baud Rate
         baudrate_layout = QHBoxLayout()
@@ -241,6 +260,7 @@ class SerialConWindow(QWidget):
         config_layout.addLayout(log_file_name_layout)
         config_layout.addLayout(user_pass_layout)
         config_layout.addLayout(serial_port_layout)
+        config_layout.addLayout(flow_control_layout)
         config_layout.addLayout(baudrate_layout)
         config_layout.addLayout(timeout_layout)
         config_layout.addLayout(databits_layout)
@@ -345,6 +365,19 @@ class SerialConWindow(QWidget):
     def handle_connect_button(self):
         """Function to execute on Connect button click."""        
         modo = self.mode_combo.currentText()
+        
+        if modo == "Servidor" and (not self.server_ip_input.text() or not self.server_port_input.text()):
+            self.log_message("Erro: IP ou Porta do Servidor não definidos!", level=logging.ERROR)
+            QMessageBox.warning(self, "Erro", "Defina o IP e a Porta do Servidor antes de conectar.")
+            self.update_status_gui({"server_status": "Erro de Configuração"})
+            return
+
+        if modo == "Cliente" and not self.client_url_input.text():
+            self.log_message("Erro: URL do Cliente não definida!", level=logging.ERROR)
+            QMessageBox.warning(self, "Erro", "Defina a URL do Cliente antes de conectar.")
+            self.update_status_gui({"client_status": "Erro de Configuração"})
+            return
+        
         if modo == "Servidor":
             if not self.server_thread or not self.server_thread.isRunning():
                 self.start_server_mode()
@@ -386,6 +419,11 @@ class SerialConWindow(QWidget):
         ip = self.server_ip_input.text()
         port = self.server_port_input.text()
         porta_serial = self.serial_port_combo.currentText()
+        
+        if porta_serial == "Gerar Porta Virtual":
+            master, slave = pty.openpty()
+            porta_serial = os.ttyname(slave)
+            self.log_message(f"Porta virtual criada: {porta_serial}")
 
         if not ip or not port or not porta_serial:
             self.log_message("Configurações de Servidor incompletas.")
@@ -404,7 +442,7 @@ class SerialConWindow(QWidget):
         self.log_message(f"Iniciando Servidor em: {ip}:{port}")
         self.update_status_gui({"status_label":"Iniciando Servidor", "connection_details":f"Servidor: {ip}:{port}", "focused_port":porta_serial, "server_status":"Iniciando..."})
 
-        self.server_thread = ServerThread(ip, port_num, porta_serial, self.serial_port_semaphore, {"baudrate": self.baudrate_combo.currentText(), "timeout": self.timeout_edit.text(), "databits": self.databits_combo.currentText(), "stopbits": self.stopbits_combo.currentText(), "parity": self.parity_combo.currentText()[0]})
+        self.server_thread = ServerThread(ip, port_num, porta_serial, self.serial_port_semaphore, {"baudrate": self.baudrate_combo.currentText(), "timeout": self.timeout_edit.text(), "databits": self.databits_combo.currentText(), "stopbits": self.stopbits_combo.currentText(), "parity": self.parity_combo.currentText()[0], "rtscts": self.rtscts_combo.currentText() == "Ativado", "dsrdtr": self.dsrdtr_combo.currentText() == "Ativado"})
         self.server_thread.client_connected_signal.connect(self.update_connected_clients_count)
         self.server_thread.server_status_signal.connect(self.update_server_status_gui) # Connect server status signals
         self.server_thread.start()
@@ -430,6 +468,11 @@ class SerialConWindow(QWidget):
         """Starts the application in Client mode."""
         url = self.client_url_input.text()
         porta_serial = self.serial_port_combo.currentText()
+        
+        if porta_serial == "Gerar Porta Virtual":
+            master, slave = pty.openpty()
+            porta_serial = os.ttyname(slave)
+            self.log_message(f"Porta virtual criada: {porta_serial}")
 
         if not url or not porta_serial:
             self.log_message("Configurações de Cliente incompletas.")
@@ -443,7 +486,7 @@ class SerialConWindow(QWidget):
         # Stop any existing client thread
         self.stop_client_mode()
 
-        self.client_thread = ClientThread(url, porta_serial, self.log_signal, self.serial_port_semaphore, {"baudrate": self.baudrate_combo.currentText(), "timeout": self.timeout_edit.text(), "databits": self.databits_combo.currentText(), "stopbits": self.stopbits_combo.currentText(), "parity": self.parity_combo.currentText()[0]})
+        self.client_thread = ClientThread(url, porta_serial, self.log_signal, self.serial_port_semaphore, {"baudrate": self.baudrate_combo.currentText(), "timeout": self.timeout_edit.text(), "databits": self.databits_combo.currentText(), "stopbits": self.stopbits_combo.currentText(), "parity": self.parity_combo.currentText()[0], "rtscts": self.rtscts_combo.currentText() == "Ativado", "dsrdtr": self.dsrdtr_combo.currentText() == "Ativado"})
         self.client_thread.client_status_signal.connect(self.update_client_status_gui) # Connect client status signal
         self.client_thread.start()
         self.connect_button.setText("Desconectar Cliente") # Immediately update button text
@@ -501,7 +544,9 @@ class SerialConWindow(QWidget):
             "databits": self.databits_combo.currentText(),
             "stopbits": self.stopbits_combo.currentText(),
             "parity": self.parity_combo.currentText(),
-            "timeout": self.timeout_edit.text()
+            "timeout": self.timeout_edit.text(),
+            "rtscts": self.rtscts_combo.currentText() == "Ativado",
+            "dsrdtr": self.dsrdtr_combo.currentText() == "Ativado"
         }
         try:
             with open("config.json", 'w', encoding='cp850') as f:
@@ -529,6 +574,8 @@ class SerialConWindow(QWidget):
                 self.stopbits_combo.setCurrentText(config.get("stopbits", "1"))
                 self.parity_combo.setCurrentText(config.get("parity", "Even"))
                 self.timeout_edit.setText(config.get("timeout", "10"))
+                self.rtscts_combo.setCurrentText("Ativado" if config.get("rtscts", False) else "Desativado")
+                self.dsrdtr_combo.setCurrentText("Ativado" if config.get("dsrdtr", False) else "Desativado")
                 serial_port = config.get("porta_serial", "")
                 if serial_port:
                     index = self.serial_port_combo.findText(serial_port)
@@ -677,9 +724,8 @@ class ServerThread(QThread):
                     self.log_message(f"Cliente {client_ip_addr} desconectado.")
                     break
 
-                decoded_data = data.decode('cp850')
-                self.log_message(f"Recebido do cliente {client_ip_addr}: {decoded_data.strip()}")
-                self.write_to_serial_port(decoded_data)
+                self.log_message(f"Recebido do cliente {client_ip_addr}: {data.decode('cp850').strip()}")
+                self.write_to_serial_port(data)
 
                 time.sleep(1)
 
@@ -697,24 +743,37 @@ class ServerThread(QThread):
     def open_serial_port(self):
         """Opens the serial port and returns success status."""
         try:
-            self.serial_port = serial.Serial(self.serial_port_name, baudrate=int(self.params.get("baudrate")), timeout=float(self.params.get("timeout")), bytesize=int(self.params.get("databits")), stopbits=float(self.params.get("stopbits")), parity=str(self.params.get("parity")))
+            self.serial_port = serial.Serial(self.serial_port_name, baudrate=int(self.params.get("baudrate")), timeout=float(self.params.get("timeout")), bytesize=int(self.params.get("databits")), stopbits=float(self.params.get("stopbits")), parity=str(self.params.get("parity")), rtscts=self.params.get("rtscts", False), dsrdtr=self.params.get("dsrdtr", False))
             self.log_message(f"Porta serial {self.serial_port_name} aberta.")
             return True # Serial port opened successfully
         except serial.SerialException as e:
-            self.log_message(f"Erro ao abrir porta serial {self.serial_port_name}: {e}", level=logging.ERROR)
-            self.update_server_status("Erro na Serial") # Update server status to "Erro na Serial"
-            self._is_running = False
-            return False # Serial port opening failed
+            try: 
+                self.serial_port = serial.serial_for_url(self.serial_port_name, baudrate=int(self.params.get("baudrate")), timeout=float(self.params.get("timeout")), bytesize=int(self.params.get("databits")), stopbits=float(self.params.get("stopbits")), parity=str(self.params.get("parity")))
+                self.log_message(f"Porta serial {self.serial_port_name} aberta.")
+                return True
+            except serial.SerialException as se:
+                self.log_message(f"Erro ao abrir porta serial {self.serial_port_name}: {e}", level=logging.ERROR)
+                self.update_server_status("Erro na Serial") # Update server status to "Erro na Serial"
+                self._is_running = False
+                return False # Serial port opening failed
 
     def close_serial_port(self):
         """Closes the serial port."""
         if self.serial_port and self.serial_port.is_open:
-            self.serial_port.close()
+            if "linux" in platform.platform().lower() and self.serial_port:
+                try:
+                    os.close(self.serial_port.fileno())  # Fecha a porta do pseudoterminal
+                    self.log_message(f"Porta virtual {self.serial_port_name} fechada.")
+                except Exception as e:
+                    self.log_message(f"Erro ao fechar a porta virtual: {e}", level=logging.ERROR)
+            elif "windows" in platform.platform().lower() and self.serial_port:
+                self.serial_port.close()
+    
             self.log_message(f"Porta serial {self.serial_port_name} fechada.")
             self.serial_port = None
 
 
-    def write_to_serial_port(self, data):
+    def write_to_serial_port(self, data: bytes):
         """Writes data to serial port using semaphore."""
         if not self.serial_port or not self.serial_port.is_open:
             self.log_message("Porta serial não está aberta.", level=logging.WARNING)
@@ -722,15 +781,18 @@ class ServerThread(QThread):
         
         max_retries = 3
         retry_delay = 1  # Começa com 1s
-        self.log_message(f"Tentando enviar para serial: {data.strip()}")
+        self.log_message(f"Tentando enviar para serial: {data.decode('cp850').strip()}")
         
         try:
             for attempt in range(max_retries):
                 if self.serial_semaphore.tryAcquire():
                     try:
-                        encoded_data = data.encode('cp850')
-                        self.serial_port.write(encoded_data)
-                        self.log_message(f"Enviado para serial: {data.strip()}")
+                        if not self.serial_port or not self.serial_port.is_open:
+                            self.log_message("Erro: Porta serial foi desconectada!", level=logging.ERROR)
+                            return
+                        
+                        self.serial_port.write(data)
+                        self.log_message(f"Enviado para serial: {data.decode('cp850').strip()}")
                         break  # Sucesso, sai do loop
                     finally:
                         self.serial_semaphore.release()
@@ -831,12 +893,17 @@ class ClientThread(QThread):
     def open_serial_port(self):
         """Opens the serial port and returns success status."""
         try:
-            self.serial_port = serial.Serial(self.serial_port_name, baudrate=int(self.params.get("baudrate")), timeout=float(self.params.get("timeout")), bytesize=int(self.params.get("databits")), stopbits=float(self.params.get("stopbits")), parity=str(self.params.get("parity")))
+            self.serial_port = serial.Serial(self.serial_port_name, baudrate=int(self.params.get("baudrate")), timeout=float(self.params.get("timeout")), bytesize=int(self.params.get("databits")), stopbits=float(self.params.get("stopbits")), parity=str(self.params.get("parity")), rtscts=self.params.get("rtscts", False), dsrdtr=self.params.get("dsrdtr", False))
             self.log_message(f"Porta serial {self.serial_port_name} aberta.")
             return True # Serial port opened successfully
         except serial.SerialException as e:
-            self.log_message(f"Erro ao abrir porta serial {self.serial_port_name}: {e}", level=logging.ERROR)
-            return False # Serial port opening failed
+            try: 
+                self.serial_port = serial.serial_for_url(self.serial_port_name, baudrate=int(self.params.get("baudrate")), timeout=float(self.params.get("timeout")), bytesize=int(self.params.get("databits")), stopbits=float(self.params.get("stopbits")), parity=str(self.params.get("parity")))
+                self.log_message(f"Porta serial {self.serial_port_name} aberta.")
+                return True
+            except serial.SerialException as se:
+                self.log_message(f"Erro ao abrir porta serial {self.serial_port_name}: {e}", level=logging.ERROR)
+                return False # Serial port opening failed
 
 
     def close_serial_port(self):

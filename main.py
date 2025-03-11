@@ -446,8 +446,9 @@ class SerialConWindow(QWidget):
         self.server_thread.client_connected_signal.connect(self.update_connected_clients_count)
         self.server_thread.server_status_signal.connect(self.update_server_status_gui) # Connect server status signals
         self.server_thread.start()
-        self.connect_button.setText("Parar Servidor") # Immediately update button text
+        self.connect_button.setText("Parar Servidor")
         self.log_message("Thread Servidor iniciada.")
+        self.update_status_gui({"server_status":"Online"})
 
 
     def stop_server_mode(self):
@@ -650,6 +651,7 @@ class ServerThread(QThread):
         if self.server_socket:
             try:
                 self.server_socket.close()
+                self.update_server_status("Parado")
             except Exception as e:
                 self.logger.error(f"Erro ao fechar o socket do servidor: {e}")
 
@@ -713,7 +715,6 @@ class ServerThread(QThread):
             self.update_server_status("Parado") # Update server status to "Parado" in GUI
             self.log_message("Thread Servidor finalizada.")
 
-
     def handle_client(self, client_socket, addr):
         """Handles communication with a single client."""
         client_ip_addr = f"{addr[0]}:{addr[1]}"
@@ -738,7 +739,6 @@ class ServerThread(QThread):
                 self.update_connected_clients_count_signal()
             client_socket.close()
             self.log_message(f"Conexão com cliente {client_ip_addr} encerrada.")
-
 
     def open_serial_port(self):
         """Opens the serial port and returns success status."""

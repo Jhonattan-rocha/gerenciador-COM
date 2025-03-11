@@ -39,3 +39,12 @@
 2025-03-10 09:52:23,455 - INFO - Socket do servidor fechado.
 2025-03-10 09:52:23,455 - INFO - Thread Servidor finalizada.
 2025-03-10 09:52:23,457 - INFO - Configurações salvas em config.json
+2025-03-10 12:19:09,488 - INFO - Logging configurado com sucesso.
+2025-03-10 12:19:09,491 - INFO - Configurações carregadas de config.json
+2025-03-10 12:19:09,491 - INFO - Aplicativo Iniciado.
+2025-03-10 12:33:49,154 - INFO - Logging configurado com sucesso.
+2025-03-10 12:33:49,156 - INFO - Configurações carregadas de config.json
+2025-03-10 12:33:49,156 - INFO - Aplicativo Iniciado.
+2025-03-11 09:22:04,166 - INFO - Logging configurado com sucesso.
+2025-03-11 09:22:04,177 - INFO - Configurações carregadas de config.json
+2025-03-11 09:22:04,179 - INFO - Aplicativo Iniciado.

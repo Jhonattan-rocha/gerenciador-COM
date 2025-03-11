@@ -1,3 +1,4 @@
+import struct
 import sys
 import json
 from PySide6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QHBoxLayout,
@@ -720,7 +721,16 @@ class ServerThread(QThread):
         client_ip_addr = f"{addr[0]}:{addr[1]}"
         try:
             while self._is_running:
-                data = client_socket.recv(1024)
+                data_len = client_socket.recv(8)
+                
+                if not data_len:
+                    self.log_message("Tamanho da mensagem não enviado", logging.ERROR)
+                    continue
+                
+                data_len_unpack = struct.unpack("!Q", data_len)[0]
+                
+                data = client_socket.recv(data_len_unpack)
+                
                 if not data:
                     self.log_message(f"Cliente {client_ip_addr} desconectado.")
                     break
@@ -865,9 +875,11 @@ class ClientThread(QThread):
                 return # Exit if serial port fails to open
 
             while self._is_running:
-                data_from_serial = self.read_from_serial_port()
-                if data_from_serial:
+                data = self.read_from_serial_port()
+                if data:
                     try:
+                        data_from_serial = data.split("\n")[0]
+                        self.client_socket.sendall(len(data_from_serial.encode('cp850')))
                         self.client_socket.sendall(data_from_serial.encode('cp850'))
                         self.log_message(f"Enviado para servidor: {data_from_serial.strip()}")
                     except Exception as e:

@@ -1,16 +1,18 @@
 {
-    "modo": "Servidor",
+    "modo": "Cliente",
     "server_ip": "10.150.0.12",
     "server_port": "10000",
-    "client_url": "10.150.0.27:9000",
+    "client_url": "10.0.0.107:9000",
     "log_location": "C:/Users/Jhonattan/Documents/GitHub/gerenciador-COM",
     "log_file_name": "app_log.txt",
     "usuario": "jhonattan.rocha",
     "senha": "19751983",
-    "porta_serial": "loop://",
+    "porta_serial": "loop://1",
     "baudrate": "9600",
     "databits": "8",
     "stopbits": "2",
     "parity": "Even",
-    "timeout": "5"
+    "timeout": "5",
+    "rtscts": false,
+    "dsrdtr": false
 }

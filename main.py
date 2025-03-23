@@ -715,25 +715,41 @@ class ServerThread(QThread):
                 self.log_message("Socket do servidor fechado.")
             self.update_server_status("Parado") # Update server status to "Parado" in GUI
             self.log_message("Thread Servidor finalizada.")
+    
+    def recv_exact(self, sock: socket.socket, n: int):
+        data = b''
+        while len(data) < n:
+            packet = sock.recv(n - len(data))
+            if not packet:
+                return None
+            data += packet
+        return data
+
 
     def handle_client(self, client_socket, addr):
         """Handles communication with a single client."""
         client_ip_addr = f"{addr[0]}:{addr[1]}"
         try:
+            last_data = b''
             while self._is_running:
-                data_len = client_socket.recv(8)
+                data_len = self.recv_exact(client_socket, 8)
                 
                 if not data_len:
                     self.log_message("Tamanho da mensagem não enviado", logging.ERROR)
                     continue
                 
-                data_len_unpack = struct.unpack("!Q", data_len)[0]
+                data_len_unpack: int = struct.unpack("!Q", data_len)[0]
                 
-                data = client_socket.recv(data_len_unpack)
+                data = self.recv_exact(client_socket, data_len_unpack)
                 
                 if not data:
                     self.log_message(f"Cliente {client_ip_addr} desconectado.")
                     break
+                
+                if data != last_data:
+                    last_data = data
+                    self.serial_port.reset_input_buffer()
+                    self.serial_port.reset_output_buffer()
 
                 self.log_message(f"Recebido do cliente {client_ip_addr}: {data.decode('cp850').strip()}")
                 self.write_to_serial_port(data)
@@ -874,11 +890,18 @@ class ClientThread(QThread):
                 self.update_client_status("Erro na Serial") # Update client status if serial fails
                 return # Exit if serial port fails to open
 
+            last_data = ""
             while self._is_running:
                 data = self.read_from_serial_port()
                 if data:
                     try:
                         data_from_serial = data.split("\n")[0]
+                        
+                        if last_data != data_from_serial:
+                            last_data = data_from_serial
+                            self.serial_port.reset_input_buffer()
+                            self.serial_port.reset_output_buffer()
+
                         self.client_socket.sendall(len(data_from_serial.encode('cp850')))
                         self.client_socket.sendall(data_from_serial.encode('cp850'))
                         self.log_message(f"Enviado para servidor: {data_from_serial.strip()}")
@@ -900,6 +923,7 @@ class ClientThread(QThread):
                 self.log_message("Socket cliente fechado.")
             self.update_client_status("Desconectado") # Update client status to "Desconectado" in GUI
             self.log_message("Thread Cliente finalizada.")
+            time.sleep(2)
 
 
     def open_serial_port(self):

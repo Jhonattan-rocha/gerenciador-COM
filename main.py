@@ -730,7 +730,6 @@ class ServerThread(QThread):
         """Handles communication with a single client."""
         client_ip_addr = f"{addr[0]}:{addr[1]}"
         try:
-            last_data = b''
             while self._is_running:
                 data_len = self.recv_exact(client_socket, 8)
                 
@@ -746,10 +745,8 @@ class ServerThread(QThread):
                     self.log_message(f"Cliente {client_ip_addr} desconectado.")
                     break
                 
-                if data != last_data:
-                    last_data = data
-                    self.serial_port.reset_input_buffer()
-                    self.serial_port.reset_output_buffer()
+                self.serial_port.reset_input_buffer()
+                self.serial_port.reset_output_buffer()
 
                 self.log_message(f"Recebido do cliente {client_ip_addr}: {data.decode('cp850').strip()}")
                 self.write_to_serial_port(data)
@@ -902,8 +899,9 @@ class ClientThread(QThread):
                             self.serial_port.reset_input_buffer()
                             self.serial_port.reset_output_buffer()
 
-                        self.client_socket.sendall(len(data_from_serial.encode('cp850')))
-                        self.client_socket.sendall(data_from_serial.encode('cp850'))
+                        data_bytes = data_from_serial.encode('cp850')
+                        self.client_socket.sendall(struct.pack("!Q", len(data_bytes)))
+                        self.client_socket.sendall(data_bytes)
                         self.log_message(f"Enviado para servidor: {data_from_serial.strip()}")
                     except Exception as e:
                         self.log_message(f"Erro ao enviar dados para o servidor: {e}", level=logging.ERROR)

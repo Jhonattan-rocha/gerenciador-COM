@@ -53,9 +53,9 @@ class SerialConWindow(QWidget):
 
         self.setup_logging()
         self.load_config()
-        self.log_timer = QTimer(self)
-        self.log_timer.timeout.connect(self.update_log_content)
-        self.log_timer.start(5000)
+        # self.log_timer = QTimer(self)
+        # self.log_timer.timeout.connect(self.update_log_content)
+        # self.log_timer.start(5000)
         self.log_signal.connect(self.append_log_text) # Connect signal to append log text
 
         self.log_message("Aplicativo Iniciado.") # Initial log message
@@ -747,7 +747,7 @@ class ServerThread(QThread):
             self.log_message(f"Erro ao lidar com o cliente {client_ip_addr}: {e}", level=logging.ERROR)
         finally:
             client_id = addr[1]
-            if client_id in self.connected_clients:
+            if client_id in self.connected_clients.keys():
                 self.connected_clients.pop(client_id)
                 self.update_connected_clients_count_signal()
             client_socket.close()
@@ -877,17 +877,14 @@ class ClientThread(QThread):
                 self.update_client_status("Erro na Serial") # Update client status if serial fails
                 return # Exit if serial port fails to open
 
-            last_data = ""
             while self._is_running:
                 data = self.read_from_serial_port()
                 if data:
                     try:
-                        data_from_serial = data.split("\n")[0]
+                        data_from_serial = "".join(data.split(" ")[:-5])
                         
-                        if last_data != data_from_serial:
-                            last_data = data_from_serial
-                            self.serial_port.reset_input_buffer()
-                            self.serial_port.reset_output_buffer()
+                        self.serial_port.reset_input_buffer()
+                        self.serial_port.reset_output_buffer()
 
                         data_bytes = data_from_serial.encode('cp850')
                         self.client_socket.sendall(struct.pack("!Q", len(data_bytes)))

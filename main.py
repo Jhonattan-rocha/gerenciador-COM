@@ -715,23 +715,13 @@ class ServerThread(QThread):
                 self.log_message("Socket do servidor fechado.")
             self.update_server_status("Parado") # Update server status to "Parado" in GUI
             self.log_message("Thread Servidor finalizada.")
-    
-    def recv_exact(self, sock: socket.socket, n: int):
-        data = b''
-        while len(data) < n:
-            packet = sock.recv(n - len(data))
-            if not packet:
-                return None
-            data += packet
-        return data
 
-
-    def handle_client(self, client_socket, addr):
+    def handle_client(self, client_socket: socket.socket, addr):
         """Handles communication with a single client."""
         client_ip_addr = f"{addr[0]}:{addr[1]}"
         try:
             while self._is_running:
-                data_len = self.recv_exact(client_socket, 8)
+                data_len = client_socket.recv(8)
                 
                 if not data_len:
                     self.log_message("Tamanho da mensagem não enviado", logging.ERROR)
@@ -739,7 +729,7 @@ class ServerThread(QThread):
                 
                 data_len_unpack: int = struct.unpack("!Q", data_len)[0]
                 
-                data = self.recv_exact(client_socket, data_len_unpack)
+                data = client_socket.recv(data_len_unpack)
                 
                 if not data:
                     self.log_message(f"Cliente {client_ip_addr} desconectado.")
@@ -957,7 +947,7 @@ class ClientThread(QThread):
         try:
             if self.serial_semaphore.tryAcquire():
                 try:
-                    data = self.serial_port.readline().decode('cp850').strip()
+                    data = self.serial_port.read_until(b'\n').decode('cp850').strip()
                     if data:
                         self.log_message(f"Recebido da serial: {data}")
                         return data

@@ -29,7 +29,7 @@ class ServerThread(QThread):
         self.server_socket: socket.socket = None
         self.serial_port: serial.Serial = None
         self.connected_clients = {} # client_socket: address
-        self.client_handler_threads = []
+        self.client_handler_threads: list[QThread] = []
 
 
     def _log(self, message: str, level=logging.INFO, to_gui=True):
@@ -256,12 +256,12 @@ class ServerThread(QThread):
             return
 
         try:
-            if self.serial_semaphore.tryAcquire(1, 500): # Tenta adquirir por 500ms
+            if self.serial_semaphore.tryAcquire(): # Tenta adquirir por 500ms
                 try:
                     # Limpar buffers antes de escrever pode ser útil em alguns casos,
                     # mas pode descartar dados importantes em outros. Avaliar necessidade.
-                    # self.serial_port.reset_input_buffer() # Cuidado com isso
-                    # self.serial_port.reset_output_buffer()
+                    self.serial_port.reset_input_buffer()
+                    self.serial_port.reset_output_buffer()
 
                     bytes_written = self.serial_port.write(data)
                     self.serial_port.flush() # Garante que os dados sejam enviados

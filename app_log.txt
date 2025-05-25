@@ -1,0 +1,50 @@
+2025-05-25 12:07:45,105 - INFO - main_app - Sistema de logging configurado.
+2025-05-25 12:07:45,160 - INFO - main_app - config.json não encontrado. Usando padrões e salvando nova config.
+2025-05-25 12:07:45,160 - INFO - main_app - Configurações salvas em config.json
+2025-05-25 12:07:45,161 - INFO - main_app - Aplicativo Iniciado.
+2025-05-25 12:07:45,168 - ERROR - main_app - Erro ao carregar style.qss: 'charmap' codec can't decode byte 0x81 in position 334: character maps to <undefined>
+2025-05-25 12:08:25,460 - INFO - main_app - Fechando aplicativo...
+2025-05-25 12:08:25,462 - INFO - main_app - Configurações salvas em config.json
+2025-05-25 12:08:31,142 - INFO - main_app - Sistema de logging configurado.
+2025-05-25 12:08:31,205 - INFO - main_app - Sistema de logging configurado.
+2025-05-25 12:08:31,207 - INFO - main_app - Configurações carregadas de config.json
+2025-05-25 12:08:31,207 - INFO - main_app - Aplicativo Iniciado.
+2025-05-25 12:08:31,215 - ERROR - main_app - Erro ao carregar style.qss: 'charmap' codec can't decode byte 0x81 in position 334: character maps to <undefined>
+2025-05-25 12:09:25,394 - INFO - main_app - Fechando aplicativo...
+2025-05-25 12:09:25,395 - INFO - main_app - Configurações salvas em config.json
+2025-05-25 12:09:31,322 - INFO - main_app - Sistema de logging configurado.
+2025-05-25 12:09:31,379 - INFO - main_app - Sistema de logging configurado.
+2025-05-25 12:09:31,379 - INFO - main_app - Configurações carregadas de config.json
+2025-05-25 12:09:31,379 - INFO - main_app - Aplicativo Iniciado.
+2025-05-25 12:09:36,956 - INFO - main_app - Fechando aplicativo...
+2025-05-25 12:09:36,957 - INFO - main_app - Configurações salvas em config.json
+2025-05-25 12:09:52,288 - INFO - main_app - Sistema de logging configurado.
+2025-05-25 12:09:52,345 - INFO - main_app - Sistema de logging configurado.
+2025-05-25 12:09:52,345 - INFO - main_app - Configurações carregadas de config.json
+2025-05-25 12:09:52,345 - INFO - main_app - Aplicativo Iniciado.
+2025-05-25 12:10:19,003 - INFO - main_app - Fechando aplicativo...
+2025-05-25 12:10:19,004 - INFO - main_app - Configurações salvas em config.json
+2025-05-25 12:13:14,817 - INFO - main_app - Sistema de logging configurado.
+2025-05-25 12:13:14,873 - INFO - main_app - Sistema de logging configurado.
+2025-05-25 12:13:14,873 - INFO - main_app - Configurações carregadas de config.json
+2025-05-25 12:13:14,873 - INFO - main_app - Aplicativo Iniciado.
+2025-05-25 12:13:28,657 - INFO - main_app - Fechando aplicativo...
+2025-05-25 12:13:28,659 - INFO - main_app - Configurações salvas em config.json
+2025-05-25 12:14:03,848 - INFO - main_app - Sistema de logging configurado.
+2025-05-25 12:14:03,906 - INFO - main_app - Sistema de logging configurado.
+2025-05-25 12:14:03,906 - INFO - main_app - Configurações carregadas de config.json
+2025-05-25 12:14:03,906 - INFO - main_app - Aplicativo Iniciado.
+2025-05-25 12:14:12,087 - INFO - main_app - Fechando aplicativo...
+2025-05-25 12:14:12,088 - INFO - main_app - Configurações salvas em config.json
+2025-05-25 12:14:40,808 - INFO - main_app - Sistema de logging configurado.
+2025-05-25 12:14:40,865 - INFO - main_app - Sistema de logging configurado.
+2025-05-25 12:14:40,865 - INFO - main_app - Configurações carregadas de config.json
+2025-05-25 12:14:40,865 - INFO - main_app - Aplicativo Iniciado.
+2025-05-25 12:14:51,312 - INFO - main_app - Fechando aplicativo...
+2025-05-25 12:14:51,313 - INFO - main_app - Configurações salvas em config.json
+2025-05-25 12:16:18,953 - INFO - main_app - Sistema de logging configurado.
+2025-05-25 12:16:19,012 - INFO - main_app - Sistema de logging configurado.
+2025-05-25 12:16:19,012 - INFO - main_app - Configurações carregadas de config.json
+2025-05-25 12:16:19,012 - INFO - main_app - Aplicativo Iniciado.
+2025-05-25 12:16:42,862 - INFO - main_app - Fechando aplicativo...
+2025-05-25 12:16:42,863 - INFO - main_app - Configurações salvas em config.json

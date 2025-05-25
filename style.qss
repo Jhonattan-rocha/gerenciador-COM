@@ -1,0 +1,178 @@
+QWidget {
+    font-size: 10pt;
+    color: #333; /* Cor de texto padrão */
+}
+
+QTabWidget::pane { /* Painel da aba */
+    border-top: 2px solid #C2C7CB;
+    margin-top: -1px; /* Para alinhar com a borda da aba */
+}
+
+QTabBar::tab { /* Abas */
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                stop: 0 #E1E1E1, stop: 0.4 #DDDDDD,
+                                stop: 0.5 #D8D8D8, stop: 1.0 #D3D3D3);
+    border: 1px solid #C4C4C3;
+    border-bottom-color: #C2C7CB; /* Para conectar com a borda do pane */
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    min-width: 8ex;
+    padding: 5px 10px; /* Aumenta o padding */
+    margin-right: 2px; /* Espaço entre abas */
+}
+
+QTabBar::tab:selected {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                stop: 0 #fafafa, stop: 0.4 #f4f4f4,
+                                stop: 0.5 #e7e7e7, stop: 1.0 #fafafa);
+    border-color: #9B9B9B;
+    border-bottom-color: #fafafa; /* Cor do fundo da aba selecionada */
+    color: #222; /* Texto mais escuro para aba selecionada */
+}
+
+QTabBar::tab:!selected:hover {
+    background: #e0e0e0; /* Cor ao passar o mouse em aba não selecionada */
+}
+
+QGroupBox {
+    background-color: #f0f0f0; /* Fundo levemente cinza para QGroupBox */
+    border: 1px solid #c0c0c0;
+    border-radius: 5px;
+    margin-top: 1ex; /* Espaço acima do título */
+    font-weight: bold;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding: 0 5px;
+    background-color: #e0e0e0; /* Fundo do título um pouco diferente */
+    border-radius: 3px;
+    color: #111;
+}
+
+QLineEdit, QComboBox, QTextEdit, QLineEdit:read-only {
+    padding: 5px;
+    border: 1px solid #b0b0b0;
+    border-radius: 3px;
+    background-color: #ffffff; /* Fundo branco para campos de entrada */
+}
+
+QLineEdit:read-only {
+    background-color: #eeeeee; /* Fundo cinza claro para campos somente leitura */
+}
+
+QPushButton {
+    background-color: #4CAF50; /* Verde */
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    border: 1px solid #3e8e41; /* Borda sutil */
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    background-color: #45a049; /* Verde mais escuro no hover */
+}
+
+QPushButton:pressed {
+    background-color: #3e8e41; /* Verde ainda mais escuro ao pressionar */
+}
+
+QPushButton[active="true"] { /* Estilo para botão quando "ativo" (conectado/iniciado) */
+    background-color: #f44336; /* Vermelho */
+    border: 1px solid #d32f2f;
+}
+
+QPushButton[active="true"]:hover {
+    background-color: #e53935;
+}
+
+QPushButton[active="true"]:pressed {
+    background-color: #d32f2f;
+}
+
+
+/* Status Labels com cores baseadas na propriedade 'status' */
+QLabel#status_label_value[status="Desconectado"],
+QLabel#status_label_value[status*="Erro"], /* Contém "Erro" */
+QLabel#status_label_value[status="Parando Servidor"],
+QLabel#status_label_value[status="Desconectando Cliente"] {
+    color: #D32F2F; /* Vermelho escuro */
+    font-weight: bold;
+}
+
+QLabel#server_status_value[status="Parado"],
+QLabel#server_status_value[status*="Erro"],
+QLabel#server_status_value[status="Porta Inválida"],
+QLabel#server_status_value[status="Parando..."] {
+    color: #D32F2F;
+    font-weight: bold;
+}
+
+QLabel#client_status_value[status="Desconectado"],
+QLabel#client_status_value[status*="Erro"],
+QLabel#client_status_value[status="Configuração Incompleta"],
+QLabel#client_status_value[status="Conexão Recusada"],
+QLabel#client_status_value[status="Timeout Servidor"],
+QLabel#client_status_value[status="Host Inválido"],
+QLabel#client_status_value[status="URL Inválida"],
+QLabel#client_status_value[status="Desconectando..."] {
+    color: #D32F2F;
+    font-weight: bold;
+}
+
+
+QLabel#status_label_value[status="Conectado"],
+QLabel#status_label_value[status="Iniciando Servidor"],
+QLabel#status_label_value[status="Conectando ao Servidor"] {
+    color: #388E3C; /* Verde escuro */
+    font-weight: bold;
+}
+
+QLabel#server_status_value[status="Online"],
+QLabel#server_status_value[status="Ouvindo"],
+QLabel#server_status_value[status="Serial Conectada"],
+QLabel#server_status_value[status="Iniciando..."] {
+    color: #388E3C;
+    font-weight: bold;
+}
+
+QLabel#client_status_value[status="Conectado"],
+QLabel#client_status_value[status="Serial Conectada"],
+QLabel#client_status_value[status="Conectando..."] {
+    color: #388E3C;
+    font-weight: bold;
+}
+
+/* Cores de aviso */
+QLabel#server_status_value[status*="Timeout"],
+QLabel#client_status_value[status*="Timeout"] {
+    color: #FFA000; /* Laranja/Ambar */
+    font-weight: bold;
+}
+
+/* creditos */
+QLabel#credits_label,
+QLabel#mode_label {
+    color: #FFFFFF; /* Laranja/Ambar */
+    font-weight: bold;
+}
+
+QComboBox QAbstractItemView {
+    background-color: #ffffff;   /* Fundo da lista que aparece */
+    border: 1px solid #cccccc;   /* Borda da lista */
+    outline: 0px;                /* Remove a borda pontilhada de foco em alguns sistemas */
+    
+    /* Cor do TEXTO do item SELECIONADO na lista */
+    selection-color: #ffffff; 
+    /* Cor de FUNDO do item SELECIONADO na lista */
+    selection-background-color: #0078D7; /* Azul Microsoft (mesmo dos botões) */
+}
+
+QTextEdit {
+    background-color: #272822; /* Fundo escuro para log (estilo Monokai) */
+    color: #F8F8F2; /* Texto claro */
+    font-family: "Consolas", "Courier New", monospace;
+    font-size: 9pt;
+}

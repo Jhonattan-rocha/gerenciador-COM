@@ -48,3 +48,9 @@
 2025-05-25 12:16:19,012 - INFO - main_app - Aplicativo Iniciado.
 2025-05-25 12:16:42,862 - INFO - main_app - Fechando aplicativo...
 2025-05-25 12:16:42,863 - INFO - main_app - Configurações salvas em config.json
+2025-05-25 12:37:59,450 - INFO - main_app - Sistema de logging configurado.
+2025-05-25 12:37:59,505 - INFO - main_app - Sistema de logging configurado.
+2025-05-25 12:37:59,506 - INFO - main_app - Configurações carregadas de config.json
+2025-05-25 12:37:59,506 - INFO - main_app - Aplicativo Iniciado.
+2025-05-25 12:38:16,265 - INFO - main_app - Fechando aplicativo...
+2025-05-25 12:38:16,267 - INFO - main_app - Configurações salvas em config.json

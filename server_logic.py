@@ -29,7 +29,7 @@ class ServerThread(QThread):
         self.server_socket: socket.socket = None
         self.serial_port: serial.Serial = None
         self.connected_clients = {} # client_socket: address
-        self.client_handler_threads: list[QThread] = []
+        self.client_handler_threads: list[threading.Thread] = []
 
 
     def _log(self, message: str, level=logging.INFO, to_gui=True):

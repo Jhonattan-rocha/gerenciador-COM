@@ -19,6 +19,11 @@ import serial.tools.list_ports
 from server_logic import ServerThread
 from client_logic import ClientThread
 
+# ############## NOVO ##############
+# Importar o novo cliente de API
+from api_client import APIClient
+# ##################################
+
 if "linux" in platform.platform().lower():
     import pty
 
@@ -70,7 +75,10 @@ class SerialConWindow(QWidget):
         self.serial_port = None # Não usado diretamente aqui, gerenciado por threads
         self.server_thread: ServerThread = None
         self.client_thread: ClientThread = None
-
+        # ############## NOVO ##############
+        self.api_client: APIClient = None
+        # ##################################
+        
         self.serial_port_semaphore = QSemaphore(1)
         self.log_file_path = ""
         self.logger = logging.getLogger(APP_LOGGER_NAME) # Logger nomeado
@@ -186,6 +194,13 @@ class SerialConWindow(QWidget):
         self.client_config_group.setLayout(client_config_layout)
         config_layout.addWidget(self.client_config_group)
 
+        backend_group = QGroupBox("Configurações do Backend")
+        backend_layout = QGridLayout(backend_group)
+        self.backend_url_input = QLineEdit("localhost:8000")
+        backend_layout.addWidget(QLabel("URL do Backend:"), 0, 0)
+        backend_layout.addWidget(self.backend_url_input, 0, 1)
+        config_layout.addWidget(backend_group)
+
         # Local do Log
         log_location_group = QGroupBox("Configurações de Log")
         log_config_layout = QGridLayout(log_location_group)
@@ -207,16 +222,14 @@ class SerialConWindow(QWidget):
 
 
         # Usuário e Senha (se necessário para autenticação futura)
-        auth_group = QGroupBox("Autenticação (Opcional)")
+        auth_group = QGroupBox("Autenticação da Licença")
         auth_layout = QGridLayout(auth_group)
-        user_label = QLabel("Usuário:")
         self.user_input = QLineEdit()
-        password_label = QLabel("Senha:")
         self.password_input = QLineEdit()
         self.password_input.setEchoMode(QLineEdit.Password)
-        auth_layout.addWidget(user_label, 0, 0)
+        auth_layout.addWidget(QLabel("Usuário:"), 0, 0)
         auth_layout.addWidget(self.user_input, 0, 1)
-        auth_layout.addWidget(password_label, 1, 0)
+        auth_layout.addWidget(QLabel("Senha/Licença:"), 1, 0)
         auth_layout.addWidget(self.password_input, 1, 1)
         config_layout.addWidget(auth_group)
 
@@ -453,36 +466,57 @@ class SerialConWindow(QWidget):
 
 
     def handle_connect_button(self):
-        modo = self.mode_combo.currentText()
-        selected_serial_port_name_display = self.serial_port_combo.currentText() # Para log
-        selected_serial_port_actual = self.get_selected_serial_port()
+        # ############## LÓGICA DE CONEXÃO MODIFICADA ##############
+        # Se já estiver conectado, o botão irá parar/desconectar
+        is_running = (self.server_thread and self.server_thread.isRunning()) or \
+                     (self.client_thread and self.client_thread.isRunning())
+        if is_running:
+            if self.mode_combo.currentText() == "Servidor":
+                self.stop_server_mode()
+            else:
+                self.stop_client_mode()
+            self.update_connect_button_state()
+            return
 
-        if not selected_serial_port_actual or selected_serial_port_actual == "Nenhuma porta serial encontrada":
-            QMessageBox.warning(self, "Erro", "Nenhuma porta serial selecionada ou disponível.")
-            self.log_message("Tentativa de conexão sem porta serial selecionada.", logging.ERROR)
+        # Validação dos campos antes de prosseguir
+        usuario = self.user_input.text()
+        senha = self.password_input.text()
+        backend_url = self.backend_url_input.text()
+
+        if not all([usuario, senha, backend_url]):
+            QMessageBox.warning(self, "Validação Falhou", "Os campos 'URL do Backend', 'Usuário' e 'Senha/Licença' são obrigatórios.")
+            return
+
+        # Instancia o APIClient
+        self.api_client = APIClient(backend_url)
+        
+        # Chama a validação da licença
+        is_valid, message = self.api_client.validar_licenca(usuario, senha)
+
+        if not is_valid:
+            self.log_message(f"Falha na validação da licença: {message}", logging.ERROR)
+            QMessageBox.critical(self, "Falha na Ativação", message)
+            return
+        
+        # Se a licença for válida, exibe a mensagem de sucesso e continua
+        QMessageBox.information(self, "Licença Ativada", message)
+        
+        # Continua com a lógica original de conexão
+        modo = self.mode_combo.currentText()
+        selected_serial_port = self.get_selected_serial_port()
+
+        if not selected_serial_port or "Nenhuma" in selected_serial_port:
+            QMessageBox.warning(self, "Erro", "Nenhuma porta serial selecionada.")
             return
 
         if modo == "Servidor":
-            if not self.server_ip_input.text() or not self.server_port_input.text():
-                QMessageBox.warning(self, "Erro de Configuração", "IP e Porta do Servidor são obrigatórios.")
-                self.update_status_labels(server_status="Erro de Configuração")
-                return
-            if not self.server_thread or not self.server_thread.isRunning():
-                self.start_server_mode(selected_serial_port_actual)
-            else:
-                self.stop_server_mode()
-        elif modo == "Cliente":
-            if not self.client_url_input.text():
-                QMessageBox.warning(self, "Erro de Configuração", "URL do Cliente é obrigatória.")
-                self.update_status_labels(client_status="Erro de Configuração")
-                return
-            if not self.client_thread or not self.client_thread.isRunning():
-                self.start_client_mode(selected_serial_port_actual)
-            else:
-                self.stop_client_mode()
+            self.start_server_mode(selected_serial_port)
+        else:
+            self.start_client_mode(selected_serial_port)
 
         self.save_config()
         self.update_connect_button_state()
+        # #############################################################
 
 
     def update_connect_button_state(self):
@@ -689,7 +723,8 @@ class SerialConWindow(QWidget):
             "log_location": current_log_dir,
             "log_file_name": current_log_filename,
             "usuario": self.user_input.text(),
-            # "senha": self.password_input.text(), # Evitar salvar senhas em plain text
+            "senha": self.password_input.text(),
+            "backend_url": self.backend_url_input.text(),
             "porta_serial_display": self.serial_port_combo.currentText(), # Salva o texto exibido
             "porta_serial_actual": self.get_selected_serial_port(),      # Salva o valor real da porta
             "baudrate": self.baudrate_combo.currentText(),
@@ -716,6 +751,7 @@ class SerialConWindow(QWidget):
             self.server_ip_input.setText(config.get("server_ip", "0.0.0.0"))
             self.server_port_input.setText(config.get("server_port", "8888"))
             self.client_url_input.setText(config.get("client_url", "127.0.0.1:8888"))
+            self.backend_url_input.setText(config.get("backend_url", "localhost:8000"))
             self.log_location_input.setText(config.get("log_location", "."))
             self.log_file_name_input.setText(config.get("log_file_name", DEFAULT_LOG_FILENAME))
             self.user_input.setText(config.get("usuario", ""))

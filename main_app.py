@@ -68,7 +68,7 @@ class SerialConWindow(QWidget):
 
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Gerenciador de Porta Serial v1.1")
+        self.setWindowTitle("Gerenciador de Porta Serial v1.3 - Autenticação JWT")
         self.setWindowIcon(QIcon("./icon.png"))
         self.setGeometry(100, 100, 700, 600) # Tamanho inicial
 
@@ -466,7 +466,9 @@ class SerialConWindow(QWidget):
 
 
     def handle_connect_button(self):
-        # ############## LÓGICA DE CONEXÃO MODIFICADA ##############
+        """
+        Lógica de conexão totalmente refeita para o fluxo de autenticação JWT.
+        """
         # Se já estiver conectado, o botão irá parar/desconectar
         is_running = (self.server_thread and self.server_thread.isRunning()) or \
                      (self.client_thread and self.client_thread.isRunning())
@@ -478,30 +480,47 @@ class SerialConWindow(QWidget):
             self.update_connect_button_state()
             return
 
-        # Validação dos campos antes de prosseguir
+        # 1. Validação dos campos da interface
         usuario = self.user_input.text()
         senha = self.password_input.text()
         backend_url = self.backend_url_input.text()
 
         if not all([usuario, senha, backend_url]):
-            QMessageBox.warning(self, "Validação Falhou", "Os campos 'URL do Backend', 'Usuário' e 'Senha/Licença' são obrigatórios.")
+            QMessageBox.warning(self, "Validação Falhou", "Os campos 'URL do Backend', 'Usuário' e 'Senha' são obrigatórios.")
             return
 
-        # Instancia o APIClient
+        # 2. Instancia o APIClient e obtém o token
         self.api_client = APIClient(backend_url)
-        
-        # Chama a validação da licença
-        is_valid, message = self.api_client.validar_licenca(usuario, senha)
+        self.log_message(f"Iniciando processo de autenticação para o usuário '{usuario}'...")
+        QApplication.setOverrideCursor(Qt.WaitCursor) # Mãozinha de "esperando"
 
-        if not is_valid:
-            self.log_message(f"Falha na validação da licença: {message}", logging.ERROR)
-            QMessageBox.critical(self, "Falha na Ativação", message)
+        token_ok, login_message = self.api_client.obter_token(usuario, senha)
+        
+        QApplication.restoreOverrideCursor() # Restaura o cursor
+
+        if not token_ok:
+            self.log_message(f"Falha na autenticação: {login_message}", logging.ERROR)
+            QMessageBox.critical(self, "Falha na Autenticação", login_message)
             return
+
+        self.log_message("Autenticação bem-sucedida. Validando licença...")
+
+        # 3. Com o token armazenado no api_client, valida a licença
+        QApplication.setOverrideCursor(Qt.WaitCursor)
         
-        # Se a licença for válida, exibe a mensagem de sucesso e continua
-        QMessageBox.information(self, "Licença Ativada", message)
+        licenca_ok, licenca_message = self.api_client.validar_licenca()
         
-        # Continua com a lógica original de conexão
+        QApplication.restoreOverrideCursor()
+
+        if not licenca_ok:
+            self.log_message(f"Falha na validação da licença: {licenca_message}", logging.ERROR)
+            QMessageBox.critical(self, "Falha na Licença", licenca_message)
+            return
+
+        # 4. Se tudo deu certo, inicia a operação principal (servidor/cliente)
+        self.log_message(f"Licença validada: {licenca_message}", logging.INFO)
+        QMessageBox.information(self, "Licença Ativa", "Licença validada com sucesso. Iniciando serviço...")
+        
         modo = self.mode_combo.currentText()
         selected_serial_port = self.get_selected_serial_port()
 
@@ -516,7 +535,6 @@ class SerialConWindow(QWidget):
 
         self.save_config()
         self.update_connect_button_state()
-        # #############################################################
 
 
     def update_connect_button_state(self):

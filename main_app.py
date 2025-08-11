@@ -68,7 +68,7 @@ class SerialConWindow(QWidget):
 
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Gerenciador de Porta Serial v1.3 - Autenticação JWT")
+        self.setWindowTitle("Gerenciador de Porta Serial v1.4 - API Key + WebSocket")
         self.setWindowIcon(QIcon("./icon.png"))
         self.setGeometry(100, 100, 700, 600) # Tamanho inicial
 
@@ -221,16 +221,20 @@ class SerialConWindow(QWidget):
         config_layout.addWidget(log_location_group)
 
 
-        # Usuário e Senha (se necessário para autenticação futura)
-        auth_group = QGroupBox("Autenticação da Licença")
+        # API Key para autenticação
+        auth_group = QGroupBox("Autenticação do Agente")
         auth_layout = QGridLayout(auth_group)
-        self.user_input = QLineEdit()
-        self.password_input = QLineEdit()
-        self.password_input.setEchoMode(QLineEdit.Password)
-        auth_layout.addWidget(QLabel("Usuário:"), 0, 0)
-        auth_layout.addWidget(self.user_input, 0, 1)
-        auth_layout.addWidget(QLabel("Senha/Licença:"), 1, 0)
-        auth_layout.addWidget(self.password_input, 1, 1)
+        self.api_key_input = QLineEdit()
+        self.api_key_input.setEchoMode(QLineEdit.Password)
+        self.api_key_input.setPlaceholderText("Cole aqui a API Key do agente")
+        auth_layout.addWidget(QLabel("API Key:"), 0, 0)
+        auth_layout.addWidget(self.api_key_input, 0, 1)
+        
+        # Status da conexão WebSocket
+        self.ws_status_label = QLabel("Status: Desconectado")
+        self.ws_status_label.setStyleSheet("color: red; font-weight: bold;")
+        auth_layout.addWidget(QLabel("WebSocket:"), 1, 0)
+        auth_layout.addWidget(self.ws_status_label, 1, 1)
         config_layout.addWidget(auth_group)
 
         # Configurações da Porta Serial
@@ -467,59 +471,66 @@ class SerialConWindow(QWidget):
 
     def handle_connect_button(self):
         """
-        Lógica de conexão totalmente refeita para o fluxo de autenticação JWT.
+        Lógica de conexão refeita para usar API Key e WebSocket.
         """
         # Se já estiver conectado, o botão irá parar/desconectar
         is_running = (self.server_thread and self.server_thread.isRunning()) or \
-                     (self.client_thread and self.client_thread.isRunning())
+                     (self.client_thread and self.client_thread.isRunning()) or \
+                     (self.api_client and self.api_client.is_connected)
         if is_running:
+            if self.api_client:
+                self.api_client.desconectar()
             if self.mode_combo.currentText() == "Servidor":
                 self.stop_server_mode()
             else:
                 self.stop_client_mode()
             self.update_connect_button_state()
+            self.update_ws_status("disconnected", "Desconectado")
             return
 
         # 1. Validação dos campos da interface
-        usuario = self.user_input.text()
-        senha = self.password_input.text()
-        backend_url = self.backend_url_input.text()
+        api_key = self.api_key_input.text().strip()
+        backend_url = self.backend_url_input.text().strip()
 
-        if not all([usuario, senha, backend_url]):
-            QMessageBox.warning(self, "Validação Falhou", "Os campos 'URL do Backend', 'Usuário' e 'Senha' são obrigatórios.")
+        if not all([api_key, backend_url]):
+            QMessageBox.warning(self, "Validação Falhou", "Os campos 'URL do Backend' e 'API Key' são obrigatórios.")
             return
 
-        # 2. Instancia o APIClient e obtém o token
+        # 2. Instancia o APIClient e autentica com API Key
         self.api_client = APIClient(backend_url)
-        self.log_message(f"Iniciando processo de autenticação para o usuário '{usuario}'...")
-        QApplication.setOverrideCursor(Qt.WaitCursor) # Mãozinha de "esperando"
+        self.log_message(f"Iniciando processo de autenticação com API Key...")
+        QApplication.setOverrideCursor(Qt.WaitCursor) # Cursor de "esperando"
 
-        token_ok, login_message = self.api_client.obter_token(usuario, senha)
+        auth_ok, auth_message = self.api_client.autenticar_api_key(api_key)
         
         QApplication.restoreOverrideCursor() # Restaura o cursor
 
-        if not token_ok:
-            self.log_message(f"Falha na autenticação: {login_message}", logging.ERROR)
-            QMessageBox.critical(self, "Falha na Autenticação", login_message)
+        if not auth_ok:
+            self.log_message(f"Falha na autenticação: {auth_message}", logging.ERROR)
+            QMessageBox.critical(self, "Falha na Autenticação", auth_message)
             return
 
-        self.log_message("Autenticação bem-sucedida. Validando licença...")
+        self.log_message(f"Autenticação bem-sucedida: {auth_message}")
 
-        # 3. Com o token armazenado no api_client, valida a licença
+        # 3. Conecta ao WebSocket
+        self.log_message("Estabelecendo conexão WebSocket...")
         QApplication.setOverrideCursor(Qt.WaitCursor)
         
-        licenca_ok, licenca_message = self.api_client.validar_licenca()
+        ws_ok, ws_message = self.api_client.conectar_websocket(
+            on_message_callback=self.handle_ws_message,
+            on_status_callback=self.update_ws_status
+        )
         
         QApplication.restoreOverrideCursor()
 
-        if not licenca_ok:
-            self.log_message(f"Falha na validação da licença: {licenca_message}", logging.ERROR)
-            QMessageBox.critical(self, "Falha na Licença", licenca_message)
+        if not ws_ok:
+            self.log_message(f"Falha na conexão WebSocket: {ws_message}", logging.ERROR)
+            QMessageBox.critical(self, "Falha na Conexão", ws_message)
             return
 
         # 4. Se tudo deu certo, inicia a operação principal (servidor/cliente)
-        self.log_message(f"Licença validada: {licenca_message}", logging.INFO)
-        QMessageBox.information(self, "Licença Ativa", "Licença validada com sucesso. Iniciando serviço...")
+        self.log_message(f"WebSocket conectado: {ws_message}", logging.INFO)
+        QMessageBox.information(self, "Conexão Estabelecida", "Agente conectado com sucesso ao backend!")
         
         modo = self.mode_combo.currentText()
         selected_serial_port = self.get_selected_serial_port()
@@ -740,8 +751,7 @@ class SerialConWindow(QWidget):
             "client_url": self.client_url_input.text(),
             "log_location": current_log_dir,
             "log_file_name": current_log_filename,
-            "usuario": self.user_input.text(),
-            "senha": self.password_input.text(),
+            "api_key": self.api_key_input.text(),
             "backend_url": self.backend_url_input.text(),
             "porta_serial_display": self.serial_port_combo.currentText(), # Salva o texto exibido
             "porta_serial_actual": self.get_selected_serial_port(),      # Salva o valor real da porta
@@ -772,8 +782,7 @@ class SerialConWindow(QWidget):
             self.backend_url_input.setText(config.get("backend_url", "localhost:8000"))
             self.log_location_input.setText(config.get("log_location", "."))
             self.log_file_name_input.setText(config.get("log_file_name", DEFAULT_LOG_FILENAME))
-            self.user_input.setText(config.get("usuario", ""))
-            # self.password_input.setText(config.get("senha", ""))
+            self.api_key_input.setText(config.get("api_key", ""))
 
             saved_serial_port = config.get("porta_serial_actual") # Usar o valor real
             if saved_serial_port:
@@ -812,6 +821,58 @@ class SerialConWindow(QWidget):
     def update_connected_clients_count(self, count: int):
         self.connected_clients_value.setText(str(count))
         self.update_status_labels(connected_clients=count)
+    
+    def handle_ws_message(self, data):
+        """Processa mensagens recebidas via WebSocket."""
+        try:
+            message_type = data.get('type', 'unknown')
+            
+            if message_type == 'heartbeat_ack':
+                # Apenas log de debug para heartbeat
+                self.logger.debug("Heartbeat ACK recebido")
+                return
+                
+            self.log_message(f"Mensagem WebSocket recebida: {message_type}")
+            
+            if message_type == 'command':
+                # Processa comandos do backend
+                command = data.get('command')
+                if command == 'restart':
+                    self.log_message("Comando de reinicialização recebido do servidor")
+                    QMessageBox.information(self, "Comando do Servidor", "O servidor solicitou reinicialização do agente.")
+                    # Implementar lógica de reinicialização se necessário
+                elif command == 'disconnect':
+                    self.log_message("Comando de desconexão recebido do servidor")
+                    if self.api_client and self.api_client.is_connected:
+                        self.api_client.desconectar()
+                        self.update_ws_status("disconnected", "Desconectado pelo servidor")
+                        self.update_connect_button_state()
+            
+            elif message_type == 'message':
+                # Exibe mensagens do backend
+                message = data.get('content', 'Sem conteúdo')
+                self.log_message(f"Mensagem do servidor: {message}")
+                QMessageBox.information(self, "Mensagem do Servidor", message)
+                
+        except Exception as e:
+            self.log_message(f"Erro ao processar mensagem WebSocket: {e}", logging.ERROR)
+    
+    def update_ws_status(self, status_type: str, message: str):
+        """Atualiza o status da conexão WebSocket na interface."""
+        if status_type == "connected":
+            self.ws_status_label.setText(f"Status: Conectado")
+            self.ws_status_label.setStyleSheet("color: green; font-weight: bold;")
+        elif status_type == "connecting":
+            self.ws_status_label.setText(f"Status: Conectando...")
+            self.ws_status_label.setStyleSheet("color: orange; font-weight: bold;")
+        elif status_type == "error":
+            self.ws_status_label.setText(f"Status: Erro")
+            self.ws_status_label.setStyleSheet("color: red; font-weight: bold;")
+        else:  # disconnected
+            self.ws_status_label.setText(f"Status: Desconectado")
+            self.ws_status_label.setStyleSheet("color: red; font-weight: bold;")
+            
+        self.log_message(f"Status WebSocket: {message}")
 
 
     def update_status_labels(self, general_status=None, connection_details=None,

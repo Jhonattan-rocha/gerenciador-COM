@@ -12,7 +12,7 @@ from PySide6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QHBoxLayout,
                                QLineEdit, QPushButton, QComboBox, QTextEdit,
                                QFileDialog, QMessageBox, QProgressBar)
 from PySide6.QtGui import QIcon, QPixmap, QDoubleValidator, Qt
-from PySide6.QtCore import QTimer, Signal, QThread, pyqtSignal
+from PySide6.QtCore import QTimer, Signal
 
 import serial.tools.list_ports
 
@@ -105,35 +105,33 @@ class SerialConWindow(QWidget):
 
 
     def setup_logging(self):
-        self.logger.setLevel(logging.DEBUG)
-        self.logger.handlers = [] # Limpa handlers anteriores para evitar duplicação
-
-        # Handler para arquivo
+        """Configura o sistema de logging usando a nova arquitetura."""
         log_dir = self.log_location_input.text().strip() or "."
         log_filename = self.log_file_name_input.text().strip() or DEFAULT_LOG_FILENAME
         self.log_file_path = os.path.join(log_dir, log_filename)
 
         try:
-            os.makedirs(log_dir, exist_ok=True) # Garante que o diretório de log exista
-            file_handler = logging.FileHandler(self.log_file_path, mode="a", encoding="utf-8")
-            file_formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(module)s - %(message)s")
-            file_handler.setFormatter(file_formatter)
-            self.logger.addHandler(file_handler)
+            # Usar o setup_logger da nova arquitetura
+            setup_logger(
+                name=APP_LOGGER_NAME,
+                level=logging.DEBUG,
+                log_file=self.log_file_path,
+                console_output=False  # Não usar console, apenas GUI
+            )
+            
+            # Obter o logger configurado
+            self.logger = get_logger(APP_LOGGER_NAME)
+            
+            # Adicionar handler para GUI
+            gui_handler = QtLogHandler(self.log_signal)
+            gui_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+            gui_handler.setFormatter(gui_formatter)
+            self.logger.addHandler(gui_handler)
+            
+            self.logger.info("Sistema de logging configurado com nova arquitetura.")
+            
         except Exception as e:
-            QMessageBox.warning(self, "Erro de Logging", f"Não foi possível configurar o log em arquivo: {e}")
-
-
-        # Handler para GUI
-        gui_handler = QtHandler(self.log_signal)
-        gui_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-        gui_handler.setFormatter(gui_formatter)
-        self.logger.addHandler(gui_handler)
-
-        # Redirecionar stdout e stderr
-        sys.stdout = LogRedirector(self.logger, logging.INFO)
-        sys.stderr = LogRedirector(self.logger, logging.ERROR)
-
-        self.logger.info("Sistema de logging configurado.")
+            QMessageBox.warning(self, "Erro de Logging", f"Não foi possível configurar o log: {e}")
 
     def setup_config_tab(self):
         config_layout = QVBoxLayout()
@@ -450,39 +448,57 @@ class SerialConWindow(QWidget):
 
     def handle_connect_button(self):
         """
-        Lógica de conexão refeita para usar API Key e WebSocket.
+        Lógica de conexão refatorada para usar a nova arquitetura.
         """
         # Se já estiver conectado, o botão irá parar/desconectar
-        is_running = (self.server_thread and self.server_thread.isRunning()) or \
-                     (self.client_thread and self.client_thread.isRunning()) or \
+        is_running = (self.state_machine and self.state_machine.is_running()) or \
                      (self.api_client and self.api_client.is_connected)
         if is_running:
-            if self.api_client:
-                self.api_client.desconectar()
-            if self.mode_combo.currentText() == "Servidor":
-                self.stop_server_mode()
-            else:
-                self.stop_client_mode()
-            self.update_connect_button_state()
-            self.update_ws_status("disconnected", "Desconectado")
+            self.stop_agent()
             return
 
         # 1. Validação dos campos da interface
         api_key = self.api_key_input.text().strip()
         backend_url = self.backend_url_input.text().strip()
+        selected_serial_port = self.get_selected_serial_port()
 
         if not all([api_key, backend_url]):
             QMessageBox.warning(self, "Validação Falhou", "Os campos 'URL do Backend' e 'API Key' são obrigatórios.")
             return
 
-        # 2. Instancia o APIClient e autentica com API Key
+        if not selected_serial_port or "Nenhuma" in selected_serial_port:
+            QMessageBox.warning(self, "Erro", "Nenhuma porta serial selecionada.")
+            return
+
+        # 2. Inicializar ConfigManager e criar configuração
+        try:
+            self.config_manager = ConfigManager()
+            
+            # Criar configuração baseada na interface
+            config_data = self._create_agent_config()
+            
+            # Validar configuração
+            validation_result = validate_agent_config(config_data)
+            if not validation_result.is_valid:
+                error_msg = "\n".join(validation_result.errors)
+                QMessageBox.critical(self, "Configuração Inválida", f"Erros na configuração:\n{error_msg}")
+                return
+                
+            # Carregar configuração no ConfigManager
+            self.config_manager.update_config(config_data)
+            
+        except Exception as e:
+            self.log_message(f"Erro ao inicializar configuração: {e}", logging.ERROR)
+            QMessageBox.critical(self, "Erro de Configuração", f"Falha ao configurar o sistema: {e}")
+            return
+
+        # 3. Autenticação com API Key
         self.api_client = APIClient(backend_url)
         self.log_message(f"Iniciando processo de autenticação com API Key...")
-        QApplication.setOverrideCursor(Qt.WaitCursor) # Cursor de "esperando"
+        QApplication.setOverrideCursor(Qt.WaitCursor)
 
         auth_ok, auth_message = self.api_client.autenticar_api_key(api_key)
-        
-        QApplication.restoreOverrideCursor() # Restaura o cursor
+        QApplication.restoreOverrideCursor()
 
         if not auth_ok:
             self.log_message(f"Falha na autenticação: {auth_message}", logging.ERROR)
@@ -491,7 +507,7 @@ class SerialConWindow(QWidget):
 
         self.log_message(f"Autenticação bem-sucedida: {auth_message}")
 
-        # 3. Conecta ao WebSocket
+        # 4. Conectar WebSocket
         self.log_message("Estabelecendo conexão WebSocket...")
         QApplication.setOverrideCursor(Qt.WaitCursor)
         
@@ -499,7 +515,6 @@ class SerialConWindow(QWidget):
             on_message_callback=self.handle_ws_message,
             on_status_callback=self.update_ws_status
         )
-        
         QApplication.restoreOverrideCursor()
 
         if not ws_ok:
@@ -507,42 +522,32 @@ class SerialConWindow(QWidget):
             QMessageBox.critical(self, "Falha na Conexão", ws_message)
             return
 
-        # 4. Se tudo deu certo, inicia a operação principal (servidor/cliente)
-        self.log_message(f"WebSocket conectado: {ws_message}", logging.INFO)
-        QMessageBox.information(self, "Conexão Estabelecida", "Agente conectado com sucesso ao backend!")
-        
-        modo = self.mode_combo.currentText()
-        selected_serial_port = self.get_selected_serial_port()
-
-        if not selected_serial_port or "Nenhuma" in selected_serial_port:
-            QMessageBox.warning(self, "Erro", "Nenhuma porta serial selecionada.")
+        # 5. Inicializar componentes da nova arquitetura
+        try:
+            self.start_agent()
+            self.log_message(f"WebSocket conectado: {ws_message}", logging.INFO)
+            QMessageBox.information(self, "Conexão Estabelecida", "Agente conectado com sucesso ao backend!")
+            
+        except Exception as e:
+            self.log_message(f"Erro ao iniciar agente: {e}", logging.ERROR)
+            QMessageBox.critical(self, "Erro de Inicialização", f"Falha ao iniciar o agente: {e}")
             return
-
-        if modo == "Servidor":
-            self.start_server_mode(selected_serial_port)
-        else:
-            self.start_client_mode(selected_serial_port)
 
         self.save_config()
         self.update_connect_button_state()
 
 
     def update_connect_button_state(self):
-        modo = self.mode_combo.currentText()
-        if modo == "Servidor":
-            if self.server_thread and self.server_thread.isRunning():
-                self.connect_button.setText("Parar Servidor")
-                self.connect_button.setProperty("active", True)
-            else:
-                self.connect_button.setText("Iniciar Servidor")
-                self.connect_button.setProperty("active", False)
-        elif modo == "Cliente":
-            if self.client_thread and self.client_thread.isRunning():
-                self.connect_button.setText("Desconectar Cliente")
-                self.connect_button.setProperty("active", True)
-            else:
-                self.connect_button.setText("Conectar Cliente")
-                self.connect_button.setProperty("active", False)
+        """Atualiza o estado do botão de conexão baseado na nova arquitetura."""
+        is_running = (self.state_machine and self.state_machine.is_running()) or \
+                     (self.api_client and self.api_client.is_connected)
+        
+        if is_running:
+            self.connect_button.setText("Desconectar Agente")
+            self.connect_button.setProperty("active", True)
+        else:
+            self.connect_button.setText("Conectar Agente")
+            self.connect_button.setProperty("active", False)
         
         # Forçar reavaliação do estilo para o botão (se QSS usar a propriedade 'active')
         self.style().unpolish(self.connect_button)
@@ -566,134 +571,190 @@ class SerialConWindow(QWidget):
             "dsrdtr": self.dsrdtr_combo.currentText() == "Ativado",
         }
 
-    def start_server_mode(self, porta_serial_raw: str):
-        ip = self.server_ip_input.text()
+    def _create_agent_config(self) -> Dict[str, Any]:
+        """Cria a configuração do agente baseada nos valores da interface."""
+        from utils.config_manager import SerialConfig, NetworkConfig, ProcessingConfig, LoggingConfig, AgentConfig
+        
+        # Configuração da porta serial
+        serial_params = self.get_serial_params()
+        serial_config = SerialConfig(
+            port=self.get_selected_serial_port(),
+            **serial_params
+        )
+        
+        # Configuração de rede
+        modo = self.mode_combo.currentText()
+        if modo == "Servidor":
+            network_config = NetworkConfig(
+                mode="server",
+                host=self.server_ip_input.text().strip() or "0.0.0.0",
+                port=int(self.server_port_input.text().strip() or "8888")
+            )
+        else:
+            client_url = self.client_url_input.text().strip() or "127.0.0.1:8888"
+            if ":" in client_url:
+                host, port_str = client_url.split(":", 1)
+                port = int(port_str)
+            else:
+                host = client_url
+                port = 8888
+            network_config = NetworkConfig(
+                mode="client",
+                host=host,
+                port=port
+            )
+        
+        # Configuração de processamento
+        processing_config = ProcessingConfig(
+            enable_filtering=True,
+            enable_validation=True,
+            max_queue_size=1000
+        )
+        
+        # Configuração de logging
+        logging_config = LoggingConfig(
+            level="DEBUG",
+            file_path=self.log_file_path,
+            max_file_size=10*1024*1024,  # 10MB
+            backup_count=5
+        )
+        
+        # Configuração principal do agente
+        agent_config = AgentConfig(
+            agent_id=f"agent_{int(time.time())}",
+            serial=serial_config,
+            network=network_config,
+            processing=processing_config,
+            logging=logging_config
+        )
+        
+        return agent_config.__dict__
+
+    def start_agent(self):
+        """Inicia todos os componentes da nova arquitetura."""
         try:
-            port_num = int(self.server_port_input.text())
-        except ValueError:
-            self.log_message("Porta do servidor inválida. Deve ser um número.", logging.ERROR)
-            QMessageBox.warning(self, "Erro de Configuração", "Porta do servidor inválida.")
-            self.update_status_labels(general_status="Erro de Configuração", server_status="Porta Inválida")
-            return
+            # 1. Inicializar SerialManager
+            serial_config = self.config_manager.get_config().serial
+            self.serial_manager = SerialManager(
+                port=serial_config.port,
+                baudrate=serial_config.baudrate,
+                timeout=serial_config.timeout,
+                bytesize=serial_config.bytesize,
+                stopbits=serial_config.stopbits,
+                parity=serial_config.parity,
+                rtscts=serial_config.rtscts,
+                dsrdtr=serial_config.dsrdtr
+            )
+            
+            # 2. Inicializar ConnectionManager
+            network_config = self.config_manager.get_config().network
+            self.connection_manager = ConnectionManager(
+                mode=network_config.mode,
+                host=network_config.host,
+                port=network_config.port
+            )
+            
+            # 3. Inicializar DataProcessor
+            processing_config = self.config_manager.get_config().processing
+            self.data_processor = DataProcessor(
+                enable_filtering=processing_config.enable_filtering,
+                enable_validation=processing_config.enable_validation,
+                max_queue_size=processing_config.max_queue_size
+            )
+            
+            # 4. Inicializar AgentStateMachine
+            self.state_machine = AgentStateMachine()
+            
+            # 5. Configurar callbacks
+            self.serial_manager.set_data_callback(self._on_serial_data_received)
+            self.serial_manager.set_status_callback(self._on_serial_status_changed)
+            self.connection_manager.set_message_callback(self._on_network_message_received)
+            self.connection_manager.set_status_callback(self._on_network_status_changed)
+            self.state_machine.set_state_callback(self._on_state_changed)
+            
+            # 6. Conectar sinais
+            self.status_update_signal.connect(self._handle_status_update)
+            self.data_received_signal.connect(self._handle_data_received)
+            
+            # 7. Iniciar componentes
+            self.serial_manager.connect()
+            self.connection_manager.start()
+            self.state_machine.start()
+            
+            self.log_message("Agente iniciado com sucesso usando nova arquitetura.")
+            
+        except Exception as e:
+            self.log_message(f"Erro ao iniciar agente: {e}", logging.ERROR)
+            self.stop_agent()  # Limpar recursos em caso de erro
+            raise
 
-        porta_serial_para_uso = porta_serial_raw
-        if porta_serial_raw == "<GENERATE_VIRTUAL>" and "linux" in platform.platform().lower():
-            try:
-                master, slave = pty.openpty()
-                porta_serial_para_uso = os.ttyname(slave)
-                # O master fd (master) precisaria ser mantido aberto e talvez passado ou gerenciado
-                # Esta é uma simplificação; a gestão completa de PTY pode ser complexa.
-                self.log_message(f"Porta virtual mestre: {os.ttyname(master)}, escravo: {porta_serial_para_uso} (usado pela app)")
-            except Exception as e:
-                self.log_message(f"Falha ao criar porta virtual: {e}", logging.ERROR)
-                QMessageBox.critical(self, "Erro PTY", f"Não foi possível criar porta virtual: {e}")
-                return
+    def stop_agent(self):
+        """Para todos os componentes da nova arquitetura."""
+        try:
+            # Parar componentes na ordem inversa
+            if self.state_machine:
+                self.state_machine.stop()
+                self.state_machine = None
+                
+            if self.connection_manager:
+                self.connection_manager.stop()
+                self.connection_manager = None
+                
+            if self.serial_manager:
+                self.serial_manager.disconnect()
+                self.serial_manager = None
+                
+            if self.data_processor:
+                self.data_processor = None
+                
+            if self.api_client:
+                self.api_client.desconectar()
+                self.api_client = None
+                
+            self.log_message("Agente parado com sucesso.")
+            self.update_connect_button_state()
+            self.update_ws_status("disconnected", "Desconectado")
+            
+        except Exception as e:
+            self.log_message(f"Erro ao parar agente: {e}", logging.ERROR)
 
-        self.log_message(f"Iniciando Servidor em: {ip}:{port_num} usando porta serial {porta_serial_para_uso}")
-        self.update_status_labels(general_status="Iniciando Servidor",
-                                  connection_details=f"Servidor: {ip}:{port_num}",
-                                  focused_port=porta_serial_para_uso,
-                                  server_status="Iniciando...")
-
-        serial_params = self.get_serial_params()
-        self.server_thread = ServerThread(ip, port_num, porta_serial_para_uso,
-                                          self.serial_port_semaphore, serial_params,
-                                          self.log_signal) # Passa o log_signal
+    def _on_serial_data_received(self, data: bytes):
+        """Callback para dados recebidos da porta serial."""
+        self.data_received_signal.emit(data)
         
-        # Conectar sinais do ServerThread
-        self.server_thread.status_update_signal.connect(self.handle_server_status_update)
-        self.server_thread.client_count_signal.connect(self.update_connected_clients_count)
+    def _on_serial_status_changed(self, status: str, message: str):
+        """Callback para mudanças de status da porta serial."""
+        self.status_update_signal.emit(f"serial_{status}", message)
         
-        self.server_thread.start()
-        self.update_connect_button_state() # Atualiza texto do botão
-
-    def stop_server_mode(self):
-        if self.server_thread and self.server_thread.isRunning():
-            self.log_message("Parando Servidor...")
-            self.update_status_labels(general_status="Parando Servidor", server_status="Parando...")
-            self.server_thread.stop_server()
-            if not self.server_thread.wait(5000): # Espera 5 segundos
-                self.log_message("Thread do servidor não parou a tempo. Forçando término.", logging.WARNING)
-                self.server_thread.terminate() # Opção mais drástica
-                self.server_thread.wait() # Espera a terminação
-
-            self.server_thread = None
-            self.update_status_labels(general_status="Desconectado",
-                                      connection_details="Servidor parado",
-                                      server_status="Parado",
-                                      connected_clients=0) # Reseta contagem
-        self.update_connect_button_state()
-
-
-    def start_client_mode(self, porta_serial_raw: str):
-        url = self.client_url_input.text()
+    def _on_network_message_received(self, message: bytes, client_info: Optional[Dict] = None):
+        """Callback para mensagens recebidas da rede."""
+        # Processar mensagem através do DataProcessor
+        if self.data_processor:
+            self.data_processor.process_data(message)
+            
+    def _on_network_status_changed(self, status: str, message: str):
+        """Callback para mudanças de status da rede."""
+        self.status_update_signal.emit(f"network_{status}", message)
         
-        porta_serial_para_uso = porta_serial_raw
-        if porta_serial_raw == "<GENERATE_VIRTUAL>" and "linux" in platform.platform().lower():
-            # Mesma lógica de criação de porta virtual do servidor
-            try:
-                master, slave = pty.openpty()
-                porta_serial_para_uso = os.ttyname(slave)
-                self.log_message(f"Porta virtual mestre: {os.ttyname(master)}, escravo: {porta_serial_para_uso} (usado pela app)")
-            except Exception as e:
-                self.log_message(f"Falha ao criar porta virtual: {e}", logging.ERROR)
-                QMessageBox.critical(self, "Erro PTY", f"Não foi possível criar porta virtual: {e}")
-                return
+    def _on_state_changed(self, old_state: str, new_state: str):
+        """Callback para mudanças de estado do agente."""
+        self.status_update_signal.emit("state_change", f"Estado: {old_state} -> {new_state}")
+        
+    def _handle_status_update(self, status_type: str, message: str):
+        """Manipula atualizações de status dos componentes."""
+        self.log_message(f"[{status_type}] {message}")
+        # Atualizar labels de status na interface se necessário
+        
+    def _handle_data_received(self, data: bytes):
+        """Manipula dados recebidos."""
+        # Processar dados através do DataProcessor
+        if self.data_processor:
+            processed_data = self.data_processor.process_data(data)
+            # Enviar dados processados através da rede se necessário
+            if self.connection_manager and processed_data:
+                self.connection_manager.send_message(processed_data)
 
-        self.log_message(f"Conectando ao Servidor em: {url} usando porta serial {porta_serial_para_uso}")
-        self.update_status_labels(general_status="Conectando ao Servidor",
-                                  connection_details=f"Cliente para: {url}",
-                                  focused_port=porta_serial_para_uso,
-                                  client_status="Conectando...")
-
-        serial_params = self.get_serial_params()
-        self.client_thread = ClientThread(url, porta_serial_para_uso,
-                                          self.serial_port_semaphore, serial_params,
-                                          self.log_signal) # Passa o log_signal
-
-        self.client_thread.status_update_signal.connect(self.handle_client_status_update)
-        self.client_thread.start()
-        self.update_connect_button_state()
-
-    def stop_client_mode(self):
-        if self.client_thread and self.client_thread.isRunning():
-            self.log_message("Desconectando Cliente...")
-            self.update_status_labels(general_status="Desconectando Cliente", client_status="Desconectando...")
-            self.client_thread.stop_client()
-            if not self.client_thread.wait(5000):
-                self.log_message("Thread do cliente não parou a tempo. Forçando término.", logging.WARNING)
-                self.client_thread.terminate()
-                self.client_thread.wait()
-
-            self.client_thread = None
-            self.update_status_labels(general_status="Desconectado",
-                                      connection_details="Cliente parado",
-                                      client_status="Desconectado")
-        self.update_connect_button_state()
-
-
-    def handle_server_status_update(self, status_type: str, message: str):
-        """Recebe atualizações de status do ServerThread."""
-        if status_type == "server_status":
-            self.update_status_labels(server_status=message)
-            if message == "Ouvindo" or message == "Online":
-                 self.update_status_labels(general_status="Conectado")
-            elif "Erro" in message:
-                self.update_status_labels(general_status="Erro")
-        elif status_type == "connection_detail":
-            self.update_status_labels(connection_details=message)
-        # Adicionar mais tipos conforme necessário (ex: "error", "info")
-
-    def handle_client_status_update(self, status_type: str, message: str):
-        """Recebe atualizações de status do ClientThread."""
-        if status_type == "client_status":
-            self.update_status_labels(client_status=message)
-            if message == "Conectado":
-                self.update_status_labels(general_status="Conectado")
-            elif "Erro" in message or "Recusada" in message or "Falha" in message:
-                 self.update_status_labels(general_status="Erro")
-        elif status_type == "connection_detail":
-            self.update_status_labels(connection_details=message)
+    # Métodos antigos removidos - agora usando a nova arquitetura com start_agent/stop_agent
 
 
     def load_log_from_file(self):
@@ -885,15 +946,13 @@ class SerialConWindow(QWidget):
         self.log_message("Fechando aplicativo...")
         self.save_config() # Salva configuração ao sair
 
-        if self.server_thread and self.server_thread.isRunning():
-            self.log_message("Parando servidor antes de sair...")
-            self.stop_server_mode()
-
-        if self.client_thread and self.client_thread.isRunning():
-            self.log_message("Parando cliente antes de sair...")
-            self.stop_client_mode()
+        # Para os componentes da nova arquitetura
+        if (self.state_machine and self.state_machine.is_running()) or \
+           (self.api_client and self.api_client.is_connected()):
+            self.log_message("Parando agente antes de sair...")
+            self.stop_agent()
         
-        # Garante que o buffer do LogRedirector seja escrito
+        # Garante que o buffer seja escrito
         if hasattr(sys.stdout, 'flush'):
             sys.stdout.flush()
         if hasattr(sys.stderr, 'flush'):

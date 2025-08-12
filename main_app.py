@@ -2,27 +2,24 @@ import sys
 import json
 import platform
 import logging
-import time # Adicionado para timestamp no log manual
-from typing import IO
+import time
+from typing import Dict, Any, Optional
 import os
+from pathlib import Path
 
 from PySide6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QHBoxLayout,
                                QTabWidget, QLabel, QGroupBox, QGridLayout,
                                QLineEdit, QPushButton, QComboBox, QTextEdit,
-                               QFileDialog, QMessageBox)
+                               QFileDialog, QMessageBox, QProgressBar)
 from PySide6.QtGui import QIcon, QPixmap, QDoubleValidator, Qt
-from PySide6.QtCore import QTimer, Signal, QSemaphore, QThread # QThread importado para type hinting
+from PySide6.QtCore import QTimer, Signal, QThread, pyqtSignal
 
 import serial.tools.list_ports
 
-# Importar lógica do servidor e cliente
-from server_logic import ServerThread
-from client_logic import ClientThread
-
-# ############## NOVO ##############
-# Importar o novo cliente de API
+# Importar nova arquitetura
+from core import SerialManager, ConnectionManager, AgentStateMachine, DataProcessor
+from utils import ConfigManager, setup_logger, get_logger, validate_agent_config
 from api_client import APIClient
-# ##################################
 
 if "linux" in platform.platform().lower():
     import pty
@@ -32,7 +29,7 @@ CONFIG_FILE = "config.json"
 DEFAULT_LOG_FILENAME = "./app_log.txt"
 APP_LOGGER_NAME = "SerialApp"
 
-class QtHandler(logging.Handler):
+class QtLogHandler(logging.Handler):
     """Handler de logging para emitir registros para a GUI."""
     def __init__(self, log_signal: Signal):
         super().__init__()
@@ -42,46 +39,28 @@ class QtHandler(logging.Handler):
         log_message = self.format(record)
         self.log_signal.emit(log_message)
 
-class LogRedirector(IO):
-    """Redireciona stdout/stderr para o logger."""
-    def __init__(self, logger, log_level=logging.INFO):
-        self.logger = logger
-        self.log_level = log_level
-        self.buffer = ""
-
-    def write(self, message):
-        self.buffer += message
-        if '\n' in self.buffer:
-            lines = self.buffer.split('\n')
-            for line in lines[:-1]: # Processa todas as linhas completas
-                if line.strip():
-                    self.logger.log(self.log_level, line.strip())
-            self.buffer = lines[-1] # Guarda a parte incompleta
-
-    def flush(self):
-        if self.buffer.strip(): # Processa o restante do buffer ao final
-            self.logger.log(self.log_level, self.buffer.strip())
-        self.buffer = ""
-
 class SerialConWindow(QWidget):
     log_signal = Signal(str)  # Sinal para logs na GUI
+    status_update_signal = Signal(str, str)  # Sinal para atualizações de status
+    data_received_signal = Signal(bytes)  # Sinal para dados recebidos
 
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Gerenciador de Porta Serial v1.4 - API Key + WebSocket")
+        self.setWindowTitle("Gerenciador de Porta Serial v2.0 - Arquitetura Refatorada")
         self.setWindowIcon(QIcon("./icon.png"))
-        self.setGeometry(100, 100, 700, 600) # Tamanho inicial
+        self.setGeometry(100, 100, 800, 700)
 
-        self.serial_port = None # Não usado diretamente aqui, gerenciado por threads
-        self.server_thread: ServerThread = None
-        self.client_thread: ClientThread = None
-        # ############## NOVO ##############
-        self.api_client: APIClient = None
-        # ##################################
+        # Componentes da nova arquitetura
+        self.config_manager: Optional[ConfigManager] = None
+        self.serial_manager: Optional[SerialManager] = None
+        self.connection_manager: Optional[ConnectionManager] = None
+        self.state_machine: Optional[AgentStateMachine] = None
+        self.data_processor: Optional[DataProcessor] = None
+        self.api_client: Optional[APIClient] = None
         
-        self.serial_port_semaphore = QSemaphore(1)
+        # Logger
+        self.logger = get_logger(APP_LOGGER_NAME)
         self.log_file_path = ""
-        self.logger = logging.getLogger(APP_LOGGER_NAME) # Logger nomeado
 
         self.tab_widget = QTabWidget()
         self.config_tab = QWidget()

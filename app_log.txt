@@ -74,3 +74,7 @@
 2025-08-11 14:13:11,907 - INFO - main_app - Sistema de logging configurado.
 2025-08-11 14:13:11,907 - INFO - main_app - Configurações carregadas de config.json
 2025-08-11 14:13:11,907 - INFO - main_app - Aplicativo Iniciado.
+2025-08-12 14:01:54,854 - INFO - main_app - Sistema de logging configurado.
+2025-08-12 14:01:55,044 - INFO - main_app - Sistema de logging configurado.
+2025-08-12 14:01:55,044 - INFO - main_app - Configurações carregadas de config.json
+2025-08-12 14:01:55,045 - INFO - main_app - Aplicativo Iniciado.

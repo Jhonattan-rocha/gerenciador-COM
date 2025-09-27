@@ -256,7 +256,7 @@ class ServerThread(QThread):
             return
 
         try:
-            if self.serial_semaphore.tryAcquire(): # Tenta adquirir por 500ms
+            if self.serial_semaphore.tryAcquire(): # Tenta adquirir
                 try:
                     # Limpar buffers antes de escrever pode ser útil em alguns casos,
                     # mas pode descartar dados importantes em outros. Avaliar necessidade.

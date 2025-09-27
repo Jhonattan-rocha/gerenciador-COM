@@ -81,19 +81,13 @@ class ClientThread(QThread):
                     # Por ora, vamos enviar o dado bruto como recebido da serial.
                     # Se uma transformação específica é necessária, ela deve ser feita aqui.
                     # Exemplo: data_to_send = serial_data.strip() # Simples strip
-                    data_to_send_str = serial_data.strip() # Exemplo
-                    
-                    # Se precisar da lógica original exata (remover as últimas 5 "palavras" separadas por espaço):
-                    parts = serial_data.split(" ")
-                    if len(parts) > 5:
-                       data_to_send_str = " ".join(parts[:-5])
-                    else:
-                       data_to_send_str = "" # ou serial_data, dependendo do que se espera
+                    data_to_send_str = "".join(serial_data.strip().split(" ")[:10])
                     
                     if not data_to_send_str: # Não envia strings vazias
                         time.sleep(0.05) # Pequena pausa para não ocupar CPU se não houver dados
                         continue
-
+                    
+                    data_bytes = b''
                     try:
                         data_bytes = data_to_send_str.encode('cp850') # Ou outra codificação conforme o servidor espera
                     except Exception as e_enc:
@@ -201,7 +195,7 @@ class ClientThread(QThread):
 
         data = None
         try:
-            if self.serial_semaphore.tryAcquire(): # Tenta adquirir por 200ms
+            if self.serial_semaphore.tryAcquire(): # Tenta adquirir
                 try:
                     # read_until espera até encontrar o terminador ou timeout.
                     # Se o dispositivo serial não envia '\n', isso pode não funcionar bem.
@@ -210,6 +204,8 @@ class ClientThread(QThread):
                         # Tenta ler uma linha, comum para dispositivos baseados em texto.
                         # O timeout da porta serial (definido na abertura) controla o bloqueio máximo aqui.
                         line = self.serial_port.read_until(b'\n') # read_until(b'\n') é similar
+                        if not line:
+                            line = self.serial_port.read_until(b' ')
                         if line:
                             # Tenta decodificar com cp850, mas seja flexível
                             try:

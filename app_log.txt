@@ -621,3 +621,585 @@
 2025-09-27 11:36:07,449 - INFO - client_logic - Solicitação para parar o cliente...
 2025-09-27 11:36:07,478 - INFO - client_logic - Porta serial COM6 (cliente) fechada.
 2025-09-27 11:36:07,479 - INFO - client_logic - Thread Cliente finalizada.
+2025-09-27 12:58:14,438 - INFO - main_app - Sistema de logging configurado.
+2025-09-27 12:58:18,438 - INFO - main_app - Sistema de logging configurado.
+2025-09-27 12:58:45,637 - INFO - main_app - Sistema de logging configurado.
+2025-09-27 12:58:45,637 - INFO - main_app - Pasta de log alterada para: C:/Users/Jhonattan-PC/OneDrive/Documentos/projetos/gerenciador-COM
+2025-09-27 13:01:15,874 - INFO - main_app - Conectando ao Servidor em: 127.0.0.1:8888 usando porta serial COM6
+2025-09-27 13:01:15,876 - INFO - client_logic - Abrindo porta serial COM6 com params: {'baudrate': 9600, 'timeout': 10.0, 'bytesize': 8, 'stopbits': 2.0, 'parity': 'E', 'rtscts': False, 'dsrdtr': False}
+2025-09-27 13:01:15,877 - INFO - main_app - Configurações salvas em config.json
+2025-09-27 13:01:15,877 - INFO - client_logic - Porta serial COM6 (cliente) aberta.
+2025-09-27 13:01:15,879 - INFO - client_logic - Conectado ao servidor em 127.0.0.1:8888
+2025-09-27 13:01:51,690 - DEBUG - client_logic - Recebido da serial (cliente): '1 1 1 1 1 1 1 1 1 1 11'
+2025-09-27 13:01:51,690 - INFO - client_logic - Enviado para servidor: '1111111111' (10 bytes)
+2025-09-27 13:01:53,204 - DEBUG - client_logic - Recebido da serial (cliente): '1 1 1 1 1 1 1 1 1 1 11'
+2025-09-27 13:01:53,205 - INFO - client_logic - Enviado para servidor: '1111111111' (10 bytes)
+2025-09-27 13:01:54,113 - DEBUG - client_logic - Recebido da serial (cliente): '1 1 1 1 1 1 1 1 1 1 11'
+2025-09-27 13:01:54,113 - INFO - client_logic - Enviado para servidor: '1111111111' (10 bytes)
+2025-09-27 13:01:54,771 - DEBUG - client_logic - Recebido da serial (cliente): '1 1 1 1 1 1 1 1 1 1 11'
+2025-09-27 13:01:54,771 - INFO - client_logic - Enviado para servidor: '1111111111' (10 bytes)
+2025-09-27 13:01:55,883 - DEBUG - client_logic - Recebido da serial (cliente): '1 1 1 1 1 1 1 1 1 1 11'
+2025-09-27 13:01:55,886 - INFO - client_logic - Enviado para servidor: '1111111111' (10 bytes)
+2025-09-27 13:01:56,949 - DEBUG - client_logic - Recebido da serial (cliente): '1 1 1 1 1 1 1 1 1 1 11'
+2025-09-27 13:01:56,950 - INFO - client_logic - Enviado para servidor: '1111111111' (10 bytes)
+2025-09-27 13:01:58,215 - DEBUG - client_logic - Recebido da serial (cliente): '1 1 1 1 1 1 1 1 1 1 11'
+2025-09-27 13:01:58,217 - INFO - client_logic - Enviado para servidor: '1111111111' (10 bytes)
+2025-09-27 13:01:59,580 - DEBUG - client_logic - Recebido da serial (cliente): '1 1 1 1 1 1 1 1 1 1 11'
+2025-09-27 13:01:59,581 - INFO - client_logic - Enviado para servidor: '1111111111' (10 bytes)
+2025-09-27 13:02:00,793 - DEBUG - client_logic - Recebido da serial (cliente): '1 1 1 1 1 1 1 1 1 1 11'
+2025-09-27 13:02:00,794 - INFO - client_logic - Enviado para servidor: '1111111111' (10 bytes)
+2025-09-27 13:02:02,462 - DEBUG - client_logic - Recebido da serial (cliente): '1 1 1 1 1 1 1 1 1 1 11'
+2025-09-27 13:02:02,463 - INFO - client_logic - Enviado para servidor: '1111111111' (10 bytes)
+2025-09-27 13:02:04,031 - DEBUG - client_logic - Recebido da serial (cliente): '1 1 1 1 1 1 1 1 1 1 11'
+2025-09-27 13:02:04,033 - INFO - client_logic - Enviado para servidor: '1111111111' (10 bytes)
+2025-09-27 13:02:05,705 - DEBUG - client_logic - Recebido da serial (cliente): '1 1 1 1 1 1 1 1 1 1 11'
+2025-09-27 13:02:05,706 - INFO - client_logic - Enviado para servidor: '1111111111' (10 bytes)
+2025-09-27 13:02:06,618 - DEBUG - client_logic - Recebido da serial (cliente): '1 1 1 1 1 1 1 1 1 1 11'
+2025-09-27 13:02:06,622 - INFO - client_logic - Enviado para servidor: '1111111111' (10 bytes)
+2025-09-27 13:02:07,128 - DEBUG - client_logic - Recebido da serial (cliente): '1 1 1 1 1 1 1 1 1 1 11'
+2025-09-27 13:02:07,128 - INFO - client_logic - Enviado para servidor: '1111111111' (10 bytes)
+2025-09-27 13:02:07,634 - DEBUG - client_logic - Recebido da serial (cliente): '1 1 1 1 1 1 1 1 1 1 11'
+2025-09-27 13:02:07,634 - INFO - client_logic - Enviado para servidor: '1111111111' (10 bytes)
+2025-09-27 13:02:08,648 - DEBUG - client_logic - Recebido da serial (cliente): '1 1 1 1 1 1 1 1 1 1 11'
+2025-09-27 13:02:08,651 - INFO - client_logic - Enviado para servidor: '1111111111' (10 bytes)
+2025-09-27 13:02:09,511 - DEBUG - client_logic - Recebido da serial (cliente): '1 1 1 1 1 1 1 1 1 1 11'
+2025-09-27 13:02:09,512 - INFO - client_logic - Enviado para servidor: '1111111111' (10 bytes)
+2025-09-27 13:02:10,019 - DEBUG - client_logic - Recebido da serial (cliente): '1 1 1 1 1 1 1 1 1 1 11'
+2025-09-27 13:02:10,020 - INFO - client_logic - Enviado para servidor: '1111111111' (10 bytes)
+2025-09-27 13:02:11,992 - DEBUG - client_logic - Recebido da serial (cliente): '2 2 2 2 2 2 2 2 2 2 22'
+2025-09-27 13:02:11,993 - INFO - client_logic - Enviado para servidor: '2222222222' (10 bytes)
+2025-09-27 13:02:13,005 - DEBUG - client_logic - Recebido da serial (cliente): '2 2 2 2 2 2 2 2 2 2 22'
+2025-09-27 13:02:13,006 - INFO - client_logic - Enviado para servidor: '2222222222' (10 bytes)
+2025-09-27 13:02:14,221 - DEBUG - client_logic - Recebido da serial (cliente): '2 2 2 2 2 2 2 2 2 2 22'
+2025-09-27 13:02:14,224 - INFO - client_logic - Enviado para servidor: '2222222222' (10 bytes)
+2025-09-27 13:02:15,136 - DEBUG - client_logic - Recebido da serial (cliente): '2 2 2 2 2 2 2 2 2 2 22'
+2025-09-27 13:02:15,137 - INFO - client_logic - Enviado para servidor: '2222222222' (10 bytes)
+2025-09-27 13:02:15,945 - DEBUG - client_logic - Recebido da serial (cliente): '2 2 2 2 2 2 2 2 2 2 22'
+2025-09-27 13:02:15,947 - INFO - client_logic - Enviado para servidor: '2222222222' (10 bytes)
+2025-09-27 13:02:17,060 - DEBUG - client_logic - Recebido da serial (cliente): '2 2 2 2 2 2 2 2 2 2 22'
+2025-09-27 13:02:17,061 - INFO - client_logic - Enviado para servidor: '2222222222' (10 bytes)
+2025-09-27 13:02:18,933 - DEBUG - client_logic - Recebido da serial (cliente): '2 2 2 2 2 2 2 2 2 2 22'
+2025-09-27 13:02:18,933 - INFO - client_logic - Enviado para servidor: '2222222222' (10 bytes)
+2025-09-27 13:02:19,843 - DEBUG - client_logic - Recebido da serial (cliente): '2 2 2 2 2 2 2 2 2 2 22'
+2025-09-27 13:02:19,845 - INFO - client_logic - Enviado para servidor: '2222222222' (10 bytes)
+2025-09-27 13:02:21,818 - DEBUG - client_logic - Recebido da serial (cliente): '2 2 2 2 2 2 2 2 2 2 22'
+2025-09-27 13:02:21,819 - INFO - client_logic - Enviado para servidor: '2222222222' (10 bytes)
+2025-09-27 13:02:23,485 - DEBUG - client_logic - Recebido da serial (cliente): '2 2 2 2 2 2 2 2 2 2 22'
+2025-09-27 13:02:23,486 - INFO - client_logic - Enviado para servidor: '2222222222' (10 bytes)
+2025-09-27 13:02:24,852 - DEBUG - client_logic - Recebido da serial (cliente): '2 2 2 2 2 2 2 2 2 2 22'
+2025-09-27 13:02:24,852 - INFO - client_logic - Enviado para servidor: '2222222222' (10 bytes)
+2025-09-27 13:02:26,114 - DEBUG - client_logic - Recebido da serial (cliente): '2 2 2 2 2 2 2 2 2 2 22'
+2025-09-27 13:02:26,115 - INFO - client_logic - Enviado para servidor: '2222222222' (10 bytes)
+2025-09-27 13:02:26,822 - DEBUG - client_logic - Recebido da serial (cliente): '2 2 2 2 2 2 2 2 2 2 22'
+2025-09-27 13:02:26,822 - INFO - client_logic - Enviado para servidor: '2222222222' (10 bytes)
+2025-09-27 13:02:28,540 - DEBUG - client_logic - Recebido da serial (cliente): '2 2 2 2 2 2 2 2 2 2 22'
+2025-09-27 13:02:28,541 - INFO - client_logic - Enviado para servidor: '2222222222' (10 bytes)
+2025-09-27 13:02:30,184 - DEBUG - client_logic - Recebido da serial (cliente): '2 2 2 2 2 2 2 2 2 2 22'
+2025-09-27 13:02:30,185 - INFO - client_logic - Enviado para servidor: '2222222222' (10 bytes)
+2025-09-27 13:02:31,700 - DEBUG - client_logic - Recebido da serial (cliente): '2 2 2 2 2 2 2 2 2 2 22'
+2025-09-27 13:02:31,701 - INFO - client_logic - Enviado para servidor: '2222222222' (10 bytes)
+2025-09-27 13:02:33,273 - DEBUG - client_logic - Recebido da serial (cliente): '3 3 3 3 3 3 3 3 3 3 33'
+2025-09-27 13:02:33,274 - INFO - client_logic - Enviado para servidor: '3333333333' (10 bytes)
+2025-09-27 13:02:34,587 - DEBUG - client_logic - Recebido da serial (cliente): '3 3 3 3 3 3 3 3 3 3 33'
+2025-09-27 13:02:34,588 - INFO - client_logic - Enviado para servidor: '3333333333' (10 bytes)
+2025-09-27 13:02:36,356 - DEBUG - client_logic - Recebido da serial (cliente): '3 3 3 3 3 3 3 3 3 3 33'
+2025-09-27 13:02:36,356 - INFO - client_logic - Enviado para servidor: '3333333333' (10 bytes)
+2025-09-27 13:02:37,720 - DEBUG - client_logic - Recebido da serial (cliente): '3 3 3 3 3 3 3 3 3 3 33'
+2025-09-27 13:02:37,720 - INFO - client_logic - Enviado para servidor: '3333333333' (10 bytes)
+2025-09-27 13:02:38,429 - DEBUG - client_logic - Recebido da serial (cliente): '3 3 3 3 3 3 3 3 3 3 33'
+2025-09-27 13:02:38,430 - INFO - client_logic - Enviado para servidor: '3333333333' (10 bytes)
+2025-09-27 13:02:39,140 - DEBUG - client_logic - Recebido da serial (cliente): '3 3 3 3 3 3 3 3 3 3 33'
+2025-09-27 13:02:39,144 - INFO - client_logic - Enviado para servidor: '3333333333' (10 bytes)
+2025-09-27 13:02:40,610 - DEBUG - client_logic - Recebido da serial (cliente): '3 3 3 3 3 3 3 3 3 3 33'
+2025-09-27 13:02:40,611 - INFO - client_logic - Enviado para servidor: '3333333333' (10 bytes)
+2025-09-27 13:02:41,875 - DEBUG - client_logic - Recebido da serial (cliente): '3 3 3 3 3 3 3 3 3 3 33'
+2025-09-27 13:02:41,876 - INFO - client_logic - Enviado para servidor: '3333333333' (10 bytes)
+2025-09-27 13:02:42,383 - DEBUG - client_logic - Recebido da serial (cliente): '3 3 3 3 3 3 3 3 3 3 33'
+2025-09-27 13:02:42,385 - INFO - client_logic - Enviado para servidor: '3333333333' (10 bytes)
+2025-09-27 13:02:44,103 - DEBUG - client_logic - Recebido da serial (cliente): '3 3 3 3 3 3 3 3 3 3 33'
+2025-09-27 13:02:44,105 - INFO - client_logic - Enviado para servidor: '3333333333' (10 bytes)
+2025-09-27 13:02:44,713 - DEBUG - client_logic - Recebido da serial (cliente): '3 3 3 3 3 3 3 3 3 3 33'
+2025-09-27 13:02:44,713 - INFO - client_logic - Enviado para servidor: '3333333333' (10 bytes)
+2025-09-27 13:02:46,129 - DEBUG - client_logic - Recebido da serial (cliente): '3 3 3 3 3 3 3 3 3 3 33'
+2025-09-27 13:02:46,129 - INFO - client_logic - Enviado para servidor: '3333333333' (10 bytes)
+2025-09-27 13:02:48,101 - DEBUG - client_logic - Recebido da serial (cliente): '3 3 3 3 3 3 3 3 3 3 33'
+2025-09-27 13:02:48,101 - INFO - client_logic - Enviado para servidor: '3333333333' (10 bytes)
+2025-09-27 13:02:48,709 - DEBUG - client_logic - Recebido da serial (cliente): '3 3 3 3 3 3 3 3 3 3 33'
+2025-09-27 13:02:48,710 - INFO - client_logic - Enviado para servidor: '3333333333' (10 bytes)
+2025-09-27 13:02:50,173 - DEBUG - client_logic - Recebido da serial (cliente): '3 3 3 3 3 3 3 3 3 3 33'
+2025-09-27 13:02:50,174 - INFO - client_logic - Enviado para servidor: '3333333333' (10 bytes)
+2025-09-27 13:02:50,783 - DEBUG - client_logic - Recebido da serial (cliente): '3 3 3 3 3 3 3 3 3 3 33'
+2025-09-27 13:02:50,785 - INFO - client_logic - Enviado para servidor: '3333333333' (10 bytes)
+2025-09-27 13:02:52,055 - DEBUG - client_logic - Recebido da serial (cliente): '3 3 3 3 3 3 3 3 3 3 33'
+2025-09-27 13:02:52,060 - INFO - client_logic - Enviado para servidor: '3333333333' (10 bytes)
+2025-09-27 13:02:53,933 - DEBUG - client_logic - Recebido da serial (cliente): '4 4 4 4 4 4 4 4 4 4 44'
+2025-09-27 13:02:53,934 - INFO - client_logic - Enviado para servidor: '4444444444' (10 bytes)
+2025-09-27 13:02:54,946 - DEBUG - client_logic - Recebido da serial (cliente): '4 4 4 4 4 4 4 4 4 4 44'
+2025-09-27 13:02:54,946 - INFO - client_logic - Enviado para servidor: '4444444444' (10 bytes)
+2025-09-27 13:02:56,060 - DEBUG - client_logic - Recebido da serial (cliente): '4 4 4 4 4 4 4 4 4 4 44'
+2025-09-27 13:02:56,061 - INFO - client_logic - Enviado para servidor: '4444444444' (10 bytes)
+2025-09-27 13:02:56,769 - DEBUG - client_logic - Recebido da serial (cliente): '4 4 4 4 4 4 4 4 4 4 44'
+2025-09-27 13:02:56,770 - INFO - client_logic - Enviado para servidor: '4444444444' (10 bytes)
+2025-09-27 13:02:58,691 - DEBUG - client_logic - Recebido da serial (cliente): '4 4 4 4 4 4 4 4 4 4 44'
+2025-09-27 13:02:58,692 - INFO - client_logic - Enviado para servidor: '4444444444' (10 bytes)
+2025-09-27 13:03:00,562 - DEBUG - client_logic - Recebido da serial (cliente): '4 4 4 4 4 4 4 4 4 4 44'
+2025-09-27 13:03:00,563 - INFO - client_logic - Enviado para servidor: '4444444444' (10 bytes)
+2025-09-27 13:03:01,371 - DEBUG - client_logic - Recebido da serial (cliente): '4 4 4 4 4 4 4 4 4 4 44'
+2025-09-27 13:03:01,372 - INFO - client_logic - Enviado para servidor: '4444444444' (10 bytes)
+2025-09-27 13:03:02,281 - DEBUG - client_logic - Recebido da serial (cliente): '4 4 4 4 4 4 4 4 4 4 44'
+2025-09-27 13:03:02,282 - INFO - client_logic - Enviado para servidor: '4444444444' (10 bytes)
+2025-09-27 13:03:04,001 - DEBUG - client_logic - Recebido da serial (cliente): '4 4 4 4 4 4 4 4 4 4 44'
+2025-09-27 13:03:04,005 - INFO - client_logic - Enviado para servidor: '4444444444' (10 bytes)
+2025-09-27 13:03:04,664 - DEBUG - client_logic - Recebido da serial (cliente): '4 4 4 4 4 4 4 4 4 4 44'
+2025-09-27 13:03:04,665 - INFO - client_logic - Enviado para servidor: '4444444444' (10 bytes)
+2025-09-27 13:03:06,535 - DEBUG - client_logic - Recebido da serial (cliente): '4 4 4 4 4 4 4 4 4 4 44'
+2025-09-27 13:03:06,536 - INFO - client_logic - Enviado para servidor: '4444444444' (10 bytes)
+2025-09-27 13:03:07,295 - DEBUG - client_logic - Recebido da serial (cliente): '4 4 4 4 4 4 4 4 4 4 44'
+2025-09-27 13:03:07,296 - INFO - client_logic - Enviado para servidor: '4444444444' (10 bytes)
+2025-09-27 13:03:08,406 - DEBUG - client_logic - Recebido da serial (cliente): '4 4 4 4 4 4 4 4 4 4 44'
+2025-09-27 13:03:08,407 - INFO - client_logic - Enviado para servidor: '4444444444' (10 bytes)
+2025-09-27 13:03:10,381 - DEBUG - client_logic - Recebido da serial (cliente): '4 4 4 4 4 4 4 4 4 4 44'
+2025-09-27 13:03:10,382 - INFO - client_logic - Enviado para servidor: '4444444444' (10 bytes)
+2025-09-27 13:03:11,545 - DEBUG - client_logic - Recebido da serial (cliente): '4 4 4 4 4 4 4 4 4 4 44'
+2025-09-27 13:03:11,546 - INFO - client_logic - Enviado para servidor: '4444444444' (10 bytes)
+2025-09-27 13:03:12,812 - DEBUG - client_logic - Recebido da serial (cliente): '4 4 4 4 4 4 4 4 4 4 44'
+2025-09-27 13:03:12,813 - INFO - client_logic - Enviado para servidor: '4444444444' (10 bytes)
+2025-09-27 13:03:14,479 - DEBUG - client_logic - Recebido da serial (cliente): '5 5 5 5 5 5 5 5 5 5 55'
+2025-09-27 13:03:14,480 - INFO - client_logic - Enviado para servidor: '5555555555' (10 bytes)
+2025-09-27 13:03:16,101 - DEBUG - client_logic - Recebido da serial (cliente): '5 5 5 5 5 5 5 5 5 5 55'
+2025-09-27 13:03:16,102 - INFO - client_logic - Enviado para servidor: '5555555555' (10 bytes)
+2025-09-27 13:03:16,861 - DEBUG - client_logic - Recebido da serial (cliente): '5 5 5 5 5 5 5 5 5 5 55'
+2025-09-27 13:03:16,862 - INFO - client_logic - Enviado para servidor: '5555555555' (10 bytes)
+2025-09-27 13:03:17,820 - DEBUG - client_logic - Recebido da serial (cliente): '5 5 5 5 5 5 5 5 5 5 55'
+2025-09-27 13:03:17,820 - INFO - client_logic - Enviado para servidor: '5555555555' (10 bytes)
+2025-09-27 13:03:19,182 - DEBUG - client_logic - Recebido da serial (cliente): '5 5 5 5 5 5 5 5 5 5 55'
+2025-09-27 13:03:19,183 - INFO - client_logic - Enviado para servidor: '5555555555' (10 bytes)
+2025-09-27 13:03:20,649 - DEBUG - client_logic - Recebido da serial (cliente): '5 5 5 5 5 5 5 5 5 5 55'
+2025-09-27 13:03:20,652 - INFO - client_logic - Enviado para servidor: '5555555555' (10 bytes)
+2025-09-27 13:03:21,918 - DEBUG - client_logic - Recebido da serial (cliente): '5 5 5 5 5 5 5 5 5 5 55'
+2025-09-27 13:03:21,918 - INFO - client_logic - Enviado para servidor: '5555555555' (10 bytes)
+2025-09-27 13:03:23,284 - DEBUG - client_logic - Recebido da serial (cliente): '5 5 5 5 5 5 5 5 5 5 55'
+2025-09-27 13:03:23,285 - INFO - client_logic - Enviado para servidor: '5555555555' (10 bytes)
+2025-09-27 13:03:24,448 - DEBUG - client_logic - Recebido da serial (cliente): '5 5 5 5 5 5 5 5 5 5 55'
+2025-09-27 13:03:24,449 - INFO - client_logic - Enviado para servidor: '5555555555' (10 bytes)
+2025-09-27 13:03:26,369 - DEBUG - client_logic - Recebido da serial (cliente): '5 5 5 5 5 5 5 5 5 5 55'
+2025-09-27 13:03:26,370 - INFO - client_logic - Enviado para servidor: '5555555555' (10 bytes)
+2025-09-27 13:03:27,634 - DEBUG - client_logic - Recebido da serial (cliente): '5 5 5 5 5 5 5 5 5 5 55'
+2025-09-27 13:03:27,635 - INFO - client_logic - Enviado para servidor: '5555555555' (10 bytes)
+2025-09-27 13:03:28,192 - DEBUG - client_logic - Recebido da serial (cliente): '5 5 5 5 5 5 5 5 5 5 55'
+2025-09-27 13:03:28,193 - INFO - client_logic - Enviado para servidor: '5555555555' (10 bytes)
+2025-09-27 13:03:29,909 - DEBUG - client_logic - Recebido da serial (cliente): '5 5 5 5 5 5 5 5 5 5 55'
+2025-09-27 13:03:29,909 - INFO - client_logic - Enviado para servidor: '5555555555' (10 bytes)
+2025-09-27 13:03:30,920 - DEBUG - client_logic - Recebido da serial (cliente): '5 5 5 5 5 5 5 5 5 5 55'
+2025-09-27 13:03:30,920 - INFO - client_logic - Enviado para servidor: '5555555555' (10 bytes)
+2025-09-27 13:03:32,838 - DEBUG - client_logic - Recebido da serial (cliente): '5 5 5 5 5 5 5 5 5 5 55'
+2025-09-27 13:03:32,839 - INFO - client_logic - Enviado para servidor: '5555555555' (10 bytes)
+2025-09-27 13:03:34,609 - DEBUG - client_logic - Recebido da serial (cliente): '6 6 6 6 6 6 6 6 6 6 66'
+2025-09-27 13:03:34,610 - INFO - client_logic - Enviado para servidor: '6666666666' (10 bytes)
+2025-09-27 13:03:36,326 - DEBUG - client_logic - Recebido da serial (cliente): '6 6 6 6 6 6 6 6 6 6 66'
+2025-09-27 13:03:36,327 - INFO - client_logic - Enviado para servidor: '6666666666' (10 bytes)
+2025-09-27 13:03:38,194 - DEBUG - client_logic - Recebido da serial (cliente): '6 6 6 6 6 6 6 6 6 6 66'
+2025-09-27 13:03:38,195 - INFO - client_logic - Enviado para servidor: '6666666666' (10 bytes)
+2025-09-27 13:03:40,215 - DEBUG - client_logic - Recebido da serial (cliente): '6 6 6 6 6 6 6 6 6 6 66'
+2025-09-27 13:03:40,218 - INFO - client_logic - Enviado para servidor: '6666666666' (10 bytes)
+2025-09-27 13:03:41,481 - DEBUG - client_logic - Recebido da serial (cliente): '6 6 6 6 6 6 6 6 6 6 66'
+2025-09-27 13:03:41,481 - INFO - client_logic - Enviado para servidor: '6666666666' (10 bytes)
+2025-09-27 13:03:43,452 - DEBUG - client_logic - Recebido da serial (cliente): '6 6 6 6 6 6 6 6 6 6 66'
+2025-09-27 13:03:43,452 - INFO - client_logic - Enviado para servidor: '6666666666' (10 bytes)
+2025-09-27 13:03:45,375 - DEBUG - client_logic - Recebido da serial (cliente): '6 6 6 6 6 6 6 6 6 6 66'
+2025-09-27 13:03:45,376 - INFO - client_logic - Enviado para servidor: '6666666666' (10 bytes)
+2025-09-27 13:03:46,033 - DEBUG - client_logic - Recebido da serial (cliente): '6 6 6 6 6 6 6 6 6 6 66'
+2025-09-27 13:03:46,034 - INFO - client_logic - Enviado para servidor: '6666666666' (10 bytes)
+2025-09-27 13:03:47,954 - DEBUG - client_logic - Recebido da serial (cliente): '6 6 6 6 6 6 6 6 6 6 66'
+2025-09-27 13:03:47,955 - INFO - client_logic - Enviado para servidor: '6666666666' (10 bytes)
+2025-09-27 13:03:49,672 - DEBUG - client_logic - Recebido da serial (cliente): '6 6 6 6 6 6 6 6 6 6 66'
+2025-09-27 13:03:49,672 - INFO - client_logic - Enviado para servidor: '6666666666' (10 bytes)
+2025-09-27 13:03:51,538 - DEBUG - client_logic - Recebido da serial (cliente): '6 6 6 6 6 6 6 6 6 6 66'
+2025-09-27 13:03:51,539 - INFO - client_logic - Enviado para servidor: '6666666666' (10 bytes)
+2025-09-27 13:03:53,204 - DEBUG - client_logic - Recebido da serial (cliente): '6 6 6 6 6 6 6 6 6 6 66'
+2025-09-27 13:03:53,205 - INFO - client_logic - Enviado para servidor: '6666666666' (10 bytes)
+2025-09-27 13:03:53,963 - DEBUG - client_logic - Recebido da serial (cliente): '6 6 6 6 6 6 6 6 6 6 66'
+2025-09-27 13:03:53,964 - INFO - client_logic - Enviado para servidor: '6666666666' (10 bytes)
+2025-09-27 13:03:54,823 - DEBUG - client_logic - Recebido da serial (cliente): '7 7 7 7 7 7 7 7 7 7 77'
+2025-09-27 13:03:54,824 - INFO - client_logic - Enviado para servidor: '7777777777' (10 bytes)
+2025-09-27 13:03:56,544 - DEBUG - client_logic - Recebido da serial (cliente): '7 7 7 7 7 7 7 7 7 7 77'
+2025-09-27 13:03:56,546 - INFO - client_logic - Enviado para servidor: '7777777777' (10 bytes)
+2025-09-27 13:03:57,708 - DEBUG - client_logic - Recebido da serial (cliente): '7 7 7 7 7 7 7 7 7 7 77'
+2025-09-27 13:03:57,709 - INFO - client_logic - Enviado para servidor: '7777777777' (10 bytes)
+2025-09-27 13:03:59,376 - DEBUG - client_logic - Recebido da serial (cliente): '7 7 7 7 7 7 7 7 7 7 77'
+2025-09-27 13:03:59,376 - INFO - client_logic - Enviado para servidor: '7777777777' (10 bytes)
+2025-09-27 13:04:00,034 - DEBUG - client_logic - Recebido da serial (cliente): '7 7 7 7 7 7 7 7 7 7 77'
+2025-09-27 13:04:00,035 - INFO - client_logic - Enviado para servidor: '7777777777' (10 bytes)
+2025-09-27 13:04:00,903 - DEBUG - client_logic - Recebido da serial (cliente): '7 7 7 7 7 7 7 7 7 7 77'
+2025-09-27 13:04:00,903 - INFO - client_logic - Enviado para servidor: '7777777777' (10 bytes)
+2025-09-27 13:04:02,722 - DEBUG - client_logic - Recebido da serial (cliente): '7 7 7 7 7 7 7 7 7 7 77'
+2025-09-27 13:04:02,723 - INFO - client_logic - Enviado para servidor: '7777777777' (10 bytes)
+2025-09-27 13:04:03,480 - DEBUG - client_logic - Recebido da serial (cliente): '7 7 7 7 7 7 7 7 7 7 77'
+2025-09-27 13:04:03,481 - INFO - client_logic - Enviado para servidor: '7777777777' (10 bytes)
+2025-09-27 13:04:05,197 - DEBUG - client_logic - Recebido da serial (cliente): '7 7 7 7 7 7 7 7 7 7 77'
+2025-09-27 13:04:05,198 - INFO - client_logic - Enviado para servidor: '7777777777' (10 bytes)
+2025-09-27 13:04:06,205 - DEBUG - client_logic - Recebido da serial (cliente): '7 7 7 7 7 7 7 7 7 7 77'
+2025-09-27 13:04:06,206 - INFO - client_logic - Enviado para servidor: '7777777777' (10 bytes)
+2025-09-27 13:04:07,114 - DEBUG - client_logic - Recebido da serial (cliente): '7 7 7 7 7 7 7 7 7 7 77'
+2025-09-27 13:04:07,115 - INFO - client_logic - Enviado para servidor: '7777777777' (10 bytes)
+2025-09-27 13:04:08,680 - DEBUG - client_logic - Recebido da serial (cliente): '7 7 7 7 7 7 7 7 7 7 77'
+2025-09-27 13:04:08,681 - INFO - client_logic - Enviado para servidor: '7777777777' (10 bytes)
+2025-09-27 13:04:09,288 - DEBUG - client_logic - Recebido da serial (cliente): '7 7 7 7 7 7 7 7 7 7 77'
+2025-09-27 13:04:09,289 - INFO - client_logic - Enviado para servidor: '7777777777' (10 bytes)
+2025-09-27 13:04:09,846 - DEBUG - client_logic - Recebido da serial (cliente): '7 7 7 7 7 7 7 7 7 7 77'
+2025-09-27 13:04:09,847 - INFO - client_logic - Enviado para servidor: '7777777777' (10 bytes)
+2025-09-27 13:04:10,806 - DEBUG - client_logic - Recebido da serial (cliente): '7 7 7 7 7 7 7 7 7 7 77'
+2025-09-27 13:04:10,807 - INFO - client_logic - Enviado para servidor: '7777777777' (10 bytes)
+2025-09-27 13:04:12,473 - DEBUG - client_logic - Recebido da serial (cliente): '7 7 7 7 7 7 7 7 7 7 77'
+2025-09-27 13:04:12,475 - INFO - client_logic - Enviado para servidor: '7777777777' (10 bytes)
+2025-09-27 13:04:13,284 - DEBUG - client_logic - Recebido da serial (cliente): '7 7 7 7 7 7 7 7 7 7 77'
+2025-09-27 13:04:13,285 - INFO - client_logic - Enviado para servidor: '7777777777' (10 bytes)
+2025-09-27 13:04:15,202 - DEBUG - client_logic - Recebido da serial (cliente): '8 8 8 8 8 8 8 8 8 8 88'
+2025-09-27 13:04:15,202 - INFO - client_logic - Enviado para servidor: '8888888888' (10 bytes)
+2025-09-27 13:04:16,616 - DEBUG - client_logic - Recebido da serial (cliente): '8 8 8 8 8 8 8 8 8 8 88'
+2025-09-27 13:04:16,617 - INFO - client_logic - Enviado para servidor: '8888888888' (10 bytes)
+2025-09-27 13:04:17,981 - DEBUG - client_logic - Recebido da serial (cliente): '8 8 8 8 8 8 8 8 8 8 88'
+2025-09-27 13:04:17,982 - INFO - client_logic - Enviado para servidor: '8888888888' (10 bytes)
+2025-09-27 13:04:18,940 - DEBUG - client_logic - Recebido da serial (cliente): '8 8 8 8 8 8 8 8 8 8 88'
+2025-09-27 13:04:18,941 - INFO - client_logic - Enviado para servidor: '8888888888' (10 bytes)
+2025-09-27 13:04:20,002 - DEBUG - client_logic - Recebido da serial (cliente): '8 8 8 8 8 8 8 8 8 8 88'
+2025-09-27 13:04:20,002 - INFO - client_logic - Enviado para servidor: '8888888888' (10 bytes)
+2025-09-27 13:04:21,215 - DEBUG - client_logic - Recebido da serial (cliente): '8 8 8 8 8 8 8 8 8 8 88'
+2025-09-27 13:04:21,216 - INFO - client_logic - Enviado para servidor: '8888888888' (10 bytes)
+2025-09-27 13:04:22,023 - DEBUG - client_logic - Recebido da serial (cliente): '8 8 8 8 8 8 8 8 8 8 88'
+2025-09-27 13:04:22,023 - INFO - client_logic - Enviado para servidor: '8888888888' (10 bytes)
+2025-09-27 13:04:24,045 - DEBUG - client_logic - Recebido da serial (cliente): '8 8 8 8 8 8 8 8 8 8 88'
+2025-09-27 13:04:24,045 - INFO - client_logic - Enviado para servidor: '8888888888' (10 bytes)
+2025-09-27 13:04:25,865 - DEBUG - client_logic - Recebido da serial (cliente): '8 8 8 8 8 8 8 8 8 8 88'
+2025-09-27 13:04:25,867 - INFO - client_logic - Enviado para servidor: '8888888888' (10 bytes)
+2025-09-27 13:04:27,735 - DEBUG - client_logic - Recebido da serial (cliente): '8 8 8 8 8 8 8 8 8 8 88'
+2025-09-27 13:04:27,736 - INFO - client_logic - Enviado para servidor: '8888888888' (10 bytes)
+2025-09-27 13:04:28,696 - DEBUG - client_logic - Recebido da serial (cliente): '8 8 8 8 8 8 8 8 8 8 88'
+2025-09-27 13:04:28,697 - INFO - client_logic - Enviado para servidor: '8888888888' (10 bytes)
+2025-09-27 13:04:30,415 - DEBUG - client_logic - Recebido da serial (cliente): '8 8 8 8 8 8 8 8 8 8 88'
+2025-09-27 13:04:30,416 - INFO - client_logic - Enviado para servidor: '8888888888' (10 bytes)
+2025-09-27 13:04:32,238 - DEBUG - client_logic - Recebido da serial (cliente): '8 8 8 8 8 8 8 8 8 8 88'
+2025-09-27 13:04:32,239 - INFO - client_logic - Enviado para servidor: '8888888888' (10 bytes)
+2025-09-27 13:04:32,846 - DEBUG - client_logic - Recebido da serial (cliente): '8 8 8 8 8 8 8 8 8 8 88'
+2025-09-27 13:04:32,847 - INFO - client_logic - Enviado para servidor: '8888888888' (10 bytes)
+2025-09-27 13:04:34,212 - DEBUG - client_logic - Recebido da serial (cliente): '8 8 8 8 8 8 8 8 8 8 88'
+2025-09-27 13:04:34,212 - INFO - client_logic - Enviado para servidor: '8888888888' (10 bytes)
+2025-09-27 13:04:35,527 - DEBUG - client_logic - Recebido da serial (cliente): '9 9 9 9 9 9 9 9 9 9 99'
+2025-09-27 13:04:35,529 - INFO - client_logic - Enviado para servidor: '9999999999' (10 bytes)
+2025-09-27 13:04:37,096 - DEBUG - client_logic - Recebido da serial (cliente): '9 9 9 9 9 9 9 9 9 9 99'
+2025-09-27 13:04:37,097 - INFO - client_logic - Enviado para servidor: '9999999999' (10 bytes)
+2025-09-27 13:04:38,259 - DEBUG - client_logic - Recebido da serial (cliente): '9 9 9 9 9 9 9 9 9 9 99'
+2025-09-27 13:04:38,260 - INFO - client_logic - Enviado para servidor: '9999999999' (10 bytes)
+2025-09-27 13:04:39,220 - DEBUG - client_logic - Recebido da serial (cliente): '9 9 9 9 9 9 9 9 9 9 99'
+2025-09-27 13:04:39,221 - INFO - client_logic - Enviado para servidor: '9999999999' (10 bytes)
+2025-09-27 13:04:40,080 - DEBUG - client_logic - Recebido da serial (cliente): '9 9 9 9 9 9 9 9 9 9 99'
+2025-09-27 13:04:40,080 - INFO - client_logic - Enviado para servidor: '9999999999' (10 bytes)
+2025-09-27 13:04:40,889 - DEBUG - client_logic - Recebido da serial (cliente): '9 9 9 9 9 9 9 9 9 9 99'
+2025-09-27 13:04:40,890 - INFO - client_logic - Enviado para servidor: '9999999999' (10 bytes)
+2025-09-27 13:04:42,810 - DEBUG - client_logic - Recebido da serial (cliente): '9 9 9 9 9 9 9 9 9 9 99'
+2025-09-27 13:04:42,811 - INFO - client_logic - Enviado para servidor: '9999999999' (10 bytes)
+2025-09-27 13:04:43,618 - DEBUG - client_logic - Recebido da serial (cliente): '9 9 9 9 9 9 9 9 9 9 99'
+2025-09-27 13:04:43,619 - INFO - client_logic - Enviado para servidor: '9999999999' (10 bytes)
+2025-09-27 13:04:45,236 - DEBUG - client_logic - Recebido da serial (cliente): '9 9 9 9 9 9 9 9 9 9 99'
+2025-09-27 13:04:45,237 - INFO - client_logic - Enviado para servidor: '9999999999' (10 bytes)
+2025-09-27 13:04:46,296 - DEBUG - client_logic - Recebido da serial (cliente): '9 9 9 9 9 9 9 9 9 9 99'
+2025-09-27 13:04:46,297 - INFO - client_logic - Enviado para servidor: '9999999999' (10 bytes)
+2025-09-27 13:04:46,904 - DEBUG - client_logic - Recebido da serial (cliente): '9 9 9 9 9 9 9 9 9 9 99'
+2025-09-27 13:04:46,905 - INFO - client_logic - Enviado para servidor: '9999999999' (10 bytes)
+2025-09-27 13:04:48,672 - DEBUG - client_logic - Recebido da serial (cliente): '9 9 9 9 9 9 9 9 9 9 99'
+2025-09-27 13:04:48,673 - INFO - client_logic - Enviado para servidor: '9999999999' (10 bytes)
+2025-09-27 13:04:50,086 - DEBUG - client_logic - Recebido da serial (cliente): '9 9 9 9 9 9 9 9 9 9 99'
+2025-09-27 13:04:50,086 - INFO - client_logic - Enviado para servidor: '9999999999' (10 bytes)
+2025-09-27 13:04:51,855 - DEBUG - client_logic - Recebido da serial (cliente): '9 9 9 9 9 9 9 9 9 9 99'
+2025-09-27 13:04:51,856 - INFO - client_logic - Enviado para servidor: '9999999999' (10 bytes)
+2025-09-27 13:04:53,018 - DEBUG - client_logic - Recebido da serial (cliente): '9 9 9 9 9 9 9 9 9 9 99'
+2025-09-27 13:04:53,019 - INFO - client_logic - Enviado para servidor: '9999999999' (10 bytes)
+2025-09-27 13:04:54,334 - DEBUG - client_logic - Recebido da serial (cliente): '9 9 9 9 9 9 9 9 9 9 99'
+2025-09-27 13:04:54,336 - INFO - client_logic - Enviado para servidor: '9999999999' (10 bytes)
+2025-09-27 13:04:55,707 - DEBUG - client_logic - Recebido da serial (cliente): '1 1 1 1 1 1 1 1 1 1 11'
+2025-09-27 13:04:55,708 - INFO - client_logic - Enviado para servidor: '1111111111' (10 bytes)
+2025-09-27 13:04:56,718 - DEBUG - client_logic - Recebido da serial (cliente): '1 1 1 1 1 1 1 1 1 1 11'
+2025-09-27 13:04:56,718 - INFO - client_logic - Enviado para servidor: '1111111111' (10 bytes)
+2025-09-27 13:04:57,223 - DEBUG - client_logic - Recebido da serial (cliente): '1 1 1 1 1 1 1 1 1 1 11'
+2025-09-27 13:04:57,224 - INFO - client_logic - Enviado para servidor: '1111111111' (10 bytes)
+2025-09-27 13:04:57,729 - DEBUG - client_logic - Recebido da serial (cliente): '1 1 1 1 1 1 1 1 1 1 11'
+2025-09-27 13:04:57,730 - INFO - client_logic - Enviado para servidor: '1111111111' (10 bytes)
+2025-09-27 13:04:58,386 - DEBUG - client_logic - Recebido da serial (cliente): '1 1 1 1 1 1 1 1 1 1 11'
+2025-09-27 13:04:58,386 - INFO - client_logic - Enviado para servidor: '1111111111' (10 bytes)
+2025-09-27 13:04:59,950 - DEBUG - client_logic - Recebido da serial (cliente): '1 1 1 1 1 1 1 1 1 1 11'
+2025-09-27 13:04:59,950 - INFO - client_logic - Enviado para servidor: '1111111111' (10 bytes)
+2025-09-27 13:05:00,808 - DEBUG - client_logic - Recebido da serial (cliente): '1 1 1 1 1 1 1 1 1 1 11'
+2025-09-27 13:05:00,808 - INFO - client_logic - Enviado para servidor: '1111111111' (10 bytes)
+2025-09-27 13:05:01,920 - DEBUG - client_logic - Recebido da serial (cliente): '1 1 1 1 1 1 1 1 1 1 11'
+2025-09-27 13:05:01,920 - INFO - client_logic - Enviado para servidor: '1111111111' (10 bytes)
+2025-09-27 13:05:03,433 - DEBUG - client_logic - Recebido da serial (cliente): '1 1 1 1 1 1 1 1 1 1 11'
+2025-09-27 13:05:03,434 - INFO - client_logic - Enviado para servidor: '1111111111' (10 bytes)
+2025-09-27 13:05:04,747 - DEBUG - client_logic - Recebido da serial (cliente): '1 1 1 1 1 1 1 1 1 1 11'
+2025-09-27 13:05:04,748 - INFO - client_logic - Enviado para servidor: '1111111111' (10 bytes)
+2025-09-27 13:05:06,564 - DEBUG - client_logic - Recebido da serial (cliente): '1 1 1 1 1 1 1 1 1 1 11'
+2025-09-27 13:05:06,564 - INFO - client_logic - Enviado para servidor: '1111111111' (10 bytes)
+2025-09-27 13:05:07,424 - DEBUG - client_logic - Recebido da serial (cliente): '1 1 1 1 1 1 1 1 1 1 11'
+2025-09-27 13:05:07,424 - INFO - client_logic - Enviado para servidor: '1111111111' (10 bytes)
+2025-09-27 13:05:08,587 - DEBUG - client_logic - Recebido da serial (cliente): '1 1 1 1 1 1 1 1 1 1 11'
+2025-09-27 13:05:08,588 - INFO - client_logic - Enviado para servidor: '1111111111' (10 bytes)
+2025-09-27 13:05:09,447 - DEBUG - client_logic - Recebido da serial (cliente): '1 1 1 1 1 1 1 1 1 1 11'
+2025-09-27 13:05:09,448 - INFO - client_logic - Enviado para servidor: '1111111111' (10 bytes)
+2025-09-27 13:05:11,366 - DEBUG - client_logic - Recebido da serial (cliente): '1 1 1 1 1 1 1 1 1 1 11'
+2025-09-27 13:05:11,366 - INFO - client_logic - Enviado para servidor: '1111111111' (10 bytes)
+2025-09-27 13:05:13,083 - DEBUG - client_logic - Recebido da serial (cliente): '1 1 1 1 1 1 1 1 1 1 11'
+2025-09-27 13:05:13,083 - INFO - client_logic - Enviado para servidor: '1111111111' (10 bytes)
+2025-09-27 13:05:15,001 - DEBUG - client_logic - Recebido da serial (cliente): '1 1 1 1 1 1 1 1 1 1 11'
+2025-09-27 13:05:15,002 - INFO - client_logic - Enviado para servidor: '1111111111' (10 bytes)
+2025-09-27 13:05:16,569 - DEBUG - client_logic - Recebido da serial (cliente): '2 2 2 2 2 2 2 2 2 2 22'
+2025-09-27 13:05:16,573 - INFO - client_logic - Enviado para servidor: '2222222222' (10 bytes)
+2025-09-27 13:05:17,792 - DEBUG - client_logic - Recebido da serial (cliente): '2 2 2 2 2 2 2 2 2 2 22'
+2025-09-27 13:05:17,793 - INFO - client_logic - Enviado para servidor: '2222222222' (10 bytes)
+2025-09-27 13:05:19,508 - DEBUG - client_logic - Recebido da serial (cliente): '2 2 2 2 2 2 2 2 2 2 22'
+2025-09-27 13:05:19,510 - INFO - client_logic - Enviado para servidor: '2222222222' (10 bytes)
+2025-09-27 13:05:20,418 - DEBUG - client_logic - Recebido da serial (cliente): '2 2 2 2 2 2 2 2 2 2 22'
+2025-09-27 13:05:20,419 - INFO - client_logic - Enviado para servidor: '2222222222' (10 bytes)
+2025-09-27 13:05:21,732 - DEBUG - client_logic - Recebido da serial (cliente): '2 2 2 2 2 2 2 2 2 2 22'
+2025-09-27 13:05:21,733 - INFO - client_logic - Enviado para servidor: '2222222222' (10 bytes)
+2025-09-27 13:05:23,502 - DEBUG - client_logic - Recebido da serial (cliente): '2 2 2 2 2 2 2 2 2 2 22'
+2025-09-27 13:05:23,502 - INFO - client_logic - Enviado para servidor: '2222222222' (10 bytes)
+2025-09-27 13:05:24,967 - DEBUG - client_logic - Recebido da serial (cliente): '2 2 2 2 2 2 2 2 2 2 22'
+2025-09-27 13:05:24,968 - INFO - client_logic - Enviado para servidor: '2222222222' (10 bytes)
+2025-09-27 13:05:25,827 - DEBUG - client_logic - Recebido da serial (cliente): '2 2 2 2 2 2 2 2 2 2 22'
+2025-09-27 13:05:25,828 - INFO - client_logic - Enviado para servidor: '2222222222' (10 bytes)
+2025-09-27 13:05:27,293 - DEBUG - client_logic - Recebido da serial (cliente): '2 2 2 2 2 2 2 2 2 2 22'
+2025-09-27 13:05:27,295 - INFO - client_logic - Enviado para servidor: '2222222222' (10 bytes)
+2025-09-27 13:05:29,112 - DEBUG - client_logic - Recebido da serial (cliente): '2 2 2 2 2 2 2 2 2 2 22'
+2025-09-27 13:05:29,113 - INFO - client_logic - Enviado para servidor: '2222222222' (10 bytes)
+2025-09-27 13:05:30,678 - DEBUG - client_logic - Recebido da serial (cliente): '2 2 2 2 2 2 2 2 2 2 22'
+2025-09-27 13:05:30,679 - INFO - client_logic - Enviado para servidor: '2222222222' (10 bytes)
+2025-09-27 13:05:31,488 - DEBUG - client_logic - Recebido da serial (cliente): '2 2 2 2 2 2 2 2 2 2 22'
+2025-09-27 13:05:31,490 - INFO - client_logic - Enviado para servidor: '2222222222' (10 bytes)
+2025-09-27 13:05:32,046 - DEBUG - client_logic - Recebido da serial (cliente): '2 2 2 2 2 2 2 2 2 2 22'
+2025-09-27 13:05:32,047 - INFO - client_logic - Enviado para servidor: '2222222222' (10 bytes)
+2025-09-27 13:05:33,963 - DEBUG - client_logic - Recebido da serial (cliente): '2 2 2 2 2 2 2 2 2 2 22'
+2025-09-27 13:05:33,964 - INFO - client_logic - Enviado para servidor: '2222222222' (10 bytes)
+2025-09-27 13:05:34,620 - DEBUG - client_logic - Recebido da serial (cliente): '2 2 2 2 2 2 2 2 2 2 22'
+2025-09-27 13:05:34,621 - INFO - client_logic - Enviado para servidor: '2222222222' (10 bytes)
+2025-09-27 13:05:36,538 - DEBUG - client_logic - Recebido da serial (cliente): '2 2 2 2 2 2 2 2 2 2 22'
+2025-09-27 13:05:36,539 - INFO - client_logic - Enviado para servidor: '2222222222' (10 bytes)
+2025-09-27 13:05:37,700 - DEBUG - client_logic - Recebido da serial (cliente): '3 3 3 3 3 3 3 3 3 3 33'
+2025-09-27 13:05:37,701 - INFO - client_logic - Enviado para servidor: '3333333333' (10 bytes)
+2025-09-27 13:05:38,356 - DEBUG - client_logic - Recebido da serial (cliente): '3 3 3 3 3 3 3 3 3 3 33'
+2025-09-27 13:05:38,357 - INFO - client_logic - Enviado para servidor: '3333333333' (10 bytes)
+2025-09-27 13:05:40,072 - DEBUG - client_logic - Recebido da serial (cliente): '3 3 3 3 3 3 3 3 3 3 33'
+2025-09-27 13:05:40,073 - INFO - client_logic - Enviado para servidor: '3333333333' (10 bytes)
+2025-09-27 13:05:42,041 - DEBUG - client_logic - Recebido da serial (cliente): '3 3 3 3 3 3 3 3 3 3 33'
+2025-09-27 13:05:42,042 - INFO - client_logic - Enviado para servidor: '3333333333' (10 bytes)
+2025-09-27 13:05:43,960 - DEBUG - client_logic - Recebido da serial (cliente): '3 3 3 3 3 3 3 3 3 3 33'
+2025-09-27 13:05:43,962 - INFO - client_logic - Enviado para servidor: '3333333333' (10 bytes)
+2025-09-27 13:05:45,173 - DEBUG - client_logic - Recebido da serial (cliente): '3 3 3 3 3 3 3 3 3 3 33'
+2025-09-27 13:05:45,173 - INFO - client_logic - Enviado para servidor: '3333333333' (10 bytes)
+2025-09-27 13:05:46,485 - DEBUG - client_logic - Recebido da serial (cliente): '3 3 3 3 3 3 3 3 3 3 33'
+2025-09-27 13:05:46,486 - INFO - client_logic - Enviado para servidor: '3333333333' (10 bytes)
+2025-09-27 13:05:47,905 - DEBUG - client_logic - Recebido da serial (cliente): '3 3 3 3 3 3 3 3 3 3 33'
+2025-09-27 13:05:47,906 - INFO - client_logic - Enviado para servidor: '3333333333' (10 bytes)
+2025-09-27 13:05:49,370 - DEBUG - client_logic - Recebido da serial (cliente): '3 3 3 3 3 3 3 3 3 3 33'
+2025-09-27 13:05:49,370 - INFO - client_logic - Enviado para servidor: '3333333333' (10 bytes)
+2025-09-27 13:05:50,634 - DEBUG - client_logic - Recebido da serial (cliente): '3 3 3 3 3 3 3 3 3 3 33'
+2025-09-27 13:05:50,634 - INFO - client_logic - Enviado para servidor: '3333333333' (10 bytes)
+2025-09-27 13:05:51,745 - DEBUG - client_logic - Recebido da serial (cliente): '3 3 3 3 3 3 3 3 3 3 33'
+2025-09-27 13:05:51,746 - INFO - client_logic - Enviado para servidor: '3333333333' (10 bytes)
+2025-09-27 13:05:52,960 - DEBUG - client_logic - Recebido da serial (cliente): '3 3 3 3 3 3 3 3 3 3 33'
+2025-09-27 13:05:52,961 - INFO - client_logic - Enviado para servidor: '3333333333' (10 bytes)
+2025-09-27 13:05:53,617 - DEBUG - client_logic - Recebido da serial (cliente): '3 3 3 3 3 3 3 3 3 3 33'
+2025-09-27 13:05:53,618 - INFO - client_logic - Enviado para servidor: '3333333333' (10 bytes)
+2025-09-27 13:05:54,173 - DEBUG - client_logic - Recebido da serial (cliente): '3 3 3 3 3 3 3 3 3 3 33'
+2025-09-27 13:05:54,174 - INFO - client_logic - Enviado para servidor: '3333333333' (10 bytes)
+2025-09-27 13:05:55,988 - DEBUG - client_logic - Recebido da serial (cliente): '3 3 3 3 3 3 3 3 3 3 33'
+2025-09-27 13:05:55,989 - INFO - client_logic - Enviado para servidor: '3333333333' (10 bytes)
+2025-09-27 13:05:57,708 - DEBUG - client_logic - Recebido da serial (cliente): '4 4 4 4 4 4 4 4 4 4 44'
+2025-09-27 13:05:57,708 - INFO - client_logic - Enviado para servidor: '4444444444' (10 bytes)
+2025-09-27 13:05:59,424 - DEBUG - client_logic - Recebido da serial (cliente): '4 4 4 4 4 4 4 4 4 4 44'
+2025-09-27 13:05:59,425 - INFO - client_logic - Enviado para servidor: '4444444444' (10 bytes)
+2025-09-27 13:06:00,486 - DEBUG - client_logic - Recebido da serial (cliente): '4 4 4 4 4 4 4 4 4 4 44'
+2025-09-27 13:06:00,487 - INFO - client_logic - Enviado para servidor: '4444444444' (10 bytes)
+2025-09-27 13:06:01,598 - DEBUG - client_logic - Recebido da serial (cliente): '4 4 4 4 4 4 4 4 4 4 44'
+2025-09-27 13:06:01,599 - INFO - client_logic - Enviado para servidor: '4444444444' (10 bytes)
+2025-09-27 13:06:02,708 - DEBUG - client_logic - Recebido da serial (cliente): '4 4 4 4 4 4 4 4 4 4 44'
+2025-09-27 13:06:02,709 - INFO - client_logic - Enviado para servidor: '4444444444' (10 bytes)
+2025-09-27 13:06:03,265 - DEBUG - client_logic - Recebido da serial (cliente): '4 4 4 4 4 4 4 4 4 4 44'
+2025-09-27 13:06:03,266 - INFO - client_logic - Enviado para servidor: '4444444444' (10 bytes)
+2025-09-27 13:06:04,528 - DEBUG - client_logic - Recebido da serial (cliente): '4 4 4 4 4 4 4 4 4 4 44'
+2025-09-27 13:06:04,529 - INFO - client_logic - Enviado para servidor: '4444444444' (10 bytes)
+2025-09-27 13:06:06,195 - DEBUG - client_logic - Recebido da serial (cliente): '4 4 4 4 4 4 4 4 4 4 44'
+2025-09-27 13:06:06,196 - INFO - client_logic - Enviado para servidor: '4444444444' (10 bytes)
+2025-09-27 13:06:07,155 - DEBUG - client_logic - Recebido da serial (cliente): '4 4 4 4 4 4 4 4 4 4 44'
+2025-09-27 13:06:07,155 - INFO - client_logic - Enviado para servidor: '4444444444' (10 bytes)
+2025-09-27 13:06:08,973 - DEBUG - client_logic - Recebido da serial (cliente): '4 4 4 4 4 4 4 4 4 4 44'
+2025-09-27 13:06:08,974 - INFO - client_logic - Enviado para servidor: '4444444444' (10 bytes)
+2025-09-27 13:06:09,529 - DEBUG - client_logic - Recebido da serial (cliente): '4 4 4 4 4 4 4 4 4 4 44'
+2025-09-27 13:06:09,533 - INFO - client_logic - Enviado para servidor: '4444444444' (10 bytes)
+2025-09-27 13:06:10,242 - DEBUG - client_logic - Recebido da serial (cliente): '4 4 4 4 4 4 4 4 4 4 44'
+2025-09-27 13:06:10,243 - INFO - client_logic - Enviado para servidor: '4444444444' (10 bytes)
+2025-09-27 13:06:11,253 - DEBUG - client_logic - Recebido da serial (cliente): '4 4 4 4 4 4 4 4 4 4 44'
+2025-09-27 13:06:11,254 - INFO - client_logic - Enviado para servidor: '4444444444' (10 bytes)
+2025-09-27 13:06:12,011 - DEBUG - client_logic - Recebido da serial (cliente): '4 4 4 4 4 4 4 4 4 4 44'
+2025-09-27 13:06:12,012 - INFO - client_logic - Enviado para servidor: '4444444444' (10 bytes)
+2025-09-27 13:06:13,526 - DEBUG - client_logic - Recebido da serial (cliente): '4 4 4 4 4 4 4 4 4 4 44'
+2025-09-27 13:06:13,527 - INFO - client_logic - Enviado para servidor: '4444444444' (10 bytes)
+2025-09-27 13:06:14,789 - DEBUG - client_logic - Recebido da serial (cliente): '4 4 4 4 4 4 4 4 4 4 44'
+2025-09-27 13:06:14,790 - INFO - client_logic - Enviado para servidor: '4444444444' (10 bytes)
+2025-09-27 13:06:16,607 - DEBUG - client_logic - Recebido da serial (cliente): '4 4 4 4 4 4 4 4 4 4 44'
+2025-09-27 13:06:16,608 - INFO - client_logic - Enviado para servidor: '4444444444' (10 bytes)
+2025-09-27 13:06:17,516 - DEBUG - client_logic - Recebido da serial (cliente): '4 4 4 4 4 4 4 4 4 4 44'
+2025-09-27 13:06:17,517 - INFO - client_logic - Enviado para servidor: '4444444444' (10 bytes)
+2025-09-27 13:06:18,173 - DEBUG - client_logic - Recebido da serial (cliente): '5 5 5 5 5 5 5 5 5 5 55'
+2025-09-27 13:06:18,174 - INFO - client_logic - Enviado para servidor: '5555555555' (10 bytes)
+2025-09-27 13:06:18,681 - DEBUG - client_logic - Recebido da serial (cliente): '5 5 5 5 5 5 5 5 5 5 55'
+2025-09-27 13:06:18,682 - INFO - client_logic - Enviado para servidor: '5555555555' (10 bytes)
+2025-09-27 13:06:19,238 - DEBUG - client_logic - Recebido da serial (cliente): '5 5 5 5 5 5 5 5 5 5 55'
+2025-09-27 13:06:19,238 - INFO - client_logic - Enviado para servidor: '5555555555' (10 bytes)
+2025-09-27 13:06:20,803 - DEBUG - client_logic - Recebido da serial (cliente): '5 5 5 5 5 5 5 5 5 5 55'
+2025-09-27 13:06:20,803 - INFO - client_logic - Enviado para servidor: '5555555555' (10 bytes)
+2025-09-27 13:06:21,712 - DEBUG - client_logic - Recebido da serial (cliente): '5 5 5 5 5 5 5 5 5 5 55'
+2025-09-27 13:06:21,712 - INFO - client_logic - Enviado para servidor: '5555555555' (10 bytes)
+2025-09-27 13:06:23,531 - DEBUG - client_logic - Recebido da serial (cliente): '5 5 5 5 5 5 5 5 5 5 55'
+2025-09-27 13:06:23,531 - INFO - client_logic - Enviado para servidor: '5555555555' (10 bytes)
+2025-09-27 13:06:24,391 - DEBUG - client_logic - Recebido da serial (cliente): '5 5 5 5 5 5 5 5 5 5 55'
+2025-09-27 13:06:24,394 - INFO - client_logic - Enviado para servidor: '5555555555' (10 bytes)
+2025-09-27 13:06:26,411 - DEBUG - client_logic - Recebido da serial (cliente): '5 5 5 5 5 5 5 5 5 5 55'
+2025-09-27 13:06:26,412 - INFO - client_logic - Enviado para servidor: '5555555555' (10 bytes)
+2025-09-27 13:06:28,180 - DEBUG - client_logic - Recebido da serial (cliente): '5 5 5 5 5 5 5 5 5 5 55'
+2025-09-27 13:06:28,181 - INFO - client_logic - Enviado para servidor: '5555555555' (10 bytes)
+2025-09-27 13:06:29,391 - DEBUG - client_logic - Recebido da serial (cliente): '5 5 5 5 5 5 5 5 5 5 55'
+2025-09-27 13:06:29,392 - INFO - client_logic - Enviado para servidor: '5555555555' (10 bytes)
+2025-09-27 13:06:31,160 - DEBUG - client_logic - Recebido da serial (cliente): '5 5 5 5 5 5 5 5 5 5 55'
+2025-09-27 13:06:31,160 - INFO - client_logic - Enviado para servidor: '5555555555' (10 bytes)
+2025-09-27 13:06:32,121 - DEBUG - client_logic - Recebido da serial (cliente): '5 5 5 5 5 5 5 5 5 5 55'
+2025-09-27 13:06:32,122 - INFO - client_logic - Enviado para servidor: '5555555555' (10 bytes)
+2025-09-27 13:06:33,939 - DEBUG - client_logic - Recebido da serial (cliente): '5 5 5 5 5 5 5 5 5 5 55'
+2025-09-27 13:06:33,940 - INFO - client_logic - Enviado para servidor: '5555555555' (10 bytes)
+2025-09-27 13:06:35,051 - DEBUG - client_logic - Recebido da serial (cliente): '5 5 5 5 5 5 5 5 5 5 55'
+2025-09-27 13:06:35,052 - INFO - client_logic - Enviado para servidor: '5555555555' (10 bytes)
+2025-09-27 13:06:36,819 - DEBUG - client_logic - Recebido da serial (cliente): '5 5 5 5 5 5 5 5 5 5 55'
+2025-09-27 13:06:36,820 - INFO - client_logic - Enviado para servidor: '5555555555' (10 bytes)
+2025-09-27 13:06:37,575 - DEBUG - client_logic - Recebido da serial (cliente): '5 5 5 5 5 5 5 5 5 5 55'
+2025-09-27 13:06:37,576 - INFO - client_logic - Enviado para servidor: '5555555555' (10 bytes)
+2025-09-27 13:06:38,989 - DEBUG - client_logic - Recebido da serial (cliente): '6 6 6 6 6 6 6 6 6 6 66'
+2025-09-27 13:06:38,990 - INFO - client_logic - Enviado para servidor: '6666666666' (10 bytes)
+2025-09-27 13:06:39,597 - DEBUG - client_logic - Recebido da serial (cliente): '6 6 6 6 6 6 6 6 6 6 66'
+2025-09-27 13:06:39,597 - INFO - client_logic - Enviado para servidor: '6666666666' (10 bytes)
+2025-09-27 13:06:41,061 - DEBUG - client_logic - Recebido da serial (cliente): '6 6 6 6 6 6 6 6 6 6 66'
+2025-09-27 13:06:41,061 - INFO - client_logic - Enviado para servidor: '6666666666' (10 bytes)
+2025-09-27 13:06:43,082 - DEBUG - client_logic - Recebido da serial (cliente): '6 6 6 6 6 6 6 6 6 6 66'
+2025-09-27 13:06:43,083 - INFO - client_logic - Enviado para servidor: '6666666666' (10 bytes)
+2025-09-27 13:06:43,639 - DEBUG - client_logic - Recebido da serial (cliente): '6 6 6 6 6 6 6 6 6 6 66'
+2025-09-27 13:06:43,639 - INFO - client_logic - Enviado para servidor: '6666666666' (10 bytes)
+2025-09-27 13:06:44,649 - DEBUG - client_logic - Recebido da serial (cliente): '6 6 6 6 6 6 6 6 6 6 66'
+2025-09-27 13:06:44,650 - INFO - client_logic - Enviado para servidor: '6666666666' (10 bytes)
+2025-09-27 13:06:46,267 - DEBUG - client_logic - Recebido da serial (cliente): '6 6 6 6 6 6 6 6 6 6 66'
+2025-09-27 13:06:46,268 - INFO - client_logic - Enviado para servidor: '6666666666' (10 bytes)
+2025-09-27 13:06:47,075 - DEBUG - client_logic - Recebido da serial (cliente): '6 6 6 6 6 6 6 6 6 6 66'
+2025-09-27 13:06:47,076 - INFO - client_logic - Enviado para servidor: '6666666666' (10 bytes)
+2025-09-27 13:06:48,945 - DEBUG - client_logic - Recebido da serial (cliente): '6 6 6 6 6 6 6 6 6 6 66'
+2025-09-27 13:06:48,946 - INFO - client_logic - Enviado para servidor: '6666666666' (10 bytes)
+2025-09-27 13:06:50,316 - DEBUG - client_logic - Recebido da serial (cliente): '6 6 6 6 6 6 6 6 6 6 66'
+2025-09-27 13:06:50,318 - INFO - client_logic - Enviado para servidor: '6666666666' (10 bytes)
+2025-09-27 13:06:51,480 - DEBUG - client_logic - Recebido da serial (cliente): '6 6 6 6 6 6 6 6 6 6 66'
+2025-09-27 13:06:51,481 - INFO - client_logic - Enviado para servidor: '6666666666' (10 bytes)
+2025-09-27 13:06:53,297 - DEBUG - client_logic - Recebido da serial (cliente): '6 6 6 6 6 6 6 6 6 6 66'
+2025-09-27 13:06:53,298 - INFO - client_logic - Enviado para servidor: '6666666666' (10 bytes)
+2025-09-27 13:06:54,814 - DEBUG - client_logic - Recebido da serial (cliente): '6 6 6 6 6 6 6 6 6 6 66'
+2025-09-27 13:06:54,815 - INFO - client_logic - Enviado para servidor: '6666666666' (10 bytes)
+2025-09-27 13:06:55,624 - DEBUG - client_logic - Recebido da serial (cliente): '6 6 6 6 6 6 6 6 6 6 66'
+2025-09-27 13:06:55,625 - INFO - client_logic - Enviado para servidor: '6666666666' (10 bytes)
+2025-09-27 13:06:57,190 - DEBUG - client_logic - Recebido da serial (cliente): '6 6 6 6 6 6 6 6 6 6 66'
+2025-09-27 13:06:57,191 - INFO - client_logic - Enviado para servidor: '6666666666' (10 bytes)
+2025-09-27 13:06:57,897 - DEBUG - client_logic - Recebido da serial (cliente): '6 6 6 6 6 6 6 6 6 6 66'
+2025-09-27 13:06:57,898 - INFO - client_logic - Enviado para servidor: '6666666666' (10 bytes)
+2025-09-27 13:06:58,504 - DEBUG - client_logic - Recebido da serial (cliente): '6 6 6 6 6 6 6 6 6 6 66'
+2025-09-27 13:06:58,505 - INFO - client_logic - Enviado para servidor: '6666666666' (10 bytes)
+2025-09-27 13:06:59,618 - DEBUG - client_logic - Recebido da serial (cliente): '7 7 7 7 7 7 7 7 7 7 77'
+2025-09-27 13:06:59,619 - INFO - client_logic - Enviado para servidor: '7777777777' (10 bytes)
+2025-09-27 13:07:00,931 - DEBUG - client_logic - Recebido da serial (cliente): '7 7 7 7 7 7 7 7 7 7 77'
+2025-09-27 13:07:00,932 - INFO - client_logic - Enviado para servidor: '7777777777' (10 bytes)
+2025-09-27 13:07:01,892 - DEBUG - client_logic - Recebido da serial (cliente): '7 7 7 7 7 7 7 7 7 7 77'
+2025-09-27 13:07:01,892 - INFO - client_logic - Enviado para servidor: '7777777777' (10 bytes)
+2025-09-27 13:07:02,751 - DEBUG - client_logic - Recebido da serial (cliente): '7 7 7 7 7 7 7 7 7 7 77'
+2025-09-27 13:07:02,752 - INFO - client_logic - Enviado para servidor: '7777777777' (10 bytes)
+2025-09-27 13:07:03,257 - DEBUG - client_logic - Recebido da serial (cliente): '7 7 7 7 7 7 7 7 7 7 77'
+2025-09-27 13:07:03,258 - INFO - client_logic - Enviado para servidor: '7777777777' (10 bytes)
+2025-09-27 13:07:04,621 - DEBUG - client_logic - Recebido da serial (cliente): '7 7 7 7 7 7 7 7 7 7 77'
+2025-09-27 13:07:04,622 - INFO - client_logic - Enviado para servidor: '7777777777' (10 bytes)
+2025-09-27 13:07:06,137 - DEBUG - client_logic - Recebido da serial (cliente): '7 7 7 7 7 7 7 7 7 7 77'
+2025-09-27 13:07:06,138 - INFO - client_logic - Enviado para servidor: '7777777777' (10 bytes)
+2025-09-27 13:07:06,996 - DEBUG - client_logic - Recebido da serial (cliente): '7 7 7 7 7 7 7 7 7 7 77'
+2025-09-27 13:07:06,996 - INFO - client_logic - Enviado para servidor: '7777777777' (10 bytes)
+2025-09-27 13:07:08,890 - DEBUG - client_logic - Recebido da serial (cliente): '7 7 7 7 7 7 7 7 7 7 77'
+2025-09-27 13:07:08,890 - INFO - client_logic - Enviado para servidor: '7777777777' (10 bytes)
+2025-09-27 13:07:09,397 - DEBUG - client_logic - Recebido da serial (cliente): '7 7 7 7 7 7 7 7 7 7 77'
+2025-09-27 13:07:09,397 - INFO - client_logic - Enviado para servidor: '7777777777' (10 bytes)
+2025-09-27 13:07:10,558 - DEBUG - client_logic - Recebido da serial (cliente): '7 7 7 7 7 7 7 7 7 7 77'
+2025-09-27 13:07:10,559 - INFO - client_logic - Enviado para servidor: '7777777777' (10 bytes)
+2025-09-27 13:07:11,971 - DEBUG - client_logic - Recebido da serial (cliente): '7 7 7 7 7 7 7 7 7 7 77'
+2025-09-27 13:07:11,972 - INFO - client_logic - Enviado para servidor: '7777777777' (10 bytes)
+2025-09-27 13:07:13,739 - DEBUG - client_logic - Recebido da serial (cliente): '7 7 7 7 7 7 7 7 7 7 77'
+2025-09-27 13:07:13,740 - INFO - client_logic - Enviado para servidor: '7777777777' (10 bytes)
+2025-09-27 13:07:15,052 - DEBUG - client_logic - Recebido da serial (cliente): '7 7 7 7 7 7 7 7 7 7 77'
+2025-09-27 13:07:15,053 - INFO - client_logic - Enviado para servidor: '7777777777' (10 bytes)
+2025-09-27 13:07:21,262 - ERROR - main_app - Traceback (most recent call last):
+2025-09-27 13:07:21,263 - ERROR - main_app - File "C:\Users\Jhonattan-PC\OneDrive\Documentos\projetos\gerenciador-COM\main_app.py", line 791, in update_uptime
+2025-09-27 13:07:21,265 - ERROR - main_app - def update_uptime(self, uptime_str: str):
+2025-09-27 13:07:21,265 - ERROR - main_app - KeyboardInterrupt
+2025-09-27 13:07:23,481 - ERROR - main_app - Traceback (most recent call last):
+2025-09-27 13:07:23,482 - ERROR - main_app - File "C:\Users\Jhonattan-PC\OneDrive\Documentos\projetos\gerenciador-COM\main_app.py", line 791, in update_uptime
+2025-09-27 13:07:23,482 - ERROR - main_app - def update_uptime(self, uptime_str: str):
+2025-09-27 13:07:23,482 - ERROR - main_app - KeyboardInterrupt
+2025-09-27 13:07:26,583 - INFO - main_app - Fechando aplicativo...
+2025-09-27 13:07:26,585 - INFO - main_app - Configurações salvas em config.json
+2025-09-27 13:07:26,586 - INFO - main_app - Parando cliente antes de sair...
+2025-09-27 13:07:26,586 - INFO - main_app - Desconectando Cliente...
+2025-09-27 13:07:26,589 - INFO - client_logic - Solicitação para parar o cliente...
+2025-09-27 13:07:26,612 - INFO - client_logic - Porta serial COM6 (cliente) fechada.
+2025-09-27 13:07:26,612 - INFO - client_logic - Thread Cliente finalizada.
+2025-09-27 13:11:22,242 - INFO - main_app - Sistema de logging configurado.
+2025-09-27 13:11:22,300 - INFO - main_app - Sistema de logging configurado.
+2025-09-27 13:11:22,300 - INFO - main_app - Configurações carregadas de config.json
+2025-09-27 13:11:22,300 - INFO - main_app - Aplicativo Iniciado.
+2025-09-27 13:13:49,539 - INFO - main_app - Sistema de logging configurado.
+2025-09-27 13:13:49,596 - INFO - main_app - Sistema de logging configurado.
+2025-09-27 13:13:49,596 - INFO - main_app - Configurações carregadas de config.json
+2025-09-27 13:13:49,596 - INFO - main_app - Aplicativo Iniciado.
+2025-09-27 13:13:50,789 - INFO - main_app - Fechando aplicativo...
+2025-09-27 13:13:50,791 - INFO - main_app - Configurações salvas em config.json
+2025-09-27 13:13:52,805 - INFO - main_app - Sistema de logging configurado.
+2025-09-27 13:13:52,862 - INFO - main_app - Sistema de logging configurado.
+2025-09-27 13:13:52,862 - INFO - main_app - Configurações carregadas de config.json
+2025-09-27 13:13:52,862 - INFO - main_app - Aplicativo Iniciado.
+2025-09-27 13:14:02,340 - INFO - main_app - Sistema de logging configurado.
+2025-09-27 13:14:02,397 - INFO - main_app - Sistema de logging configurado.
+2025-09-27 13:14:02,397 - INFO - main_app - Configurações carregadas de config.json
+2025-09-27 13:14:02,397 - INFO - main_app - Aplicativo Iniciado.
+2025-09-27 13:14:25,934 - INFO - main_app - Iniciando Servidor em: 0.0.0.0:8888 usando porta serial COM6
+2025-09-27 13:14:25,936 - INFO - server_logic - Tentando abrir porta serial COM6 com params: {'baudrate': 9600, 'timeout': 10.0, 'bytesize': 8, 'stopbits': 2.0, 'parity': 'E', 'rtscts': False, 'dsrdtr': False}
+2025-09-27 13:14:25,937 - INFO - server_logic - Porta serial COM6 aberta com sucesso.
+2025-09-27 13:14:25,937 - INFO - main_app - Configurações salvas em config.json
+2025-09-27 13:14:25,939 - INFO - server_logic - Servidor ouvindo em 0.0.0.0:8888
+2025-09-27 13:14:28,588 - INFO - main_app - Conectando ao Servidor em: 127.0.0.1:8888 usando porta serial COM5
+2025-09-27 13:14:28,589 - INFO - client_logic - Abrindo porta serial COM5 com params: {'baudrate': 9600, 'timeout': 10.0, 'bytesize': 8, 'stopbits': 2.0, 'parity': 'E', 'rtscts': False, 'dsrdtr': False}
+2025-09-27 13:14:28,590 - INFO - client_logic - Porta serial COM5 (cliente) aberta.
+2025-09-27 13:14:28,590 - INFO - main_app - Configurações salvas em config.json
+2025-09-27 13:14:28,592 - INFO - client_logic - Conectado ao servidor em 127.0.0.1:8888
+2025-09-27 13:14:28,592 - INFO - server_logic - Cliente conectado de ('127.0.0.1', 65085)
+2025-09-27 13:14:28,593 - INFO - server_logic - Handler iniciado para cliente 127.0.0.1:65085
+2025-09-27 13:14:43,746 - INFO - main_app - Desconectando Cliente...
+2025-09-27 13:14:43,746 - INFO - client_logic - Solicitação para parar o cliente...
+2025-09-27 13:14:43,747 - INFO - client_logic - Porta serial COM5 (cliente) fechada.
+2025-09-27 13:14:43,747 - INFO - client_logic - Thread Cliente finalizada.
+2025-09-27 13:14:43,747 - INFO - server_logic - Cliente 127.0.0.1:65085 desconectou (sem enviar tamanho).
+2025-09-27 13:14:43,748 - INFO - server_logic - Conexão com cliente 127.0.0.1:65085 encerrada.
+2025-09-27 13:14:43,750 - INFO - main_app - Configurações salvas em config.json
+2025-09-27 13:14:53,580 - INFO - main_app - Fechando aplicativo...
+2025-09-27 13:14:53,582 - INFO - main_app - Configurações salvas em config.json
+2025-09-27 13:14:53,582 - INFO - main_app - Parando servidor antes de sair...
+2025-09-27 13:14:53,583 - INFO - main_app - Parando Servidor...
+2025-09-27 13:14:53,583 - INFO - server_logic - Solicitação para parar o servidor...
+2025-09-27 13:14:53,584 - INFO - server_logic - Porta serial COM6 fechada.
+2025-09-27 13:14:53,584 - INFO - server_logic - Thread Servidor finalizada.
+2025-09-27 13:14:54,402 - INFO - main_app - Fechando aplicativo...
+2025-09-27 13:14:54,404 - INFO - main_app - Configurações salvas em config.json

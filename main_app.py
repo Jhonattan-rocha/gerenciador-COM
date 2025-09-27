@@ -9,7 +9,7 @@ import os
 from PySide6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QHBoxLayout,
                                QTabWidget, QLabel, QGroupBox, QGridLayout,
                                QLineEdit, QPushButton, QComboBox, QTextEdit,
-                               QFileDialog, QMessageBox)
+                               QFileDialog, QMessageBox, QListWidget)
 from PySide6.QtGui import QIcon, QPixmap, QDoubleValidator, Qt
 from PySide6.QtCore import QTimer, Signal, QSemaphore, QThread # QThread importado para type hinting
 
@@ -318,44 +318,59 @@ class SerialConWindow(QWidget):
     def setup_status_tab(self):
         status_layout = QVBoxLayout(self.status_tab)
 
-        connection_status_group = QGroupBox("Status da Conexão")
+        # Grupo de Status Geral
+        connection_status_group = QGroupBox("Status Geral")
         connection_status_layout = QGridLayout(connection_status_group)
-
         self.status_label_value = QLabel("Desconectado")
-        self.status_label_value.setObjectName("status_label_value") # Para QSS
+        self.status_label_value.setObjectName("status_label_value")
+        self.uptime_value = QLabel("00:00:00")
+        connection_status_layout.addWidget(QLabel("Status:"), 0, 0)
+        connection_status_layout.addWidget(self.status_label_value, 0, 1)
+        connection_status_layout.addWidget(QLabel("Tempo de Atividade:"), 1, 0)
+        connection_status_layout.addWidget(self.uptime_value, 1, 1)
+        status_layout.addWidget(connection_status_group)
+
+        # Grupo de Detalhes da Conexão
+        details_group = QGroupBox("Detalhes da Conexão")
+        details_layout = QGridLayout(details_group)
         self.connection_details_value = QLabel("N/A")
         self.focused_port_value = QLabel("N/A")
+        details_layout.addWidget(QLabel("Endereço:"), 0, 0)
+        details_layout.addWidget(self.connection_details_value, 0, 1)
+        details_layout.addWidget(QLabel("Porta Serial:"), 1, 0)
+        details_layout.addWidget(self.focused_port_value, 1, 1)
+        status_layout.addWidget(details_group)
 
-        self.server_status_label = QLabel("Status Servidor:")
-        self.server_status_value = QLabel("Parado")
-        self.server_status_value.setObjectName("server_status_value") # Para QSS
-        self.connected_clients_label = QLabel("Clientes Conectados (Servidor):")
-        self.connected_clients_value = QLabel("0")
+        # Grupo de Estatísticas de Dados
+        data_stats_group = QGroupBox("Estatísticas de Dados")
+        data_stats_layout = QGridLayout(data_stats_group)
+        self.bytes_sent_value = QLabel("0")
+        self.bytes_received_value = QLabel("0")
+        data_stats_layout.addWidget(QLabel("Bytes Enviados:"), 0, 0)
+        data_stats_layout.addWidget(self.bytes_sent_value, 0, 1)
+        data_stats_layout.addWidget(QLabel("Bytes Recebidos:"), 1, 0)
+        data_stats_layout.addWidget(self.bytes_received_value, 1, 1)
+        status_layout.addWidget(data_stats_group)
 
-        self.client_status_label = QLabel("Status Cliente:")
+        # --- Widgets Específicos do Servidor ---
+        self.server_status_group = QGroupBox("Status do Servidor")
+        server_status_layout = QVBoxLayout(self.server_status_group)
+        self.connected_clients_list = QListWidget()
+        self.connected_clients_list.setMaximumHeight(120)
+        self.connected_clients_list.setObjectName("connected_clients_list")
+        server_status_layout.addWidget(QLabel("Clientes Conectados:"))
+        server_status_layout.addWidget(self.connected_clients_list)
+        status_layout.addWidget(self.server_status_group)
+
+        # --- Widgets Específicos do Cliente ---
+        self.client_status_group = QGroupBox("Status do Cliente")
+        client_status_layout = QGridLayout(self.client_status_group)
         self.client_status_value = QLabel("Desconectado")
-        self.client_status_value.setObjectName("client_status_value") # Para QSS
+        self.client_status_value.setObjectName("client_status_value")
+        client_status_layout.addWidget(QLabel("Status da Conexão:"), 0, 0)
+        client_status_layout.addWidget(self.client_status_value, 0, 1)
+        status_layout.addWidget(self.client_status_group)
 
-        row = 0
-        connection_status_layout.addWidget(QLabel("Status Geral:"), row, 0)
-        connection_status_layout.addWidget(self.status_label_value, row, 1)
-        row += 1
-        connection_status_layout.addWidget(QLabel("Detalhes da Conexão:"), row, 0)
-        connection_status_layout.addWidget(self.connection_details_value, row, 1, 1, 2) # Span 2 colunas
-        row += 1
-        connection_status_layout.addWidget(QLabel("Porta Serial Focada:"), row, 0)
-        connection_status_layout.addWidget(self.focused_port_value, row, 1, 1, 2) # Span
-        row += 1
-        connection_status_layout.addWidget(self.server_status_label, row, 0)
-        connection_status_layout.addWidget(self.server_status_value, row, 1)
-        row += 1
-        connection_status_layout.addWidget(self.connected_clients_label, row, 0)
-        connection_status_layout.addWidget(self.connected_clients_value, row, 1)
-        row += 1
-        connection_status_layout.addWidget(self.client_status_label, row, 0)
-        connection_status_layout.addWidget(self.client_status_value, row, 1)
-
-        status_layout.addWidget(connection_status_group)
         status_layout.addStretch(1)
         self.status_tab.setLayout(status_layout)
 
@@ -432,14 +447,9 @@ class SerialConWindow(QWidget):
         self.server_config_group.setVisible(is_server_mode)
         self.client_config_group.setVisible(not is_server_mode)
 
-        # Atualiza visibilidade dos status específicos
-        self.server_status_label.setVisible(is_server_mode)
-        self.server_status_value.setVisible(is_server_mode)
-        self.connected_clients_label.setVisible(is_server_mode)
-        self.connected_clients_value.setVisible(is_server_mode)
-
-        self.client_status_label.setVisible(not is_server_mode)
-        self.client_status_value.setVisible(not is_server_mode)
+        # Atualiza visibilidade dos grupos de status
+        self.server_status_group.setVisible(is_server_mode)
+        self.client_status_group.setVisible(not is_server_mode)
 
         self.update_connect_button_state()
 
@@ -553,6 +563,7 @@ class SerialConWindow(QWidget):
                                   connection_details=f"Servidor: {ip}:{port_num}",
                                   focused_port=porta_serial_para_uso,
                                   server_status="Iniciando...")
+        self.reset_stats()
 
         serial_params = self.get_serial_params()
         self.server_thread = ServerThread(ip, port_num, porta_serial_para_uso,
@@ -561,7 +572,10 @@ class SerialConWindow(QWidget):
         
         # Conectar sinais do ServerThread
         self.server_thread.status_update_signal.connect(self.handle_server_status_update)
-        self.server_thread.client_count_signal.connect(self.update_connected_clients_count)
+        self.server_thread.client_list_signal.connect(self.update_client_list)
+        self.server_thread.data_transmitted_signal.connect(self.update_bytes_sent)
+        self.server_thread.data_received_signal.connect(self.update_bytes_received)
+        self.server_thread.uptime_signal.connect(self.update_uptime)
         
         self.server_thread.start()
         self.update_connect_button_state() # Atualiza texto do botão
@@ -581,8 +595,8 @@ class SerialConWindow(QWidget):
             self.server_thread = None
             self.update_status_labels(general_status="Desconectado",
                                       connection_details="Servidor parado",
-                                      server_status="Parado",
-                                      connected_clients=0) # Reseta contagem
+                                      server_status="Parado")
+            self.reset_stats()
         self.update_connect_button_state()
 
 
@@ -606,6 +620,7 @@ class SerialConWindow(QWidget):
                                   connection_details=f"Cliente para: {url}",
                                   focused_port=porta_serial_para_uso,
                                   client_status="Conectando...")
+        self.reset_stats()
 
         serial_params = self.get_serial_params()
         self.client_thread = ClientThread(url, porta_serial_para_uso,
@@ -613,6 +628,10 @@ class SerialConWindow(QWidget):
                                           self.log_signal) # Passa o log_signal
 
         self.client_thread.status_update_signal.connect(self.handle_client_status_update)
+        self.client_thread.data_transmitted_signal.connect(self.update_bytes_sent)
+        self.client_thread.data_received_signal.connect(self.update_bytes_received)
+        self.client_thread.uptime_signal.connect(self.update_uptime)
+
         self.client_thread.start()
         self.update_connect_button_state()
 
@@ -631,6 +650,7 @@ class SerialConWindow(QWidget):
             self.update_status_labels(general_status="Desconectado",
                                       connection_details="Cliente parado",
                                       client_status="Desconectado")
+            self.reset_stats()
         self.update_connect_button_state()
 
 
@@ -759,9 +779,26 @@ class SerialConWindow(QWidget):
             self.log_message(f"Erro ao carregar as configurações: {e}", logging.ERROR)
 
 
-    def update_connected_clients_count(self, count: int):
-        self.connected_clients_value.setText(str(count))
-        self.update_status_labels(connected_clients=count)
+    def update_client_list(self, clients: list):
+        self.connected_clients_list.clear()
+        self.connected_clients_list.addItems(clients)
+
+    def update_bytes_sent(self, bytes_count: int):
+        self.bytes_sent_value.setText(f"{bytes_count:,}".replace(",", "."))
+
+    def update_bytes_received(self, bytes_count: int):
+        self.bytes_received_value.setText(f"{bytes_count:,}".replace(",", "."))
+
+    def update_uptime(self, uptime_str: str):
+        self.uptime_value.setText(uptime_str)
+
+    def reset_stats(self):
+        """Reseta as estatísticas da UI para o estado inicial."""
+        self.update_uptime("00:00:00")
+        self.update_bytes_sent(0)
+        self.update_bytes_received(0)
+        if hasattr(self, 'connected_clients_list'):
+            self.connected_clients_list.clear()
 
 
     def update_status_labels(self, general_status=None, connection_details=None,
@@ -778,17 +815,13 @@ class SerialConWindow(QWidget):
         if focused_port is not None:
             self.focused_port_value.setText(focused_port)
         if server_status is not None:
-            self.server_status_value.setText(server_status)
-            self.server_status_value.setProperty("status", server_status) # Para QSS
-            self.style().unpolish(self.server_status_value)
-            self.style().polish(self.server_status_value)
+             # Este label não existe mais, mas mantemos a lógica para o status geral
+            pass
         if client_status is not None:
             self.client_status_value.setText(client_status)
             self.client_status_value.setProperty("status", client_status) # Para QSS
             self.style().unpolish(self.client_status_value)
             self.style().polish(self.client_status_value)
-        if connected_clients is not None:
-            self.connected_clients_value.setText(str(connected_clients))
 
 
     def closeEvent(self, event):

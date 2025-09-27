@@ -176,3 +176,7 @@ QTextEdit {
     font-family: "Consolas", "Courier New", monospace;
     font-size: 9pt;
 }
+
+QListWidget#connected_clients_list {
+    color: #F8F8F2
+}

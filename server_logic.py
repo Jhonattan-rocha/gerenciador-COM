@@ -46,6 +46,13 @@ class ServerThread(QThread):
         self.status_update_signal.emit("server_status", "Parando...")
         self._is_running = False
 
+        # Fechar o socket principal do servidor para desbloquear a chamada `accept()` no `run()`
+        if self.server_socket:
+            try:
+                self.server_socket.close()
+            except Exception as e:
+                 self._log(f"Erro ao fechar o socket principal do servidor: {e}", logging.ERROR, to_gui=False)
+        
         # Fechar sockets dos clientes
         for client_socket in list(self.connected_clients.keys()): # Itera sobre uma cópia
             try:
@@ -109,6 +116,11 @@ class ServerThread(QThread):
                     client_handler = threading.Thread(target=self.handle_client, args=(client_socket, addr), daemon=True)
                     self.client_handler_threads.append(client_handler)
                     client_handler.start()
+
+                    # CORREÇÃO: Limpa a lista de threads, removendo as que já terminaram.
+                    self.client_handler_threads = [
+                        t for t in self.client_handler_threads if t.is_alive()
+                    ]
 
                 except socket.timeout:
                     continue # Loop normal para checar _is_running

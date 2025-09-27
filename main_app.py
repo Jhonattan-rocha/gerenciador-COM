@@ -109,7 +109,8 @@ class SerialConWindow(QWidget):
 
         # Aplicar estilo QSS
         try:
-            with open("style.qss", "r") as f:
+            # CORREÇÃO: Adicionado encoding="utf-8" para ler o arquivo de estilo corretamente.
+            with open("style.qss", "r", encoding="utf-8") as f:
                 self.setStyleSheet(f.read())
         except FileNotFoundError:
             self.log_message("Arquivo style.qss não encontrado. Usando estilo padrão.", logging.WARNING)
@@ -570,10 +571,12 @@ class SerialConWindow(QWidget):
             self.log_message("Parando Servidor...")
             self.update_status_labels(general_status="Parando Servidor", server_status="Parando...")
             self.server_thread.stop_server()
+            # Espera a thread terminar de forma limpa.
             if not self.server_thread.wait(5000): # Espera 5 segundos
-                self.log_message("Thread do servidor não parou a tempo. Forçando término.", logging.WARNING)
-                self.server_thread.terminate() # Opção mais drástica
-                self.server_thread.wait() # Espera a terminação
+                self.log_message("Thread do servidor não parou a tempo. Isso pode indicar um problema.", logging.WARNING)
+                # CORREÇÃO: A chamada a terminate() foi removida por ser perigosa.
+                # self.server_thread.terminate()
+                # self.server_thread.wait()
 
             self.server_thread = None
             self.update_status_labels(general_status="Desconectado",
@@ -619,9 +622,10 @@ class SerialConWindow(QWidget):
             self.update_status_labels(general_status="Desconectando Cliente", client_status="Desconectando...")
             self.client_thread.stop_client()
             if not self.client_thread.wait(5000):
-                self.log_message("Thread do cliente não parou a tempo. Forçando término.", logging.WARNING)
-                self.client_thread.terminate()
-                self.client_thread.wait()
+                self.log_message("Thread do cliente não parou a tempo. Isso pode indicar um problema.", logging.WARNING)
+                # CORREÇÃO: A chamada a terminate() foi removida por ser perigosa.
+                # self.client_thread.terminate()
+                # self.client_thread.wait()
 
             self.client_thread = None
             self.update_status_labels(general_status="Desconectado",
